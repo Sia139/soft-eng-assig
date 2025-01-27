@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+
+    {% block style %} {% endblock %}
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
+        </div>
+        <nav class="menu">
+            <div class="dropdown">
+                <button class="dropdown-btn">Fee</button>
+                <div class="dropdown-content">
+                    <a href="#">View & edit bill</a>
+                    <a href="#">Update bill</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Create bill</button>
+                <div class="dropdown-content">
+                    <a href="#">By grade</a>
+                    <a href="#">By individual</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Financial</button>
+                <div class="dropdown-content">
+                    <a href="#">Financial report</a>
+                    <a href="#">Payment tracking</a>
+                </div>
+        </nav>
+        <div class="logout-section">
+            <a href="#">&#x2190;</a>
+        </div>
+    </div>
+
+    <button class="collapse-button">&#9776;</button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <div class="time"></div>
+            <div class="admin-section">
+                <span>Accountant</span>
+            </div>
+        </header>
+
+    {% block content %} {% endblock %}
+    </div>
+</body>
+</html>
