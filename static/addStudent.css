@@ -404,3 +404,52 @@ input[type="checkbox"] {
 .cancel-btn:hover {
     background: #ff6666;
 }
+
+.form-group {
+    position: relative; /* Ensure relative positioning for absolute dropdown */
+}
+
+#guardian_search {
+    width: 100%; /* Ensures the input field takes full width */
+    box-sizing: border-box; /* Prevents width issues */
+}
+
+#guardian_results {
+    display: flex;
+    position: absolute;
+    top: 100%; /* Positions dropdown directly below input */
+    left: 0; /* Aligns with input field */
+    width: auto; /* Matches input field width */
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px; /* Allows scrolling */
+    overflow-y: auto;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none; /* Hide by default */
+    margin-left: 160px;
+}
+
+#guardian_results li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+
+#guardian_results li a {
+    text-decoration: none !important; /* Force removal of underlines */
+    color: inherit; /* Ensures link takes normal text color */
+    display: block; /* Ensures full clickable area */
+    padding: 0;
+    font-size: 13px;
+}
+
+#guardian_results li:hover {
+    background-color: #f0f0f0;
+}
+
