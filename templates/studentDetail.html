@@ -54,9 +54,8 @@
                     <h1>Student Details</h1>
                     
                     <form method="get" id="search-form">
-                        <label for="grade">Grade:</label>
                         <select id="grade" name="grade" onchange="this.form.submit();">
-                            <option value="">-- Select Grade --</option>
+                            <option value="">Select Grade</option>
                             <option value="4" {% if filter_grade == "4" %}selected{% endif %}>Grade 4</option>
                             <option value="5" {% if filter_grade == "5" %}selected{% endif %}>Grade 5</option>
                             <option value="6" {% if filter_grade == "6" %}selected{% endif %}>Grade 6</option>
