@@ -42,16 +42,6 @@ def search_parents_route():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
-# @teacher_blueprint.route("/view-students")
-# @login_required
-# def viewStudents():
-#     from datetime import datetime
-#     students = Student.query.options(joinedload(Student.guardian)).all()
-#     now = datetime.now()
-#     return render_template('studentDetail.html', students=students, now=now)
-
-""" -------------------------------------------------------------------------------------------------- """  
-
 @teacher_blueprint.route("/view-students")
 @login_required
 def viewStudents():
