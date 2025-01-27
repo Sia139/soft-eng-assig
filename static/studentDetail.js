@@ -118,23 +118,3 @@ updateTime();
 
 // Update the time every minute
 setInterval(updateTime, 60000);
-
-function filterByGrade() {
-    // Get the selected grade
-    const selectedGrade = document.getElementById("grade").value;
-
-    // Get all table rows
-    const tableRows = document.querySelectorAll("#myTable2 tbody tr");
-
-    // Loop through the rows and hide or show based on the selected grade
-    tableRows.forEach(row => {
-        const studentGrade = row.getAttribute("data-grade"); // Get the grade of each student
-
-        // Show the row if it matches the selected grade or if "all" is selected
-        if (selectedGrade === "all" || studentGrade === selectedGrade) {
-            row.style.display = ""; // Show the row
-        } else {
-            row.style.display = "none"; // Hide the row
-        }
-    });
-}
