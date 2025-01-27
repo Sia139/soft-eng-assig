@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Account</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='createAccount.css') }}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
+        </div>
+        <nav class="menu">
+            <div class="dropdown">
+                <button class="dropdown-btn">Account</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('admin.createUser') }}">Add account</a>
+                    <a href="{{ url_for('admin.manageAccount') }}">Manage account</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">System</button>
+                <div class="dropdown-content">
+                    <a href="#">System configuration</a>
+                    <a href="#">Fee structure</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Add student</button>
+                <div class="dropdown-content">
+                    <a href="#">Add account</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Fee</button>
+                <div class="dropdown-content">
+                    <a href="#">View fee</a>
+                    <a href="#">Edit fee</a>
+                </div>
+            </div>
+        </nav>
+        <div class="logout-section">
+            <a href="/logout">&#x2190;</a>
+        </div>
+    </div>
+
+    <button class="collapse-button">&#9776;</button>
+
+    <div class="main-content">
+        <button class="collapse-button">&#9776;</button>
+        <div class="header">
+            <div class="time">08:27am</div>
+            <div class="user"> 
+                <label for="role-toggle">Admin</label>
+            </div>
+        </div>
+        <section class="content">
+            <div class="header-container">
+                <h1>Create Account</h1>
+            </div>
+
+            <div class="container">
+                <form class="form" action="{{ url_for('admin.createUser') }}" method="POST">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="text" id="password" name="password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="text" id="email" name="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Role:</label>
+                        <select id="role" name="role" required>
+                            <!-- <option value="">Select Role</option> -->
+                            <option value="teacher">Teacher</option>
+                            <option value="accountant">Accountant</option>
+                            <option value="parent">Parent</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Save</button>
+                        <button type="button" class="cancel-btn" onclick="clearForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <script src="{{ url_for('static', filename='createAccount.js') }}"></script>
+    <script>
+        document.querySelector('.form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            fetch("{{ url_for('admin.createUser') }}", {
+                method: 'POST',
+                body: new FormData(this)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === 'success') {
+                    window.location.href = "{{ url_for('admin.manageAccount') }}";
+                }
+            })
+            .catch(error => {
+                alert('An error occurred while processing your request.');
+            });
+        });
+
+        function clearForm() {
+            document.querySelector('.form').reset();
+        }
+    </script>
+</body>
+</html>

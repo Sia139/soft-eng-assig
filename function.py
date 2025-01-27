@@ -98,3 +98,41 @@ def search_parent_student(query, role=None):
     return users_data 
 
 """ -------------------------------------------------------------------------------------------------- """  
+
+def create_user():
+    if current_user.role == "parent":
+        return {"status": "error", "message": "Access denied. Parent cannot add user"}
+
+    # Retrieve form data
+    username = request.form["username"]
+    password = request.form["password"]
+    role = request.form["role"]
+    email = request.form.get("email")  # Optional email
+
+    # Validate inputs
+    if not username or not password or not role:
+        return {"status": "error", "message": "Username, Password, and Role are required."}
+
+    # Check if username exists
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return {"status": "error", "message": "Username already taken. Please choose another."}
+
+    # Create the new user
+    new_user = User(
+        username=username,
+        password=generate_password_hash(password),
+        role=role,
+        email=email
+    )
+    
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        return {"status": "success", "message": "User created successfully!"}
+        
+    except Exception as e:
+        db.session.rollback()
+        return {"status": "error", "message": f"An error occurred: {str(e)}"}
+
+""" -------------------------------------------------------------------------------------------------- """
