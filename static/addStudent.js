@@ -64,3 +64,30 @@ document.querySelector('form').addEventListener('submit', function(event) {
     // Set the combined date to the hidden input
     document.getElementById('dob').value = dob;
 });
+
+function updateTime() {
+    // Get the current time
+    const now = new Date();
+    
+    // Extract hours, minutes, and am/pm
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let ampm = hours >= 12 ? 'pm' : 'am';
+
+    // Convert 24-hour time to 12-hour time
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+
+    // Format the time
+    const timeString = `${hours}:${minutes} ${ampm}`;
+
+    // Update the content of the .time element
+    document.querySelector('.time').textContent = timeString;
+}
+
+// Call the function immediately to set the time when the page loads
+updateTime();
+
+// Update the time every minute
+setInterval(updateTime, 60000);
