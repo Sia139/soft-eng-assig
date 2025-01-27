@@ -21,7 +21,7 @@ def addStudent():
             
     # Get parents for the dropdown search in the form
     parents = search_parents_route()
-    return render_template("addStudent.html", parent=parents)
+    return render_template("addStudent.html")
 
 """ -------------------------------------------------------------------------------------------------- """  
 
@@ -42,13 +42,34 @@ def search_parents_route():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
-@teacher_blueprint.route("/view-students")
-@login_required
-def viewStudents():
-    from datetime import datetime
-    students = Student.query.options(joinedload(Student.guardian)).all()
-    now = datetime.now()
-    return render_template('studentDetail.html', students=students, now=now)
+# @teacher_blueprint.route("/view-students")
+# @login_required
+# def viewStudents():
+#     from datetime import datetime
+#     students = Student.query.options(joinedload(Student.guardian)).all()
+#     now = datetime.now()
+#     return render_template('studentDetail.html', students=students, now=now)
 
 """ -------------------------------------------------------------------------------------------------- """  
 
+@teacher_blueprint.route("/view-students")
+@login_required
+def viewStudents():
+    if current_user.role != "teacher":
+        return "Access Denied", 403
+    
+    search_name = request.args.get("name", "")
+    filter_grade = request.args.get("grade", "")
+    
+    # Filter students based on query parameters
+    query = Student.query.options(joinedload(Student.fees))
+    if search_name:
+        query = query.filter(Student.name.ilike(f"%{search_name}%"))
+    if filter_grade:
+        query = query.filter_by(grade=filter_grade)
+
+    students = query.all()
+
+    return render_template('studentDetail.html', students=students, search_name=search_name, filter_grade=filter_grade)
+
+""" -------------------------------------------------------------------------------------------------- """  

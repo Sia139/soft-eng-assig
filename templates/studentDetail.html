@@ -60,10 +60,20 @@
                 </div>
                 
                 <div class="search-bar">
-                    <input type="text" placeholder="Search by name">
-                    <button>&#x27A4;</button>
+                    <form method="get" id="search-form">
+                        <label for="grade">Grade:</label>
+                        <select id="grade" name="grade">
+                            <option value="">-- Select Grade --</option>
+                            <option value="4" {% if filter_grade == "4" %}selected{% endif %}>Grade 4</option>
+                            <option value="5" {% if filter_grade == "5" %}selected{% endif %}>Grade 5</option>
+                            <option value="6" {% if filter_grade == "6" %}selected{% endif %}>Grade 6</option>
+                        </select>
+                        <input type="text" id="search-name" name="name" placeholder="Search by name" value="{{ search_name }}">
+                        <button type="submit">&#x27A4;</button>
+                    </form>
                 </div>
             </div>
+
             <table id="myTable2">
                 <thead>
                     <tr>
@@ -78,7 +88,7 @@
 
                 <tbody>
                     {% for student in students %}
-                        <tr>
+                        <tr data-grade="{{ student.grade }}">
                             <td><span class="id">{{ student.id }}</span></td>
                             <td><span class="name">{{ student.name }}</span></td>
                             <td><span class="parent">{{ student.guardian.username }}</span></td>
@@ -92,7 +102,9 @@
             </table>
         </section>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='studentDetail.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>
