@@ -97,7 +97,32 @@
                         <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('teacher.addStudent') }}'">Cancel</button>
                     </div>
                 </form>
+                
             </div>
+
+            
+            <!-- Flash messages -->
+            <div class="flash-messages-container" style="display: none;">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }}" data-message="{{ message }}"></div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <script>
+                // Display flash messages as alerts dynamically
+                document.addEventListener("DOMContentLoaded", () => {
+                    const flashMessages = document.querySelectorAll(".flash-message");
+                    flashMessages.forEach(msg => {
+                        const message = msg.getAttribute("data-message");
+                        alert(message); // Show the message as an alert
+                    });
+                });
+            </script>
+
         </section>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
