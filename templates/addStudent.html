@@ -5,7 +5,8 @@
     {% extends "adminBase.html" %}
 {% endif %}
 
-{% block style %}
+{% block header %}
+    <title>Add student</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='addStudent.css') }}">
 {% endblock %}
 
