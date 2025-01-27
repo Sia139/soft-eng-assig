@@ -58,11 +58,11 @@ def viewStudents():
     if current_user.role != "teacher":
         return "Access Denied", 403
     
-    search_name = request.args.get("name", "")
-    filter_grade = request.args.get("grade", "")
+    search_name = request.args.get("name", "").strip()
+    filter_grade = request.args.get("grade", "").strip()
     
     # Filter students based on query parameters
-    query = Student.query.options(joinedload(Student.fees))
+    query = Student.query
     if search_name:
         query = query.filter(Student.name.ilike(f"%{search_name}%"))
     if filter_grade:

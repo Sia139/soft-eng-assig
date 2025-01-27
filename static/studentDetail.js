@@ -113,6 +113,18 @@ function updateTime() {
     document.querySelector('.time').textContent = timeString;
 }
 
+// Add an event listener to the grade select element
+// document.addEventListener("DOMContentLoaded", function() {
+//     const gradeSelect = document.getElementById("grade");
+//     const searchForm = document.getElementById("search-form");
+
+//     if (gradeSelect && searchForm) {
+//         gradeSelect.addEventListener("change", function() {
+//             searchForm.submit();
+//         });
+//     }
+// });
+
 // Call the function immediately to set the time when the page loads
 updateTime();
 
