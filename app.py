@@ -80,7 +80,7 @@ def initial_page():
     print(f"User role: {current_user.role}, Target route: {target_route}")
     
     if target_route:
-        return redirect(url_for(target_route)) #admin.admin_dashboard
+        return redirect(url_for(target_route))
 
     return "Role not recognized", 404
 

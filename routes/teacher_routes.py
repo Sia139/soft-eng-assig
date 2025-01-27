@@ -63,3 +63,9 @@ def viewStudents():
     return render_template('studentDetail.html', students=students, search_name=search_name, filter_grade=filter_grade)
 
 """ -------------------------------------------------------------------------------------------------- """  
+
+@teacher_blueprint.route("/fee-overview")
+@login_required
+def feeOverview():
+    
+    return render_template("feeOverview.html")

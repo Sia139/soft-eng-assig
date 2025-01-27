@@ -242,7 +242,7 @@ body {
     gap: 0.5rem;
 }
 
-.search-bar input, select {
+.search-bar input {
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 20px;
@@ -331,6 +331,7 @@ table th {
     background: #f0f0f0;
     font-weight: bold;
     cursor: pointer;
+    user-select: none;
 }
 
 .sort {
@@ -343,24 +344,26 @@ table tbody tr:last-child td {
     border-bottom: none;
 }
 
-.edit {
-    visibility: hidden;
-}
-
-.role {
+.flag-btn {
+    color: rgb(150, 150, 150);
+    background-color: white;
+    font-size: 18px;
+    padding: 5px;
     cursor: pointer;
+    transition: color 0.3s;
+    border: none;
 }
 
-.role:hover + .edit {
-    visibility: visible;
-}
-
-.delete-icon {
+.flag-btn.flagged {
     color: red;
-    font-size: 1.2rem;
-    cursor: pointer;
 }
 
-.delete-icon:hover {
-    text-decoration: underline;
+.notify-btn {
+    background-color: white;
+    font-size: 18px;
+    padding: 5px;
+    cursor: pointer;
+    transition: color 0.3s;
+    border: none;
 }
+

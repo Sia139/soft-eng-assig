@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Overview</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='studentDetail.css') }}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
+        </div>
+        <nav class="menu">
+            <div class="dropdown">
+                <button class="dropdown-btn">Student</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('teacher.addStudent') }}">Add student</a>
+                    <a href="{{ url_for('teacher.viewStudents') }}">View details</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Fee</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('teacher.feeOverview') }}">Fee overview</a>
+                </div>
+        </nav>
+        <div class="logout-section">
+            <a href="#">&#x2190;</a>
+        </div>
+    </div>
+
+    <button class="collapse-button">&#9776;</button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <div class="time">08:27am</div>
+            <div class="admin-section">
+                <span>Teacher</span>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="header-container">
+                <h1>Fee Overview</h1>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search by name">
+                    <button>&#x27A4;</button>
+                </div>
+            </div>
+            <table id="myTable2">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)"># <span class="sort"></span></th>
+                        <th onclick="sortTable(1)">Name <span class="sort"></span></th>
+                        <th onclick="sortTable(2)">Parent <span class="sort"></span></th>
+                        <th onclick="sortTable(3)">Overdue <span class="sort"></span></th>
+                        <th onclick="sortTable(4)">Due date <span class="sort"></span></th>
+                        <th>Flag</th>
+                        <th>Notify</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="id">1</span>
+                        </td>
+                        <td>
+                            <span class="name">Adolf Yeoh</span></td>
+                        <td>
+                            <span class="parent">Foreen Yeoh</span>
+                        </td>
+                        <td>
+                            <span class="overdue">1800</span>
+                        </td>
+                        <td>
+                            <span class="dueDate">23/03/2015</span>
+                        </td>
+                        <td class="flag">
+                            <button class="flag-btn flagged">&#9873;</button>
+                        </td>
+                        <td class="notify">
+                            <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="id">2</span>
+                        </td>
+                        <td>
+                            <span class="name">Bdolf Yeoh</span></td>
+                        <td>
+                            <span class="parent">Goreen Yeoh</span>
+                        </td>
+                        <td>
+                            <span class="overdue">0</span>
+                        </td>
+                        <td>
+                            <span class="dueDate">25/03/2015</span>
+                        </td>
+                        <td class="flag">
+                            <button class="flag-btn">&#9873;</button>
+                        </td>
+                        <td class="notify">
+                            <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="id">3</span>
+                        </td>
+                        <td>
+                            <span class="name">Cdolf Yeoh</span></td>
+                        <td>
+                            <span class="parent">Horeen Yeoh</span>
+                        </td>
+                        <td>
+                            <span class="overdue">0</span>
+                        </td>
+                        <td>
+                            <span class="dueDate">27/03/2015</span>
+                        </td>
+                        <td class="flag">
+                            <button class="flag-btn">&#9873;</button>
+                        </td>
+                        <td class="notify">
+                            <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="id">4</span>
+                        </td>
+                        <td>
+                            <span class="name">Ddolf Yeoh</span></td>
+                        <td>
+                            <span class="parent">Ioreen Yeoh</span>
+                        </td>
+                        <td>
+                            <span class="overdue">500</span>
+                        </td>
+                        <td>
+                            <span class="dueDate">21/03/2015</span>
+                        </td>
+                        <td class="flag">
+                            <button class="flag-btn flagged">&#9873;</button>
+                        </td>
+                        <td class="notify">
+                            <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="id">5</span>
+                        </td>
+                        <td>
+                            <span class="name">Edolf Yeoh</span></td>
+                        <td>
+                            <span class="parent">Joreen Yeoh</span>
+                        </td>
+                        <td>
+                            <span class="overdue">1200</span>
+                        </td>
+                        <td>
+                            <span class="dueDate">03/03/2015</span>
+                        </td>
+                        <td class="flag">
+                            <button class="flag-btn flagged">&#9873;</button>
+                        </td> 
+                        <td class="notify">
+                            <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
+                        </td>                                             
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <script src="feeOverview.js"></script>
+</body>
+</html>

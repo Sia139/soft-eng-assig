@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Detail</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
-    <link rel="stylesheet" href="studentDetail.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='studentDetail.css') }}">
 </head>
 
@@ -28,7 +27,7 @@
             <div class="dropdown">
                 <button class="dropdown-btn">Fee</button>
                 <div class="dropdown-content">
-                    <a href="#">Fee overview</a>
+                    <a href="{{ url_for('teacher.feeOverview') }}">Fee overview</a>
                 </div>
         </nav>
         <div class="logout-section">
@@ -101,7 +100,7 @@
 
 
     </div>
-    
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='studentDetail.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
