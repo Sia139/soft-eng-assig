@@ -52,7 +52,8 @@
 
                 <div class="header-left">
                     <h1>Student Details</h1>
-                    <select id="grade" name="grade">
+                    <select id="grade" name="grade" onchange="filterByGrade()">
+                        <option value="all">All Grades</option>
                         <option value="4">Grade 4</option>
                         <option value="5">Grade 5</option>
                         <option value="6">Grade 6</option>   
@@ -61,13 +62,13 @@
                 
                 <div class="search-bar">
                     <form method="get" id="search-form">
-                        <label for="grade">Grade:</label>
+                        <!-- <label for="grade">Grade:</label>
                         <select id="grade" name="grade">
                             <option value="">-- Select Grade --</option>
                             <option value="4" {% if filter_grade == "4" %}selected{% endif %}>Grade 4</option>
                             <option value="5" {% if filter_grade == "5" %}selected{% endif %}>Grade 5</option>
                             <option value="6" {% if filter_grade == "6" %}selected{% endif %}>Grade 6</option>
-                        </select>
+                        </select> -->
                         <input type="text" id="search-name" name="name" placeholder="Search by name" value="{{ search_name }}">
                         <button type="submit">&#x27A4;</button>
                     </form>
