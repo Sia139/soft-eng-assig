@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Account</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='manageAccount.css') }}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
+        </div>
+        <nav class="menu">
+            <div class="dropdown">
+                <button class="dropdown-btn">Account</button>
+                <div class="dropdown-content">
+                    <a href="#">Add account</a>
+                    <a href="#">View account</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">System</button>
+                <div class="dropdown-content">
+                    <a href="#">System configuration</a>
+                    <a href="#">Fee structure</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Add student</button>
+                <div class="dropdown-content">
+                    <a href="#">Add account</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Fee</button>
+                <div class="dropdown-content">
+                    <a href="#">View fee</a>
+                    <a href="#">Edit fee</a>
+                </div>
+            </div>
+        </nav>
+        <div class="logout-section">
+            <a href="/logout">&#x2190;</a>
+        </div>
+    </div>
+
+    <button class="collapse-button">&#9776;</button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <div class="time">08:27am</div>
+            <div class="admin-section">
+                <span>Admin</span>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="header-container">
+                <h1>Manage Account</h1>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search by name">
+                    <button>&#x27A4;</button>
+                </div>
+            </div>
+            <table id="myTable2">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)"># <span class="sort"></span></th>
+                        <th onclick="sortTable(1)">Name <span class="sort"></span></th>
+                        <th onclick="sortTable(2)">Role <span class="sort"></span></th>
+                        <th onclick="sortTable(3)">Date Created <span class="sort"></span></th>
+                        <th>Delete Account</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Yeoh Sugar</td>
+                        <td>
+                            <span class="role">Parent</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>2/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Yeoh Han San</td>
+                        <td>
+                            <span class="role">Accountant</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>2/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Yeoh Honey</td>
+                        <td>
+                            <span class="role">Teacher</span>
+                            <span class="edit">&#9998;</span>
+                        </td>
+                        <td>1/1/2025</td>
+                        <td class="delete-icon">&#128100; &#10060;</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <script src="{{ url_for('static', filename='manageAccount.js') }}"></script>
+</body>
+</html>

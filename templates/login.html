@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-form-container">
+            <h1 class="login-title">Welcome Back</h1>
+
+            <!-- Flash messages -->
+            <div class="flash-messages-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <!--xiang ze watch hentai in public-->
+
+
+            <form class="login-form" method="POST" id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="username" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-button">Login</button>
+            </form>
+            <a href="#" class="forgot-password">Forgot Password?</a>
+        </div>
+        <div class="decoration">
+            <img class="kids" src="{{ url_for('static', filename='images/kids.jpeg') }}" alt="Kids image">
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='login.js') }}"></script>
+</body>
+</html>

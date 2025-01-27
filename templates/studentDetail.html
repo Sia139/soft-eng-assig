@@ -1,0 +1,102 @@
+<!-- studentDetail.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Detail</title>
+    <link rel="icon" type="image/x-icon" href="icon.png">
+    <link rel="stylesheet" href="studentDetail.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='studentDetail.css') }}">
+
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
+        </div>
+        <nav class="menu">
+            <div class="dropdown">
+                <button class="dropdown-btn">Student</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('teacher.addStudent') }}">Add student</a>
+                    <a href="{{ url_for('teacher.viewStudents') }}">View details</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Fee</button>
+                <div class="dropdown-content">
+                    <a href="#">Fee overview</a>
+                </div>
+        </nav>
+        <div class="logout-section">
+            <a href="\logout">&#x2190;</a>
+        </div>
+    </div>
+
+    <button class="collapse-button">&#9776;</button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <div class="time">08:27am</div>
+            <div class="admin-section">
+                <span>Teacher</span>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="header-container">
+
+                <div class="header-left">
+                    <h1>Student Details</h1>
+                </div>
+                
+                <div class="search-bar">
+                    <label for="grade">Grade:</label><br>
+                    <select id="grade" name="grade">
+                        <option value="">-- Select Grade --</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>   
+                    </select>
+
+                    <input type="text" placeholder="Search by name">
+                    <button>&#x27A4;</button>
+                </div>
+            </div>
+            <table id="myTable2">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)"># <span class="sort"></span></th>
+                        <th onclick="sortTable(1)">Name <span class="sort"></span></th>
+                        <th onclick="sortTable(2)">Parent <span class="sort"></span></th>
+                        <th onclick="sortTable(3)">Birthday <span class="sort"></span></th>
+                        <th onclick="sortTable(4)">Grade <span class="sort"></span></th>
+                        <th onclick="sortTable(5)">Transport <span class="sort"></span></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td><span class="id">{{ student.id }}</span></td>
+                            <td><span class="name">{{ student.name }}</span></td>
+                            <td><span class="parent">{{ student.guardian.username }}</span></td>
+                            <td><span class="dob">{{ student.dob.strftime('%d/%m/%Y') }}</span></td>
+                            <td><span class="grade">{{ student.grade }}</span></td>
+                            <td><span class="transport">{{ 'Yes' if student.transport else 'No' }}</span></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>                
+
+            </table>
+        </section>
+    </div>
+    <script src="{{ url_for('static', filename='studentDetail.js') }}"></script>
+</body>
+
+</html>

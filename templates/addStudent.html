@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='addStudent.css') }}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
+        </div>
+        <nav class="menu">
+            <div class="dropdown">
+                <button class="dropdown-btn">Student</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('teacher.addStudent') }}">Add student</a>
+                    <a href="{{ url_for('teacher.viewStudents') }}">View details</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Fee</button>
+                <div class="dropdown-content">
+                    <a href="#">Fee overview</a>
+                </div>
+        </nav>
+        <div class="logout-section">
+            <a href="\logout">&#x2190;</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <button class="collapse-button">&#9776;</button>
+        <div class="header">
+            <div class="time">08:27am</div>
+            <div class="user"> 
+                <label for="role-toggle">Teacher</label>
+            </div>
+        </div>
+        <section class="content">
+            <div class="header-container">
+                <h1>Add student</h1>
+            </div>
+
+            <div class="container">
+                <form class="form" method="POST" action="{{ url_for('teacher.addStudent') }}">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="grade">Grade:</label>
+                        <input type="text" id="grade" name="grade" required>
+                    </div>
+                
+                    <div class="form-group">
+                        <label>Birthday:</label>
+                        <div class="birthday">
+                            <input type="text" id="day" maxlength="2" placeholder="DD">
+                            <span>/</span>
+                            <input type="text" id="month" maxlength="2" placeholder="MM">
+                            <span>/</span>
+                            <input type="text" id="year" maxlength="4" placeholder="YYYY">
+                            <button type="button" id="calendar-btn">📅</button>
+                            <input type="date" id="calendar" style="display: none;"/>
+
+                            <!-- Hidden input to store the combined date -->
+                            <input type="hidden" id="dob" name="dob" />
+
+                            <script>
+                            document.querySelector('form').addEventListener('submit', function(event) {
+                                const day = document.getElementById('day').value;
+                                const month = document.getElementById('month').value;
+                                const year = document.getElementById('year').value;
+
+                                // Combine the day, month, and year into a single date string
+                                const dob = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+                                // Set the combined date to the hidden input
+                                document.getElementById('dob').value = dob;
+                            });
+                            </script>
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="transport">Transport:</label>
+                        <input type="checkbox" id="transport" name="transport" value="true">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="parent">Parent:</label>
+                        <input type="text" id="guardian_search" name="guardian_search" autocomplete="off" required>
+                        <input type="hidden" id="guardian_id" name="guardian_id" required>
+                        <ul id="guardian_results" style="display: none; list-style-type: none;"></ul>
+                    </div>
+                
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Save</button>
+                        <button type="button" class="cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='addStudent.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
