@@ -86,6 +86,10 @@ function updateTime() {
     document.querySelector('.time').textContent = timeString;
 }
 
+function clearForm() {
+    document.querySelector('.form').reset();
+}
+
 // Call the function immediately to set the time when the page loads
 updateTime();
 
