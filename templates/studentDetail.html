@@ -52,9 +52,15 @@
 
                 <div class="header-left">
                     <h1>Student Details</h1>
-                    
-                    <!-- Add onchange attribute to the select element -->
-                    <form method="get" id="grade-form">
+                    <select id="grade" name="grade">
+                        <option value="4">Grade 4</option>
+                        <option value="5">Grade 5</option>
+                        <option value="6">Grade 6</option>   
+                    </select>
+                </div>
+                
+                <div class="search-bar">
+                    <form method="get" id="search-form">
                         <label for="grade">Grade:</label>
                         <select id="grade" name="grade" onchange="this.form.submit();">
                             <option value="">-- Select Grade --</option>
