@@ -8,4 +8,14 @@ parent_blueprint = Blueprint("parent", __name__)
 @parent_blueprint.route("/dashboard")
 @login_required
 def parent_dashboard():
-    return render_template("dashboard.html", role="Parent")
+    students = Student.query.filter_by(user_id=current_user.id).all()
+    student_fees = []
+    for student in students:
+        fees = Fee.query.filter_by(student_id=student.id, status='unpaid').all()
+        for fee in fees:
+            student_fees.append({
+                'student': student,
+                'overdue': fee.amount,  # Assuming 'overdue' means unpaid amount
+                'due_date': fee.due_date
+            })
+    return render_template("dashboard.html", role="Parent", student_fees=student_fees)

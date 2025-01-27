@@ -9,10 +9,22 @@
 {% block content %}
         <section class="content">
             <div class="header-container">
-                <h1>Fee Overview</h1>
+                <div class="header-left">
+                    <h1>Fee Overview</h1>
+                    <form method="get" id="search-form">
+                        <select id="grade" name="grade" onchange="this.form.submit();">
+                            <option value="">Select Grade</option>
+                            <option value="4" {% if filter_grade == "4" %}selected{% endif %}>Grade 4</option>
+                            <option value="5" {% if filter_grade == "5" %}selected{% endif %}>Grade 5</option>
+                            <option value="6" {% if filter_grade == "6" %}selected{% endif %}>Grade 6</option>
+                        </select>
+                    </form>
+                </div>
                 <div class="search-bar">
-                    <input type="text" placeholder="Search by name">
-                    <button>&#x27A4;</button>
+                    <form method="get" id="search-form">
+                        <input type="text" id="search-name" name="name" placeholder="Search by name" value="{{ search_name }}">
+                        <button>&#x27A4;</button>
+                    </form>
                 </div>
             </div>
             <table id="myTable2">
@@ -28,117 +40,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <span class="id">1</span>
-                        </td>
-                        <td>
-                            <span class="name">Adolf Yeoh</span></td>
-                        <td>
-                            <span class="parent">Foreen Yeoh</span>
-                        </td>
-                        <td>
-                            <span class="overdue">1800</span>
-                        </td>
-                        <td>
-                            <span class="dueDate">23/03/2015</span>
-                        </td>
-                        <td class="flag">
-                            <button class="flag-btn flagged">&#9873;</button>
-                        </td>
-                        <td class="notify">
-                            <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="id">2</span>
-                        </td>
-                        <td>
-                            <span class="name">Bdolf Yeoh</span></td>
-                        <td>
-                            <span class="parent">Goreen Yeoh</span>
-                        </td>
-                        <td>
-                            <span class="overdue">0</span>
-                        </td>
-                        <td>
-                            <span class="dueDate">25/03/2015</span>
-                        </td>
-                        <td class="flag">
-                            <button class="flag-btn">&#9873;</button>
-                        </td>
-                        <td class="notify">
-                            <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="id">3</span>
-                        </td>
-                        <td>
-                            <span class="name">Cdolf Yeoh</span></td>
-                        <td>
-                            <span class="parent">Horeen Yeoh</span>
-                        </td>
-                        <td>
-                            <span class="overdue">0</span>
-                        </td>
-                        <td>
-                            <span class="dueDate">27/03/2015</span>
-                        </td>
-                        <td class="flag">
-                            <button class="flag-btn">&#9873;</button>
-                        </td>
-                        <td class="notify">
-                            <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="id">4</span>
-                        </td>
-                        <td>
-                            <span class="name">Ddolf Yeoh</span></td>
-                        <td>
-                            <span class="parent">Ioreen Yeoh</span>
-                        </td>
-                        <td>
-                            <span class="overdue">500</span>
-                        </td>
-                        <td>
-                            <span class="dueDate">21/03/2015</span>
-                        </td>
-                        <td class="flag">
-                            <button class="flag-btn flagged">&#9873;</button>
-                        </td>
-                        <td class="notify">
-                            <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="id">5</span>
-                        </td>
-                        <td>
-                            <span class="name">Edolf Yeoh</span></td>
-                        <td>
-                            <span class="parent">Joreen Yeoh</span>
-                        </td>
-                        <td>
-                            <span class="overdue">1200</span>
-                        </td>
-                        <td>
-                            <span class="dueDate">03/03/2015</span>
-                        </td>
-                        <td class="flag">
-                            <button class="flag-btn flagged">&#9873;</button>
-                        </td> 
-                        <td class="notify">
-                            <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
-                        </td>                                             
-                    </tr>
+
+                    {% for student in students %}
+                        <tr>
+                            <td><span class="id">{{ student.id }}</span></td>
+                            <td><span class="name">{{ student.name }}</span></td>
+                            <td><span class="parent">{{ student.guardian.username }}</span></td>
+                            <td><span class="overdue">{{ student.overdue }}</span></td>
+                            <td><span class="dueDate">{{ student.dueDate }}</span></td>
+                            <td class="flag">
+                                <button class="flag-btn">&#9873;</button>
+                            </td>
+                            <td class="notify">
+                                <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
+                            </td> 
+                        </tr>
+                    {% endfor %}
+                    
                 </tbody>
+
             </table>
         </section>
     </div>

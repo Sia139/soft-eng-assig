@@ -68,4 +68,19 @@ def viewStudents():
 @login_required
 def feeOverview():
     
-    return render_template("feeOverview.html")
+    if current_user.role != "teacher":
+        return "Access Denied", 403
+    
+    search_name = request.args.get("name", "").strip()
+    filter_grade = request.args.get("grade", "").strip()
+    
+    # Filter students based on query parameters
+    query = Student.query
+    if search_name:
+        query = query.filter(Student.name.ilike(f"%{search_name}%"))
+    if filter_grade:
+        query = query.filter_by(grade=filter_grade)
+
+    students = query.all()
+    
+    return render_template("feeOverview.html", students=students, search_name=search_name, filter_grade=filter_grade)

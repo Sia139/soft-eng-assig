@@ -367,3 +367,12 @@ table tbody tr:last-child td {
     border: none;
 }
 
+.header-left select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    /* margin-left: 10px; */
+    background: #f7f7f7;
+}
