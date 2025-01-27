@@ -259,6 +259,16 @@ body {
     width: 90%;
 }
 
+select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-left: 10px;
+    background: #f7f7f7;
+}
+
 .toggle {
     margin-left: 10px;
 }
