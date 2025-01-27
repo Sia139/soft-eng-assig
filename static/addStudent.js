@@ -52,3 +52,15 @@ document.getElementById("calendar").addEventListener("change", function () {
 
     this.style.display = "none"; // Hide the date picker again
 });
+
+document.querySelector('form').addEventListener('submit', function(event) {
+    const day = document.getElementById('day').value;
+    const month = document.getElementById('month').value;
+    const year = document.getElementById('year').value;
+
+    // Combine the day, month, and year into a single date string
+    const dob = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+    // Set the combined date to the hidden input
+    document.getElementById('dob').value = dob;
+});
