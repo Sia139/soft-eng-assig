@@ -1,57 +1,15 @@
 <!-- studentDetail.html -->
-<!DOCTYPE html>
-<html lang="en">
+{% extends "teacherBase.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Detail</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+{% block style %}
     <link rel="stylesheet" href="{{ url_for('static', filename='studentDetail.css') }}">
-</head>
+{% endblock %}
 
-<body>
-    <!-- Sidebar -->
-    <div id="mySidebar" class="sidebar">
-        <div class="logo-section">
-            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
-        </div>
-        <nav class="menu">
-            <div class="dropdown">
-                <button class="dropdown-btn">Student</button>
-                <div class="dropdown-content">
-                    <a href="{{ url_for('teacher.addStudent') }}">Add student</a>
-                    <a href="{{ url_for('teacher.viewStudents') }}">View details</a>
-                </div>
-            </div>
-            <div class="dropdown">
-                <button class="dropdown-btn">Fee</button>
-                <div class="dropdown-content">
-                    <a href="{{ url_for('teacher.feeOverview') }}">Fee overview</a>
-                </div>
-        </nav>
-        <div class="logout-section">
-            <a href="\logout">&#x2190;</a>
-        </div>
-    </div>
-
-    <button class="collapse-button">&#9776;</button>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <header class="header">
-            <div class="time"></div>
-            <div class="admin-section">
-                <span>Teacher</span>
-            </div>
-        </header>
-
+{% block content %}
         <section class="content">
             <div class="header-container">
-
                 <div class="header-left">
                     <h1>Student Details</h1>
-                    
                     <form method="get" id="search-form">
                         <select id="grade" name="grade" onchange="this.form.submit();">
                             <option value="">Select Grade</option>
@@ -104,6 +62,5 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ url_for('static', filename='studentDetail.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-</body>
 
-</html>
+{% endblock %}
