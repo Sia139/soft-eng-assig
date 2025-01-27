@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Student</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='addStudent.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
 </head>
 <body>
     <!-- Sidebar -->
@@ -34,7 +35,7 @@
     <div class="main-content">
         <button class="collapse-button">&#9776;</button>
         <div class="header">
-            <div class="time">08:27am</div>
+            <div class="time"></div>
             <div class="user"> 
                 <label for="role-toggle">Teacher</label>
             </div>
@@ -87,7 +88,7 @@
                         <label for="parent">Parent:</label>
                         <input type="text" id="guardian_search" name="guardian_search" autocomplete="off" required>
                         <input type="hidden" id="guardian_id" name="guardian_id" required>
-                        <ul id="guardian_results" style="display: none; list-style-type: none;"></ul>
+                        <ul id="guardian_results"></ul>
                     </div>
                 
                     <div class="form-actions">
