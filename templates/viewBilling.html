@@ -106,24 +106,21 @@
                                     <span class="name">{{ fee.student.name }}</span>
                                 </td>
                                 <td>
-                                    <span class="details"> <option>{{ fee.fee_type }}</option> </span>
+                                    <input type="text" class="details" data-id="{{ fee.id }}" value="{{ fee.fee_type }}">
                                 </td>
                                 <td>
                                     <input type="number" class="amount" data-id="{{ fee.id }}" value="{{ fee.amount }}">
                                 </td>
                                 <td>
-                                    <span class="dueDate">{{ fee.due_date }}</span>
+                                    <input type="date" class="dueDate" data-id="{{ fee.id }}" value="{{ fee.due_date }}">
                                 </td>
                                 <td>
-                                    <span class="status">
-                                        <select class="status" data-id="{{ fee.id }}">
-                                            <option value="unpaid" {% if fee.status == 'unpaid' %}selected{% endif %}>Unpaid</option>
-                                            <option value="paid" {% if fee.status == 'paid' %}selected{% endif %}>Paid</option>
-                                        </select>
-                                    </span>
+                                    <select class="status" data-id="{{ fee.id }}">
+                                        <option value="unpaid" {% if fee.status == 'unpaid' %}selected{% endif %}>Unpaid</option>
+                                        <option value="paid" {% if fee.status == 'paid' %}selected{% endif %}>Paid</option>
+                                    </select>
                                 </td>
                                 <td class="edit">
-                                    <!-- <button class="edit-btn" data-id="{{ fee.id }}" onclick="openEditModal(this)">&#9998;</button> -->
                                     <button class="update-btn" data-id="{{ fee.id }}">Save</button>
                                     <button class="delete-btn" data-id="{{ fee.id }}">Delete</button>
                                 </td>
@@ -138,6 +135,53 @@
             </table>
         </section>
     </div>
+
+    <script>
+
+        document.querySelectorAll('.update-btn').forEach(button => {
+            button.addEventListener('click', async function () {
+                const feeId = this.getAttribute('data-id');
+                const row = this.closest('tr');
+                const feeType = row.querySelector('.details').value;
+                const amount = row.querySelector('.amount').value;
+                const dueDate = row.querySelector('.dueDate').value;
+                const status = row.querySelector('.status').value;
+        
+                fetch(`/update_fee/${feeId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fee_type: feeType,
+                        amount: amount,
+                        due_date: dueDate,
+                        status: status
+                    })
+                })
+                .then(response => {
+                    console.log("📌 Raw Response:", response); // Debugging
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            console.error(`❌ Server Error: ${text}`);
+                            throw new Error(`Server Error: ${text}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("✅ Success:", data);
+                    alert(data.message);
+                })
+                .catch(error => {
+                    console.error('❌ Fetch error:', error);
+                    alert('❌ Failed to update fee. Check console for details.');
+                });
+            });
+        });             
+        
+    </script>
+
     <script src="{{ url_for('static', filename='viewBilling.js') }}"></script>
 </body>
 

@@ -195,9 +195,17 @@ def update_fee(fee_id, data):
     fee.fee_type = data["fee_type"]
     fee.amount = Decimal(data["amount"])
     fee.status = data["status"]
+    
+    # Handle date conversion properly
+    try:
+        fee.due_date = datetime.strptime(data["due_date"], "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"message": "Invalid date format. Use YYYY-MM-DD."}), 400
 
     db.session.commit()
     return jsonify({"message": "Fee updated successfully"})
+
+""" -------------------------------------------------------------------------------------------------- """
 
 def delete_fee(fee_id):
     fee = Fee.query.get(fee_id)

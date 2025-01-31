@@ -1,8 +1,10 @@
 # accountant_routes.py
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student
 from function import create_fees_for_grade, update_fee, delete_fee  
+from datetime import datetime
+from decimal import Decimal
 
 accountant_blueprint = Blueprint("accountant", __name__)
 
@@ -64,11 +66,50 @@ def viewBilling():
     # Render the template with the fees
     return render_template("viewBilling.html", fees=fees)
 
+""" -------------------------------------------------------------------------------------------------- """
+
 @accountant_blueprint.route("/update_fee/<int:fee_id>", methods=["POST"])
 @login_required
 def update_fee_route(fee_id):
-    data = request.json
-    return update_fee(fee_id, data)
+    try:
+        print("✅ Received update request for Fee ID:", fee_id)
+        
+        if not request.is_json:
+            print("❌ Request is not JSON!")
+            return jsonify({"message": "Invalid request format"}), 400
+
+        data = request.json
+        print("📌 Received Data:", data)
+
+        fee = Fee.query.get_or_404(fee_id)  # Will automatically return 404 if not found
+        
+        # Update fields with validation
+        if 'fee_type' in data:
+            fee.fee_type = data['fee_type']
+        if 'amount' in data:
+            try:
+                fee.amount = Decimal(str(data['amount']))
+            except (ValueError, TypeError):
+                return jsonify({"message": "Invalid amount format"}), 400
+        if 'due_date' in data:
+            try:
+                fee.due_date = datetime.strptime(data['due_date'], "%Y-%m-%d").date()
+            except ValueError:
+                return jsonify({"message": "Invalid date format"}), 400
+        if 'status' in data:
+            if data['status'] not in ['paid', 'unpaid']:
+                return jsonify({"message": "Invalid status"}), 400
+            fee.status = data['status']
+
+        db.session.commit()
+        print(f"✅ Fee ID {fee_id} updated successfully!")
+        return jsonify({"message": "Fee updated successfully"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Error updating fee: {str(e)}")
+        return jsonify({"message": f"Error updating fee: {str(e)}"}), 500
+    
 
 @accountant_blueprint.route("/delete_fee/<int:fee_id>", methods=["DELETE"])
 @login_required
