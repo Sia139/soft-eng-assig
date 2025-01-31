@@ -186,33 +186,86 @@ def create_fees_for_grade(grade, fee_details, due_date):
 
 """ -------------------------------------------------------------------------------------------------- """
 
-def update_fee(fee_id, data):
-    fee = Fee.query.get(fee_id)
+def view_billing(student_name=None, grade=None, status=None, start_date=None, end_date=None):
+    """
+    Generic function to view and filter billing information
+    Returns filtered fees query that can be used by any route
+    """
+    # Start with a base query
+    fees_query = Fee.query.join(Student)
 
-    if not fee:
-        return jsonify({"message": "Fee record not found"}), 404
+    # Apply filters if provided
+    if student_name and student_name.strip():
+        fees_query = fees_query.filter(Student.name.ilike(f"%{student_name.strip()}%"))
+    if grade and grade.strip():
+        fees_query = fees_query.filter(Student.grade == grade.strip())
+    if status and status.strip():
+        fees_query = fees_query.filter(Fee.status == status.strip())
 
-    fee.fee_type = data["fee_type"]
-    fee.amount = Decimal(data["amount"])
-    fee.status = data["status"]
-    
-    # Handle date conversion properly
+    # Add date range filter by due_date
+    if start_date:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            fees_query = fees_query.filter(Fee.due_date >= start_date)
+        except ValueError:
+            return None, "Invalid start date format"
+
+    if end_date:
+        try:
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+            fees_query = fees_query.filter(Fee.due_date <= end_date)
+        except ValueError:
+            return None, "Invalid end date format"
+
     try:
-        fee.due_date = datetime.strptime(data["due_date"], "%Y-%m-%d").date()
-    except ValueError:
-        return jsonify({"message": "Invalid date format. Use YYYY-MM-DD."}), 400
+        fees = fees_query.all()
+        return fees, None  # Return fees and no error
+    except Exception as e:
+        return None, str(e)  # Return no fees and error message
 
-    db.session.commit()
-    return jsonify({"message": "Fee updated successfully"})
+def update_fee(fee_id, data):
+    """
+    Generic function to update fee information
+    Returns tuple of (success, message)
+    """
+    try:
+        fee = Fee.query.get_or_404(fee_id)
+        
+        # Update fields with validation
+        if 'fee_type' in data:
+            fee.fee_type = data['fee_type']
+        if 'amount' in data:
+            try:
+                fee.amount = Decimal(str(data['amount']))
+            except (ValueError, TypeError):
+                return False, "Invalid amount format"
+        if 'due_date' in data:
+            try:
+                fee.due_date = datetime.strptime(data['due_date'], "%Y-%m-%d").date()
+            except ValueError:
+                return False, "Invalid date format"
+        if 'status' in data:
+            if data['status'] not in ['paid', 'unpaid']:
+                return False, "Invalid status"
+            fee.status = data['status']
 
-""" -------------------------------------------------------------------------------------------------- """
+        db.session.commit()
+        return True, "Fee updated successfully"
+
+    except Exception as e:
+        db.session.rollback()
+        return False, str(e)
 
 def delete_fee(fee_id):
-    fee = Fee.query.get(fee_id)
-
-    if not fee:
-        return jsonify({"message": "Fee record not found"}), 404
-
-    db.session.delete(fee)
-    db.session.commit()
-    return jsonify({"message": "Fee deleted successfully"})
+    """
+    Generic function to delete a fee
+    Returns tuple of (success, message)
+    """
+    try:
+        fee = Fee.query.get_or_404(fee_id)
+        db.session.delete(fee)
+        db.session.commit()
+        return True, "Fee deleted successfully"
+    except Exception as e:
+        db.session.rollback()
+        return False, str(e)

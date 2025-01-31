@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student
-from function import create_fees_for_grade, update_fee, delete_fee  
+from function import create_fees_for_grade, update_fee, delete_fee, view_billing
 from datetime import datetime
 from decimal import Decimal
 
@@ -42,44 +42,20 @@ def billBunch():
 @accountant_blueprint.route("/viewBilling", methods=["GET"])
 @login_required
 def viewBilling():
-    # Fetch query parameters for filtering
+    # Get query parameters
     student_name = request.args.get("student_name")
     grade = request.args.get("grade")
     status = request.args.get("status")
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
 
-    # Start with a base query
-    fees_query = Fee.query.join(Student)
+    # Use the generic view_billing function
+    fees, error = view_billing(student_name, grade, status, start_date, end_date)
+    
+    if error:
+        flash(error, "error")
+        fees = []
 
-    # Apply filters if provided
-    if student_name and student_name.strip():
-        fees_query = fees_query.filter(Student.name.ilike(f"%{student_name.strip()}%"))
-    if grade and grade.strip():
-        fees_query = fees_query.filter(Student.grade == grade.strip())
-    if status and status.strip():
-        fees_query = fees_query.filter(Fee.status == status.strip())
-
-    # Add date range filter by due_date
-    if start_date:
-        try:
-            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
-            fees_query = fees_query.filter(Fee.due_date >= start_date)
-        except ValueError:
-            flash("Invalid start date format", "error")
-
-    if end_date:
-        try:
-            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
-            fees_query = fees_query.filter(Fee.due_date <= end_date)
-        except ValueError:
-            flash("Invalid end date format", "error")
-
-    # Fetch the filtered fees
-    fees = fees_query.all()
-    print("Fees fetched:", fees)  # Debug print
-
-    # Render the template with the fees
     return render_template("viewBilling.html", fees=fees)
 
 """ -------------------------------------------------------------------------------------------------- """
@@ -87,55 +63,20 @@ def viewBilling():
 @accountant_blueprint.route("/update_fee/<int:fee_id>", methods=["POST"])
 @login_required
 def update_fee_route(fee_id):
-    try:
-        print("✅ Received update request for Fee ID:", fee_id)
-        
-        if not request.is_json:
-            print("❌ Request is not JSON!")
-            return jsonify({"message": "Invalid request format"}), 400
+    if not request.is_json:
+        return jsonify({"message": "Invalid request format"}), 400
 
-        data = request.json
-        print("📌 Received Data:", data)
-
-        fee = Fee.query.get_or_404(fee_id)  # Will automatically return 404 if not found
-        
-        # Update fields with validation
-        if 'fee_type' in data:
-            fee.fee_type = data['fee_type']
-        if 'amount' in data:
-            try:
-                fee.amount = Decimal(str(data['amount']))
-            except (ValueError, TypeError):
-                return jsonify({"message": "Invalid amount format"}), 400
-        if 'due_date' in data:
-            try:
-                fee.due_date = datetime.strptime(data['due_date'], "%Y-%m-%d").date()
-            except ValueError:
-                return jsonify({"message": "Invalid date format"}), 400
-        if 'status' in data:
-            if data['status'] not in ['paid', 'unpaid']:
-                return jsonify({"message": "Invalid status"}), 400
-            fee.status = data['status']
-
-        db.session.commit()
-        print(f"✅ Fee ID {fee_id} updated successfully!")
-        return jsonify({"message": "Fee updated successfully"}), 200
-
-    except Exception as e:
-        db.session.rollback()
-        print(f"❌ Error updating fee: {str(e)}")
-        return jsonify({"message": f"Error updating fee: {str(e)}"}), 500
+    success, message = update_fee(fee_id, request.json)
     
+    if success:
+        return jsonify({"message": message}), 200
+    return jsonify({"message": f"Error updating fee: {message}"}), 400
 
 @accountant_blueprint.route("/delete_fee/<int:fee_id>", methods=["DELETE"])
 @login_required
 def delete_fee_route(fee_id):
-    try:
-        fee = Fee.query.get_or_404(fee_id)
-        db.session.delete(fee)
-        db.session.commit()
-        return jsonify({"message": "Fee deleted successfully"}), 200
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error deleting fee: {str(e)}")
-        return jsonify({"message": f"Error deleting fee: {str(e)}"}), 500
+    success, message = delete_fee(fee_id)
+    
+    if success:
+        return jsonify({"message": message}), 200
+    return jsonify({"message": f"Error deleting fee: {message}"}), 400
