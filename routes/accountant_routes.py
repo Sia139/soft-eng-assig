@@ -114,4 +114,12 @@ def update_fee_route(fee_id):
 @accountant_blueprint.route("/delete_fee/<int:fee_id>", methods=["DELETE"])
 @login_required
 def delete_fee_route(fee_id):
-    return delete_fee(fee_id)
+    try:
+        fee = Fee.query.get_or_404(fee_id)
+        db.session.delete(fee)
+        db.session.commit()
+        return jsonify({"message": "Fee deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting fee: {str(e)}")
+        return jsonify({"message": f"Error deleting fee: {str(e)}"}), 500
