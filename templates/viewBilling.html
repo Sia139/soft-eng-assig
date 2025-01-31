@@ -73,14 +73,16 @@
                                value="{{ request.args.get('end_date', '') }}" 
                                placeholder="End Date">
 
-                        <select id="grade" name="grade" onchange="this.form.submit();">
+                        <!-- <select id="grade" name="grade" onchange="this.form.submit();"> -->
+                        <select id="grade" name="grade">
                             <option value="">Select Grade</option>
                             <option value="4" {% if request.args.get('grade') == "4" %}selected{% endif %}>Grade 4</option>
                             <option value="5" {% if request.args.get('grade') == "5" %}selected{% endif %}>Grade 5</option>
                             <option value="6" {% if request.args.get('grade') == "6" %}selected{% endif %}>Grade 6</option>
                         </select>
 
-                        <select name="status" onchange="this.form.submit();">
+                        <!-- <select name="status" onchange="this.form.submit();"> -->
+                        <select name="status">
                             <option value="">All Status</option>
                             <option value="unpaid" {% if request.args.get('status') == 'unpaid' %}selected{% endif %}>Unpaid</option>
                             <option value="paid" {% if request.args.get('status') == 'paid' %}selected{% endif %}>Paid</option>
