@@ -42,7 +42,7 @@
                 </div>
         </nav>
         <div class="logout-section">
-            <a href="#">&#x2190;</a>
+            <a href="/logout">&#x2190;</a>
         </div>
     </div>
 
@@ -106,13 +106,7 @@
                                     <span class="name">{{ fee.student.name }}</span>
                                 </td>
                                 <td>
-                                    <span class="details">
-                                        <select class="fee-type" data-id="{{ fee.id }}">
-                                            <option value="tuition" {% if fee.fee_type == 'tuition' %}selected{% endif %}>Tuition</option>
-                                            <option value="transport" {% if fee.fee_type == 'transport' %}selected{% endif %}>Transport</option>
-                                            <option value="lunch" {% if fee.fee_type == 'lunch' %}selected{% endif %}>Lunch</option>
-                                        </select>
-                                    </span>
+                                    <span class="details"> <option>{{ fee.fee_type }}</option> </span>
                                 </td>
                                 <td>
                                     <input type="number" class="amount" data-id="{{ fee.id }}" value="{{ fee.amount }}">
