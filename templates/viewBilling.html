@@ -59,17 +59,34 @@
 
         <section class="content">
             <div class="header-container">
-                <h1>View Billing</h1>
-                <div class="search-bar">
-                    <form method="GET" action="{{ url_for('accountant.viewBilling') }}">
-                    <input type="text" placeholder="Search by name">
+                <h1>View & Edit Billing</h1>
+
+                <form method="GET" action="{{ url_for('accountant.viewBilling') }}">
+                    <div class="search-bar">
+                    <input type="text" name="student_name" placeholder="Search by name" value="{{ request.args.get('student_name', '') }}">
+
+                    <select id="grade" name="grade" onchange="this.form.submit();">
+                        <option value="">Select Grade</option>
+                        <option value="4" {% if request.args.get('grade') == "4" %}selected{% endif %}>Grade 4</option>
+                        <option value="5" {% if request.args.get('grade') == "5" %}selected{% endif %}>Grade 5</option>
+                        <option value="6" {% if request.args.get('grade') == "6" %}selected{% endif %}>Grade 6</option>
+                    </select>
+
+                    <select name="status" onchange="this.form.submit();">
+                        <option value="">All Status</option>
+                        <option value="unpaid" {% if request.args.get('status') == 'unpaid' %}selected{% endif %}>Unpaid</option>
+                        <option value="paid" {% if request.args.get('status') == 'paid' %}selected{% endif %}>Paid</option>
+                    </select>
+
                     <button>&#x27A4;</button>
-                </div>
+                    </div>
+                </form>
             </div>
+
             <table id="myTable2">
                 <thead>
                     <tr>
-                        <th onclick="sortTable(0)">Invoice <span class="sort"></span></th>
+                        <th onclick="sortTable(0)">#Id <span class="sort"></span></th>
                         <th onclick="sortTable(1)">Name <span class="sort"></span></th>
                         <th onclick="sortTable(2)">Details <span class="sort"></span></th>
                         <th onclick="sortTable(3)">Amount <span class="sort"></span></th>
@@ -89,19 +106,32 @@
                                     <span class="name">{{ fee.student.name }}</span>
                                 </td>
                                 <td>
-                                    <span class="details">{{ fee.fee_type }}</span>
+                                    <span class="details">
+                                        <select class="fee-type" data-id="{{ fee.id }}">
+                                            <option value="tuition" {% if fee.fee_type == 'tuition' %}selected{% endif %}>Tuition</option>
+                                            <option value="transport" {% if fee.fee_type == 'transport' %}selected{% endif %}>Transport</option>
+                                            <option value="lunch" {% if fee.fee_type == 'lunch' %}selected{% endif %}>Lunch</option>
+                                        </select>
+                                    </span>
                                 </td>
                                 <td>
-                                    <span class="amount">{{ fee.amount }}</span>
+                                    <input type="number" class="amount" data-id="{{ fee.id }}" value="{{ fee.amount }}">
                                 </td>
                                 <td>
                                     <span class="dueDate">{{ fee.due_date }}</span>
                                 </td>
                                 <td>
-                                    <span class="status">{{ fee.status }}</span>
+                                    <span class="status">
+                                        <select class="status" data-id="{{ fee.id }}">
+                                            <option value="unpaid" {% if fee.status == 'unpaid' %}selected{% endif %}>Unpaid</option>
+                                            <option value="paid" {% if fee.status == 'paid' %}selected{% endif %}>Paid</option>
+                                        </select>
+                                    </span>
                                 </td>
                                 <td class="edit">
-                                    <a href="#" class="edit-btn">&#9998;</a>
+                                    <!-- <button class="edit-btn" data-id="{{ fee.id }}" onclick="openEditModal(this)">&#9998;</button> -->
+                                    <button class="update-btn" data-id="{{ fee.id }}">Save</button>
+                                    <button class="delete-btn" data-id="{{ fee.id }}">Delete</button>
                                 </td>
                             </tr>
                         {% endfor %}

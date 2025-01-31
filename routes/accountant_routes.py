@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from models import db, Fee, Student
-from function import create_fees_for_grade  
+from function import create_fees_for_grade, update_fee, delete_fee  
 
 accountant_blueprint = Blueprint("accountant", __name__)
 
@@ -63,3 +63,14 @@ def viewBilling():
 
     # Render the template with the fees
     return render_template("viewBilling.html", fees=fees)
+
+@accountant_blueprint.route("/update_fee/<int:fee_id>", methods=["POST"])
+@login_required
+def update_fee_route(fee_id):
+    data = request.json
+    return update_fee(fee_id, data)
+
+@accountant_blueprint.route("/delete_fee/<int:fee_id>", methods=["DELETE"])
+@login_required
+def delete_fee_route(fee_id):
+    return delete_fee(fee_id)

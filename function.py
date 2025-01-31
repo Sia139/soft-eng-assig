@@ -184,3 +184,27 @@ def create_fees_for_grade(grade, fee_details, due_date):
         db.session.rollback()
         return False, f"Error creating fees: {str(e)}"
 
+""" -------------------------------------------------------------------------------------------------- """
+
+def update_fee(fee_id, data):
+    fee = Fee.query.get(fee_id)
+
+    if not fee:
+        return jsonify({"message": "Fee record not found"}), 404
+
+    fee.fee_type = data["fee_type"]
+    fee.amount = Decimal(data["amount"])
+    fee.status = data["status"]
+
+    db.session.commit()
+    return jsonify({"message": "Fee updated successfully"})
+
+def delete_fee(fee_id):
+    fee = Fee.query.get(fee_id)
+
+    if not fee:
+        return jsonify({"message": "Fee record not found"}), 404
+
+    db.session.delete(fee)
+    db.session.commit()
+    return jsonify({"message": "Fee deleted successfully"})
