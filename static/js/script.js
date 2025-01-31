@@ -31,7 +31,7 @@ $(document).ready(function () {
     setupSearch(
         "#guardian_search",
         "#guardian_results",
-        "/teacher/search-parents",
+        "/teacher/searchParents",
         function (parent) {
             return `<li><a href="#" data-id="${parent.id}" data-username="${parent.username}">ID: ${parent.id}, Username: ${parent.username}</a></li>`;
         },

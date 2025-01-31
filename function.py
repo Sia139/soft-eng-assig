@@ -1,3 +1,4 @@
+# function.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import *
@@ -136,3 +137,90 @@ def create_user():
         return {"status": "error", "message": f"An error occurred: {str(e)}"}
 
 """ -------------------------------------------------------------------------------------------------- """
+
+from flask_login import current_user
+from models import db, Fee, Student  # Prevent circular imports
+from decimal import Decimal
+
+# def create_fees_for_grade(grade, fee_details, due_date):
+
+#     try:
+#         students = Student.query.filter_by(grade=grade).all()
+#         if not students:
+#             return False, "No students found in this grade."
+        
+#         # Convert due_date string to a date object
+#         try:
+#             due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
+#         except ValueError:
+#             return False, "Invalid date format. Please use YYYY-MM-DD."
+
+#         fees_to_add = []
+#         for student in students:
+#             for fee_type, amount in fee_details.items():
+#                 if amount:
+#                     try:
+#                         amount_decimal = Decimal(amount)
+#                     except ValueError:
+#                         return False, f"Invalid amount for {fee_type}."
+
+#                     fee = Fee(
+#                         student_id=student.id,
+#                         due_date=due_date,
+#                         amount=amount_decimal,
+#                         fee_type=fee_type,
+#                         status='unpaid',
+#                         # author=current_user.id  # Fix: Use current user
+#                     )
+#                     fees_to_add.append(fee)
+
+#         db.session.bulk_save_objects(fees_to_add)
+#         db.session.commit()
+#         return True, f"Fees created successfully for {len(students)} students."
+
+#     except Exception as e:
+#         db.session.rollback()
+#         return False, f"Error creating fees: {str(e)}"
+
+def create_fees_for_grade(grade, fee_details, due_date):
+    try:
+        students = Student.query.filter_by(grade=grade).all()
+        if not students:
+            return False, "No students found in this grade."
+        
+        # Convert due_date string to a date object
+        try:
+            due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
+        except ValueError:
+            return False, "Invalid date format. Please use YYYY-MM-DD."
+
+        fees_to_add = []
+        for student in students:
+            for fee_type, amount in fee_details.items():
+                if fee_type == "transport" and not student.transport:
+                    # Skip adding transport fee if student does not have transport
+                    continue
+
+                if amount:
+                    try:
+                        amount_decimal = Decimal(amount)
+                    except ValueError:
+                        return False, f"Invalid amount for {fee_type}."
+
+                    fee = Fee(
+                        student_id=student.id,
+                        due_date=due_date,
+                        amount=amount_decimal,
+                        fee_type=fee_type,
+                        status='unpaid',
+                    )
+                    fees_to_add.append(fee)
+
+        db.session.bulk_save_objects(fees_to_add)
+        db.session.commit()
+        return True, f"Fees created successfully for {len(students)} students."
+
+    except Exception as e:
+        db.session.rollback()
+        return False, f"Error creating fees: {str(e)}"
+

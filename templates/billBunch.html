@@ -1,0 +1,174 @@
+<!--billBunch.html-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Bill Grade</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='billBunch.css') }}">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
+        </div>
+        <nav class="menu">
+            <div class="dropdown">
+                <button class="dropdown-btn">Account</button>
+                <div class="dropdown-content">
+                    <a href="#">Manage account</a>
+                    <a href="#">Create account</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">System</button>
+                <div class="dropdown-content">
+                    <a href="#">Configure system</a>
+                    <a href="#">Fee structure</a>
+                    <a href="#">Role permission</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Student</button>
+                <div class="dropdown-content">
+                    <a href="#">Add student</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Fee</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('accountant.viewBilling') }}">View & edit bill</a>
+                    <a href="#">Update bill</a>
+                    <a href="{{ url_for('accountant.billBunch') }}">Create bill bunch</a>
+                    <a href="#">Create bill single</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Payment</button>
+                <div class="dropdown-content">
+                    <a href="#">Payment tracking</a>
+                </div>
+            </div>
+        </nav>
+        <div class="logout-section">
+            <a href="/logout">&#x2190;</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <button class="collapse-button">&#9776;</button>
+        <div class="header">
+            <div class="time">08:27am</div>
+            <div class="user">
+                <label for="role-toggle">Accountant</label>
+            </div>
+        </div>
+        <section class="content">
+            <div class="header-container">
+                <h1>Create Bill by Grade</h1>
+            </div>
+
+            <div class="container">
+                <form class="form" action="{{ url_for('accountant.billBunch') }}" method="POST">
+                    <div class="form-group">
+                        <label for="grade">Grade:</label>
+                        <select id="grade" name="grade" required>
+                            <option value="4">Grade 4</option>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="details">Details:</label>
+                        <select id="detail1" name="detail1">
+                            <option value="tuition">Tuition</option>
+                        </select>
+                        <select id="detail2" name="detail2">
+                            <option value="lunch">Lunch</option>
+                        </select>
+                        <select id="detail3" name="detail3">
+                            <option value="transport">Transport</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Price(RM):</label>
+                        <input type="text" id="price1" name="price1" placeholder="">
+                        <input type="text" id="price2" name="price2" placeholder="">
+                        <input type="text" id="price3" name="price3" placeholder="">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Due date:</label>
+                        <div class="birthday">
+                            <input type="text" id="day" maxlength="2" placeholder="DD">
+                            <span>/</span>
+                            <input type="text" id="month" maxlength="2" placeholder="MM">
+                            <span>/</span>
+                            <input type="text" id="year" maxlength="4" placeholder="YYYY">
+                            <button type="button" id="calendar-btn">📅</button>
+                            <input type="date" id="calendar" style="display: none;" />
+
+                            <!-- Hidden input to store the combined date -->
+                            <input type="hidden" id="dueDate" name="dueDate" />
+                        </div>
+                    </div>
+                    
+                    <!--
+                    <div class="form-group">
+                        <label for="author">Author:</label>
+                        <input type="text" id="author" name="author">
+                    </div>
+                -->
+                    
+
+                    <div class="form-group">
+                        <label for="download">Download Invoice Preview:</label>
+                        <button type="button" class="download-btn" id="download-btn">
+                            Download
+                        </button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Save</button>
+                        <button type="button" class="cancel-btn" onclick="clearForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Flash messages -->
+            <div class="flash-messages-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert {{ category }}" style="margin: 0 auto;">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+        </section>
+    </div>
+    
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            const day = document.getElementById('day').value;
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
+        
+            // Combine the day, month, and year into a single date string
+            const dueDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        
+            // Set the combined date to the hidden input
+            document.getElementById('dueDate').value = dueDate;
+        });
+    </script>
+    
+    <script src="{{ url_for('static', filename='billBunch.js') }}" ></script>
+</body>
+
+</html>

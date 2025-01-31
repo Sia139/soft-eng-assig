@@ -10,7 +10,7 @@ teacher_blueprint = Blueprint("teacher", __name__)
 """ -------------------------------------------------------------------------------------------------- """  
 
 #add student
-@teacher_blueprint.route("/add-student", methods=["GET", "POST"])
+@teacher_blueprint.route("/addStudent", methods=["GET", "POST"])
 @login_required
 def addStudent():
     if current_user.role != "teacher":
@@ -26,23 +26,19 @@ def addStudent():
 """ -------------------------------------------------------------------------------------------------- """  
 
 #cause of (AJAX)
-@teacher_blueprint.route("/search-parents", methods=["GET"])
+@teacher_blueprint.route("/searchParents", methods=["GET"])
 @login_required
 def search_parents_route():
-    # Ensure the user has the right role (admin or teacher)
     if current_user.role not in ["teacher", "admin"]:
         return "Access Denied", 403
 
-    query = request.args.get("query", "").lower()  # Get the search query
-
-    # Call search_parents from function.py
+    query = request.args.get("query", "").lower()
     parents = search_parent_student(query, role="parent")
-
     return jsonify(parents)
 
 """ -------------------------------------------------------------------------------------------------- """  
 
-@teacher_blueprint.route("/view-students")
+@teacher_blueprint.route("/viewStudents")
 @login_required
 def viewStudents():
     if current_user.role != "teacher":
@@ -64,7 +60,7 @@ def viewStudents():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
-@teacher_blueprint.route("/fee-overview")
+@teacher_blueprint.route("/feeOverview")
 @login_required
 def feeOverview():
     

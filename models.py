@@ -1,6 +1,8 @@
+# models.py
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import NUMERIC
 
 db = SQLAlchemy()
 
@@ -43,11 +45,13 @@ class Fee(db.Model):
     __tablename__ = 'fees'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
-    create_date = db.Column(db.Date, default=func.current_timestamp())
+    create_date = db.Column(db.Date, default=func.current_date()) # Fix: Use func.current_date() for only the date
     due_date = db.Column(db.Date, nullable=False)
-    amount = db.Column(db.Float, nullable=False)
+    # amount = db.Column(db.Float, nullable=False)
+    amount = db.Column(NUMERIC(10, 2), nullable=False)  # Ensures precision
     fee_type = db.Column(db.String(100), nullable=False)
     status = db.Column(db.Enum('unpaid', 'paid', name='fee_status'), default='unpaid')
+    # flag = db.Column(db.Boolean, default=False)  # New flag column
 
     # Relationships
     invoices = db.relationship('Invoice', backref='fee', cascade='all, delete-orphan')
@@ -57,7 +61,7 @@ class Payment(db.Model):
     __tablename__ = 'payments'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    payment_date = db.Column(db.Date, default=func.current_timestamp())
+    payment_date = db.Column(db.Date, default=func.current_timestamp()) #here maybe will have problem also
     total_amount = db.Column(db.Float, nullable=False)
     payment_method = db.Column(db.String(50), nullable=False)
     status = db.Column(db.Enum('pending', 'paid', name='payment_status'), default='pending')

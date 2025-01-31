@@ -9,7 +9,7 @@ admin_blueprint = Blueprint("admin", __name__)
 
 """ -------------------------------------------------------------------------------------------------- """  
 
-@admin_blueprint.route("/create-user", methods=["GET", "POST"])
+@admin_blueprint.route("/createUser", methods=["GET", "POST"])
 @login_required
 def createUser():
     if current_user.role != "admin":
@@ -24,7 +24,7 @@ def createUser():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
-@admin_blueprint.route("/manage-account", methods=["GET", "POST"])
+@admin_blueprint.route("/manageAccount", methods=["GET", "POST"])
 @login_required
 def manageAccount():
     from datetime import datetime
@@ -37,7 +37,7 @@ def manageAccount():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
-@admin_blueprint.route("/update_user_role", methods=["GET", "POST"])
+@admin_blueprint.route("/updateUserRole", methods=["GET", "POST"])
 @login_required
 def update_user_role():
     data = request.get_json()
@@ -57,7 +57,7 @@ def update_user_role():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
-@admin_blueprint.route("/delete_user", methods=['POST'])
+@admin_blueprint.route("/deleteUser", methods=['POST'])
 @login_required
 def delete_user():
     if current_user.role != "admin":

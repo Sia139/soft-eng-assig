@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from models import db, User, Payment
+from models import *
 from config import Config
 
 # Import role-specific routes
@@ -68,7 +68,7 @@ def initial_page():
     
     role_dashboard_routes = {
         "admin": "admin.manageAccount",
-        "accountant": "accountant.accountant_dashboard",
+        "accountant": "accountant.billBunch",
         "teacher": "teacher.viewStudents",
         "parent": "parent.parent_dashboard",
     }
@@ -86,8 +86,100 @@ def initial_page():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
+# def initialize_database():
+#     """Initialize the database and create default users if needed."""
+    
+    
+#     with app.app_context():
+#         # Create tables if they don't exist
+#         db.create_all()
+
+#         # Check if users already exist
+#         if not User.query.first():
+#             print("No users found, creating default users...")
+#             default_users = [
+#                 {
+#                     "username": "admin_user",
+#                     "email": "admin@example.com",
+#                     "password": generate_password_hash("admin123"),
+#                     "role": "admin",
+#                 },
+#                 {
+#                     "username": "accountant_user",
+#                     "email": "accountant@example.com",
+#                     "password": generate_password_hash("accountant123"),
+#                     "role": "accountant",
+#                 },
+#                 {
+#                     "username": "teacher_user",
+#                     "email": "teacher@example.com",
+#                     "password": generate_password_hash("teacher123"),
+#                     "role": "teacher",
+#                 },
+#                 {
+#                     "username": "parent_user",
+#                     "email": "parent@example.com",
+#                     "password": generate_password_hash("parent123"),
+#                     "role": "parent",
+#                 },
+#             ]
+
+#             # Create User objects and save them
+#             for user_data in default_users:
+#                 user = User(**user_data)
+#                 db.session.add(user)
+
+#             db.session.commit()
+#             print("Default users created successfully!")
+#         else:
+#             print("Users already exist in the database. Skipping creation.")
+            
+            
+#         # Add student data initialization
+#         from models import Student
+#         from datetime import date
+        
+#         if not Student.query.first():
+#             print("No students found, creating default students...")
+            
+#             # Get the parent user's ID (assuming it was created in the earlier part)
+#             parent_user = User.query.filter_by(email='parent@example.com').first()
+            
+#             default_students = [
+#                 {
+#                     "name": "John Doe",
+#                     "grade": "4",
+#                     "dob": date(2015, 5, 15),
+#                     "transport": True,
+#                     "user_id": parent_user.id
+#                 },
+#                 {
+#                     "name": "Jane Smith",
+#                     "grade": "5",
+#                     "dob": date(2016, 3, 20),
+#                     "transport": False,
+#                     "user_id": parent_user.id
+#                 }
+#             ]
+
+#             # Create Student objects and save them
+#             for student_data in default_students:
+#                 student = Student(**student_data)
+#                 db.session.add(student)
+
+#             db.session.commit()
+#             print("Default students created successfully!")
+#         else:
+#             print("Students already exist in the database. Skipping creation.")
+
+
+from datetime import date
+from models import User, Student, Fee
+# from flask_bcrypt import generate_password_hash
+
 def initialize_database():
-    """Initialize the database and create default users if needed."""
+    """Initialize the database and create default users, students, and fees if needed."""
+    
     with app.app_context():
         # Create tables if they don't exist
         db.create_all()
@@ -133,9 +225,6 @@ def initialize_database():
             print("Users already exist in the database. Skipping creation.")
             
         # Add student data initialization
-        from models import Student
-        from datetime import date
-        
         if not Student.query.first():
             print("No students found, creating default students...")
             
@@ -145,14 +234,14 @@ def initialize_database():
             default_students = [
                 {
                     "name": "John Doe",
-                    "grade": "3",
+                    "grade": "4",
                     "dob": date(2015, 5, 15),
                     "transport": True,
                     "user_id": parent_user.id
                 },
                 {
                     "name": "Jane Smith",
-                    "grade": "2",
+                    "grade": "5",
                     "dob": date(2016, 3, 20),
                     "transport": False,
                     "user_id": parent_user.id
@@ -166,9 +255,53 @@ def initialize_database():
 
             db.session.commit()
             print("Default students created successfully!")
+
+            # Add fee data initialization for students
+            print("Adding default fees for students...")
+            students = Student.query.all()
+
+            # Define default fee data for students (ensure that due_date is a proper date)
+            default_fees = [
+                {
+                    "student_id": students[0].id,
+                    "due_date": date(2025, 2, 15),  # Use date only (no time)
+                    "amount": 100.00,
+                    "fee_type": "Tuition",
+                },
+                {
+                    "student_id": students[0].id,
+                    "due_date": date(2025, 3, 15),
+                    "amount": 50.00,
+                    "fee_type": "Transport",
+                },
+                {
+                    "student_id": students[1].id,
+                    "due_date": date(2025, 2, 15),
+                    "amount": 120.00,
+                    "fee_type": "Tuition",
+                },
+                {
+                    "student_id": students[1].id,
+                    "due_date": date(2025, 3, 15),
+                    "amount": 60.00,
+                    "fee_type": "Transport",
+                }
+            ]
+
+            
+            # Create Fee objects and save them
+            for fee_data in default_fees:
+                fee = Fee(**fee_data)
+                db.session.add(fee)
+
+            db.session.commit()
+            print("-----------------------------------------------------------")
+            print("Default fees created successfully!")
+
         else:
             print("Students already exist in the database. Skipping creation.")
-            
+
+
 """ -------------------------------------------------------------------------------------------------- """  
 
 if __name__ == '__main__': 
