@@ -42,13 +42,15 @@ def billBunch():
 @accountant_blueprint.route("/viewBilling", methods=["GET"])
 @login_required
 def viewBilling():
-    # Fetch query parameters for filtering (if any)
+    # Fetch query parameters for filtering
     student_name = request.args.get("student_name")
     grade = request.args.get("grade")
     status = request.args.get("status")
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
 
     # Start with a base query
-    fees_query = Fee.query.join(Student)  # Join with Student to filter by student attributes
+    fees_query = Fee.query.join(Student)
 
     # Apply filters if provided
     if student_name and student_name.strip():
@@ -58,6 +60,20 @@ def viewBilling():
     if status and status.strip():
         fees_query = fees_query.filter(Fee.status == status.strip())
 
+    # Add date range filter by due_date
+    if start_date:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            fees_query = fees_query.filter(Fee.due_date >= start_date)
+        except ValueError:
+            flash("Invalid start date format", "error")
+
+    if end_date:
+        try:
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+            fees_query = fees_query.filter(Fee.due_date <= end_date)
+        except ValueError:
+            flash("Invalid end date format", "error")
 
     # Fetch the filtered fees
     fees = fees_query.all()
