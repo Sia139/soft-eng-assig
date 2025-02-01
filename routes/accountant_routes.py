@@ -1,10 +1,11 @@
 # accountant_routes.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
-from models import db, Fee, Student
+from models import db, Fee, Student, Invoice
 from function import create_fees_for_grade, update_fee, delete_fee, view_billing
 from datetime import datetime
 from decimal import Decimal
+from sqlalchemy.orm import joinedload
 
 accountant_blueprint = Blueprint("accountant", __name__)
 
@@ -80,3 +81,35 @@ def delete_fee_route(fee_id):
     if success:
         return jsonify({"message": message}), 200
     return jsonify({"message": f"Error deleting fee: {message}"}), 400
+
+@accountant_blueprint.route("/viewInvoice", methods=["GET"])
+@login_required
+def viewInvoice():
+    # Get query parameters
+    student_name = request.args.get("student_name")
+    grade = request.args.get("grade")
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+
+    # Build the query
+    query = Invoice.query.join(Fee).join(Student)
+
+    if student_name:
+        query = query.filter(Student.name.ilike(f"%{student_name}%"))
+    if grade:
+        query = query.filter(Student.grade == grade)
+    # Remove date filtering since we don't have created_at
+
+    # Get the invoices with related data and order by id instead
+    invoices = query.options(
+        joinedload(Invoice.fees).joinedload(Fee.student)
+    ).order_by(Invoice.id.desc()).all()
+
+    return render_template("viewInvoice.html", invoices=invoices)
+
+@accountant_blueprint.route("/download_invoice/<int:invoice_id>")
+@login_required
+def download_invoice(invoice_id):
+    # Implement invoice download functionality
+    # This could generate a PDF or Excel file of the invoice
+    pass

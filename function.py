@@ -148,22 +148,25 @@ def create_fees_for_grade(grade, fee_details, due_date):
         if not students:
             return False, "No students found in this grade."
         
-        # Convert due_date string to a date object
         try:
             due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
         except ValueError:
             return False, "Invalid date format. Please use YYYY-MM-DD."
 
-        fees_to_add = []
+        # Process each student
         for student in students:
+            fees_for_student = []
+            total_amount = Decimal('0.00')
+
+            # Create fees for this student
             for fee_type, amount in fee_details.items():
                 if fee_type == "transport" and not student.transport:
-                    # Skip adding transport fee if student does not have transport
                     continue
 
                 if amount:
                     try:
                         amount_decimal = Decimal(amount)
+                        total_amount += amount_decimal
                     except ValueError:
                         return False, f"Invalid amount for {fee_type}."
 
@@ -174,15 +177,28 @@ def create_fees_for_grade(grade, fee_details, due_date):
                         fee_type=fee_type,
                         status='unpaid',
                     )
-                    fees_to_add.append(fee)
+                    fees_for_student.append(fee)
 
-        db.session.bulk_save_objects(fees_to_add)
+            # If we have fees for this student, create them and an invoice
+            if fees_for_student:
+                # Create invoice first
+                invoice = Invoice(
+                    total_amount=total_amount
+                )
+                db.session.add(invoice)
+                db.session.flush()  # This assigns an ID to the invoice
+
+                # Now link the fees to the invoice
+                for fee in fees_for_student:
+                    fee.invoice_id = invoice.id
+                    db.session.add(fee)
+
         db.session.commit()
-        return True, f"Fees created successfully for {len(students)} students."
+        return True, f"Fees and invoices created successfully for {len(students)} students."
 
     except Exception as e:
         db.session.rollback()
-        return False, f"Error creating fees: {str(e)}"
+        return False, f"Error creating fees and invoices: {str(e)}"
 
 """ -------------------------------------------------------------------------------------------------- """
 

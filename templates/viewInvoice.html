@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Invoices</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='viewBilling.css') }}">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
+        </div>
+        <nav class="menu">
+            <div class="dropdown">
+                <button class="dropdown-btn">Fee</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('accountant.viewBilling') }}">View & edit bill</a>
+                    <a href="{{ url_for('accountant.viewInvoice') }}">View Invoices</a>
+                    <a href="{{ url_for('accountant.billBunch') }}">Create bill bunch</a>
+                </div>
+            </div>
+        </nav>
+        <div class="logout-section">
+            <a href="/logout">&#x2190;</a>
+        </div>
+    </div>
+
+    <button class="collapse-button">&#9776;</button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <div class="time">08:27am</div>
+            <div class="admin-section">
+                <span>Accountant</span>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="header-container">
+                <h1>View Invoices</h1>
+
+                <form method="GET" action="{{ url_for('accountant.viewInvoice') }}">
+                    <div class="search-bar">
+                        <input type="text" name="student_name" placeholder="Search by student name" 
+                               value="{{ request.args.get('student_name', '') }}">
+                        <input type="date" name="start_date" 
+                               value="{{ request.args.get('start_date', '') }}" 
+                               placeholder="Start Date">
+                        <input type="date" name="end_date" 
+                               value="{{ request.args.get('end_date', '') }}" 
+                               placeholder="End Date">
+                        <select name="grade">
+                            <option value="">Select Grade</option>
+                            <option value="4" {% if request.args.get('grade') == "4" %}selected{% endif %}>Grade 4</option>
+                            <option value="5" {% if request.args.get('grade') == "5" %}selected{% endif %}>Grade 5</option>
+                            <option value="6" {% if request.args.get('grade') == "6" %}selected{% endif %}>Grade 6</option>
+                        </select>
+                        <button type="submit">&#x27A4;</button>
+                    </div>
+                </form>
+            </div>
+
+            <table id="invoiceTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Invoice ID <span class="sort"></span></th>
+                        <th onclick="sortTable(1)">Student Name <span class="sort"></span></th>
+                        <th onclick="sortTable(2)">Grade <span class="sort"></span></th>
+                        <th onclick="sortTable(3)">Created Date <span class="sort"></span></th>
+                        <th onclick="sortTable(4)">Total Amount <span class="sort"></span></th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if invoices %}
+                        {% for invoice in invoices %}
+                            <tr>
+                                <td>{{ invoice.id }}</td>
+                                <td>{{ invoice.fees[0].student.name }}</td>
+                                <td>{{ invoice.fees[0].student.grade }}</td>
+                                <td>{{ invoice.fees[0].create_date.strftime('%Y-%m-%d') }}</td>
+                                <td>RM {{ "%.2f"|format(invoice.total_amount) }}</td>
+                                <td>
+                                    <button class="view-btn" onclick="viewInvoiceDetails({{ invoice.id }})">View Details</button>
+                                    <button class="download-btn" onclick="downloadInvoice({{ invoice.id }})">Download</button>
+                                </td>
+                            </tr>
+                            <!-- Hidden row for invoice details -->
+                            <tr class="invoice-details" id="details-{{ invoice.id }}" style="display: none;">
+                                <td colspan="6">
+                                    <div class="fee-details">
+                                        <h4>Fee Details:</h4>
+                                        <table class="inner-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fee Type</th>
+                                                    <th>Amount</th>
+                                                    <th>Due Date</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for fee in invoice.fees %}
+                                                    <tr>
+                                                        <td>{{ fee.fee_type }}</td>
+                                                        <td>RM {{ "%.2f"|format(fee.amount) }}</td>
+                                                        <td>{{ fee.due_date.strftime('%Y-%m-%d') }}</td>
+                                                        <td>{{ fee.status }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6">No invoices found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script>
+        function viewInvoiceDetails(invoiceId) {
+            const detailsRow = document.getElementById(`details-${invoiceId}`);
+            if (detailsRow.style.display === 'none') {
+                detailsRow.style.display = 'table-row';
+            } else {
+                detailsRow.style.display = 'none';
+            }
+        }
+
+        function downloadInvoice(invoiceId) {
+            // Implement download functionality
+            window.location.href = `/accountant/download_invoice/${invoiceId}`;
+        }
+
+        function sortTable(n) {
+            // Implement table sorting functionality
+            // ... (you can reuse the sorting logic from viewBilling.js)
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='viewBilling.js') }}"></script>
+</body>
+
+</html>

@@ -45,16 +45,15 @@ class Fee(db.Model):
     __tablename__ = 'fees'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
-    create_date = db.Column(db.Date, default=func.current_date()) # Fix: Use func.current_date() for only the date
+    create_date = db.Column(db.Date, default=func.current_date())
     due_date = db.Column(db.Date, nullable=False)
-    # amount = db.Column(db.Float, nullable=False)
-    amount = db.Column(NUMERIC(10, 2), nullable=False)  # Ensures precision
+    amount = db.Column(NUMERIC(10, 2), nullable=False)
     fee_type = db.Column(db.String(100), nullable=False)
     status = db.Column(db.Enum('unpaid', 'paid', name='fee_status'), default='unpaid')
-    # flag = db.Column(db.Boolean, default=False)  # New flag column
+    invoice_id = db.Column(db.Integer, db.ForeignKey('invoices.id'), nullable=True)
 
     # Relationships
-    invoices = db.relationship('Invoice', backref='fee', cascade='all, delete-orphan')
+    invoice = db.relationship('Invoice', back_populates='fees')
 
 
 class Payment(db.Model):
@@ -77,9 +76,9 @@ class Notification(db.Model):
 class Invoice(db.Model):
     __tablename__ = 'invoices'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    fee_id = db.Column(db.Integer, db.ForeignKey('fees.id'), nullable=False)
-    total_amount = db.Column(db.Float, nullable=False)
-
+    total_amount = db.Column(NUMERIC(10, 2), nullable=False)
+    
+    fees = db.relationship('Fee', back_populates='invoice', lazy='joined')
 
 class FinancialReport(db.Model):
     __tablename__ = 'financial_reports'
