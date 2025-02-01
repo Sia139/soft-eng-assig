@@ -135,3 +135,57 @@ def download_invoice(invoice_id):
     # Implement invoice download functionality
     # This could generate a PDF or Excel file of the invoice
     pass
+
+@accountant_blueprint.route("/preview_fees/<grade>", methods=["POST"])
+@login_required
+def preview_fees(grade):
+    try:
+        # Get students in the specified grade
+        students = Student.query.filter_by(grade=grade).all()
+        
+        if not students:
+            return jsonify({"error": "No students found in this grade"}), 404
+            
+        # Format student data for preview
+        students_data = [{
+            "name": student.name,
+            "transport": student.transport
+        } for student in students]
+        
+        return jsonify({"students": students_data})
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@accountant_blueprint.route("/fee_preview", methods=["GET"])
+@login_required
+def fee_preview():
+    grade = request.args.get('grade')
+    tuition = request.args.get('tuition', '0')
+    lunch = request.args.get('lunch', '0')
+    transport = request.args.get('transport', '0')
+    
+    # Get students in the specified grade
+    students = Student.query.filter_by(grade=grade).all()
+    
+    # Calculate preview data
+    preview_data = []
+    for student in students:
+        total = (
+            float(transport) if student.transport else 0 +
+            float(tuition) +
+            float(lunch)
+        )
+        
+        preview_data.append({
+            'name': student.name,
+            'grade': grade,
+            'tuition': tuition,
+            'lunch': lunch,
+            'transport': transport if student.transport else '0.00',
+            'total': f"{total:.2f}"
+        })
+    
+    return render_template('feePreview.html', 
+                         preview_data=preview_data, 
+                         grade=grade)

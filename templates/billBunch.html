@@ -140,6 +140,26 @@
                 </form>
             </div>
 
+            <!-- Add this table div after the form -->
+            <div id="previewTableContainer" style="display: none;" class="preview-container">
+                <h2>Fee Preview</h2>
+                <table id="previewTable" class="preview-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Grade</th>
+                            <th>Tuition (RM)</th>
+                            <th>Lunch (RM)</th>
+                            <th>Transport (RM)</th>
+                            <th>Total (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
             <!-- Flash messages -->
             <div class="flash-messages-container">
                 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -165,6 +185,16 @@
         
             // Set the combined date to the hidden input
             document.getElementById('dueDate').value = dueDate;
+        });
+
+        document.getElementById('download-btn').addEventListener('click', function() {
+            const grade = document.getElementById('grade').value;
+            const tuitionFee = document.getElementById('price1').value || '0';
+            const lunchFee = document.getElementById('price2').value || '0';
+            const transportFee = document.getElementById('price3').value || '0';
+            
+            // Redirect to preview page with query parameters
+            window.location.href = `/accountant/fee_preview?grade=${grade}&tuition=${tuitionFee}&lunch=${lunchFee}&transport=${transportFee}`;
         });
     </script>
     

@@ -424,3 +424,48 @@ input[type="text"] {
 .cancel-btn:hover {
     background: #ff6666;
 }
+
+.preview-container {
+    margin: 20px auto;
+    width: 90%;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.preview-table th,
+.preview-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.preview-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.preview-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.back-btn {
+    padding: 10px 20px;
+    background: #FFDD00;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+.back-btn:hover {
+    background: #ffc107;
+}
