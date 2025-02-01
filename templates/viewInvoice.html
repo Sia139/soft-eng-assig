@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Invoices</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='viewBilling.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='viewInvoice.css') }}">
 </head>
 
 <body>
@@ -72,8 +72,9 @@
                         <th onclick="sortTable(0)">Invoice ID <span class="sort"></span></th>
                         <th onclick="sortTable(1)">Student Name <span class="sort"></span></th>
                         <th onclick="sortTable(2)">Grade <span class="sort"></span></th>
-                        <th onclick="sortTable(3)">Created Date <span class="sort"></span></th>
+                        <th onclick="sortTable(3)">Due Date <span class="sort"></span></th>
                         <th onclick="sortTable(4)">Total Amount <span class="sort"></span></th>
+                        <th>Flag</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -84,8 +85,17 @@
                                 <td>{{ invoice.id }}</td>
                                 <td>{{ invoice.fees[0].student.name }}</td>
                                 <td>{{ invoice.fees[0].student.grade }}</td>
-                                <td>{{ invoice.fees[0].create_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ invoice.fees[0].due_date.strftime('%Y-%m-%d') }}</td>
                                 <td>RM {{ "%.2f"|format(invoice.total_amount) }}</td>
+                                
+                                <td class="flag">
+                                    {% if invoice.flag %}
+                                        <button class="flag-btn red">&#9873;</button>
+                                    {% else %}
+                                        <button class="flag-btn">&#9873;</button>
+                                    {% endif %}
+                                </td>
+
                                 <td>
                                     <button class="view-btn" onclick="viewInvoiceDetails({{ invoice.id }})">View Details</button>
                                     <button class="download-btn" onclick="downloadInvoice({{ invoice.id }})">Download</button>

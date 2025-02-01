@@ -103,6 +103,7 @@
                         <th onclick="sortTable(4)">Due Date <span class="sort"></span></th>
                         <th onclick="sortTable(5)">Status <span class="sort"></span></th>
                         <th>Edit</th>
+                        <th>#Invoice</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -133,6 +134,9 @@
                                 <td class="edit">
                                     <button class="update-btn" data-id="{{ fee.id }}">Save</button>
                                     <button class="delete-btn" data-id="{{ fee.id }}">Delete</button>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('accountant.viewInvoice') }}">{{ fee.invoice.id }}</a> 
                                 </td>
                             </tr>
                         {% endfor %}

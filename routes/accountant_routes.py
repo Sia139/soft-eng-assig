@@ -98,12 +98,34 @@ def viewInvoice():
         query = query.filter(Student.name.ilike(f"%{student_name}%"))
     if grade:
         query = query.filter(Student.grade == grade)
-    # Remove date filtering since we don't have created_at
+    
+    # Add date filtering based on Fee's due_date
+    if start_date:
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            query = query.filter(Fee.due_date >= start_date)
+        except ValueError:
+            flash("Invalid start date format", "error")
+    
+    if end_date:
+        try:
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+            query = query.filter(Fee.due_date <= end_date)
+        except ValueError:
+            flash("Invalid end date format", "error")
 
-    # Get the invoices with related data and order by id instead
+    # Get the invoices with related data and order by id
     invoices = query.options(
         joinedload(Invoice.fees).joinedload(Fee.student)
     ).order_by(Invoice.id.desc()).all()
+    
+    # Calculate flag status for each invoice
+    for invoice in invoices:
+        invoice.flag = False
+        for fee in invoice.fees:
+            if fee.due_date.date() < datetime.now().date() and fee.status == 'unpaid':
+                invoice.flag = True
+                break
 
     return render_template("viewInvoice.html", invoices=invoices)
 
