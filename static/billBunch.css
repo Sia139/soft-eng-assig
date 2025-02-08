@@ -8,38 +8,28 @@ body {
     flex-direction: column;
 }
 
-/* Header */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #808080;
-    color: white;
-    font-size: 16px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
 /* Sidebar Styles */
 .sidebar {
     width: 20%;
-    height: 100vh;
-    /* Make the sidebar occupy full height */
+    height: 100vh; /* Make the sidebar occupy full height */
     background-color: #FFDD00;
     color: #333;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    position: fixed;
-    /* Fix the sidebar's position */
+    position: fixed; /* Fix the sidebar's position */
     top: 0;
     left: 0;
-    z-index: 2;
-    /* Keep above other content */
+    z-index: 2; /* Keep above other content */
     padding: 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: width 0.3s ease, visibility 0.3s ease;
     overflow: hidden;
+}
+
+.sidebar.collapsed {
+    width: 0%;
+    visibility: hidden;
 }
 
 .dropdown {
@@ -105,19 +95,12 @@ body {
     background: rgba(0, 0, 0, 0.1);
 }
 
-.sidebar.collapsed {
-    width: 0%;
-    visibility: hidden;
-}
-
 .logo-section {
     width: 100%;
-    height: 20%;
-    /* Set a fixed height for the logo */
+    height: 20%; /* Set a fixed height for the logo */
     display: flex;
     justify-content: center;
-    align-items: center;
-    /* Center the logo vertically */
+    align-items: center; /* Center the logo vertically */
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -136,15 +119,12 @@ body {
     display: flex;
     flex-direction: column;
     text-align: center;
-    gap: 1rem;
-    /* Reduce the gap between menu items */
-    margin-top: 1rem;
-    /* Remove extra top margin */
-    padding: 0;
-    /* Remove any padding */
+    gap: 1rem; /* Reduce the gap between menu items */
+    margin-top: 1rem; /* Remove extra top margin */
+    padding: 0; /* Remove any padding */
 }
 
-.menu a{
+.menu a {
     color: #333;
     text-decoration: none;
     font-weight: bold;
@@ -154,7 +134,6 @@ body {
     transition: background 0.3s;
     width: auto;
     text-align: center;
-    display: block;
 }
 
 .menu a:hover {
@@ -162,15 +141,12 @@ body {
 }
 
 .sidebar.collapsed .menu a {
-    font-size: 0;
-    /* Hide text when collapsed */
-    padding: 0rem;
-    /* Shrink padding */
+    font-size: 0; /* Hide text when collapsed */
+    padding: 0rem; /* Shrink padding */
 }
 
-.sidebar.collapsed+.main-content {
-    margin-left: 70px;
-    /* Adjust the main content position */
+.sidebar.collapsed + .main-content {
+    margin-left: 70px; /* Adjust the main content position */
 }
 
 .logout-section {
@@ -182,12 +158,9 @@ body {
 
 /* Logout Button */
 .logout-section a {
-    position: absolute;
-    /* Position the logout button at the bottom-right */
-    bottom: 10px;
-    /* Distance from the bottom of the sidebar */
-    right: 10px;
-    /* Distance from the right of the sidebar */
+    position: absolute; /* Position the logout button at the bottom-right */
+    bottom: 10px; /* Distance from the bottom of the sidebar */
+    right: 10px; /* Distance from the right of the sidebar */
     text-decoration: none;
     color: #333;
     font-size: 1.5rem;
@@ -199,18 +172,18 @@ body {
 }
 
 .logout-section a:hover {
-    color: red;
-    /* Highlight on hover */
+    color: red; /* Highlight on hover */
 }
+
+/* .menu-icon {
+    font-size: 1.5rem;
+} */
 
 /* Collapse button styles */
 .collapse-button {
-    position: absolute;
-    /* Always position outside the sidebar */
-    bottom: 10px;
-    /* Adjust vertical positioning */
-    left: 10px;
-    /* Fixed position to ensure visibility */
+    position: absolute; /* Always position outside the sidebar */
+    bottom: 10px; /* Adjust vertical positioning */
+    left: 10px; /* Fixed position to ensure visibility */
     width: 30px;
     height: 30px;
     font-size: 1rem;
@@ -218,8 +191,7 @@ body {
     border: none;
     border-radius: 0;
     cursor: pointer;
-    z-index: 3;
-    /* Ensure it stays on top of everything */
+    z-index: 3; /* Ensure it stays on top of everything */
     transition: all 0.3s ease;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -227,10 +199,10 @@ body {
 
 /* Ensure collapse button is always visible when sidebar is collapsed */
 .sidebar.collapsed .collapse-button {
-    left: 10px;
-    /* Adjust left position when collapsed */
+    left: 10px; /* Adjust left position when collapsed */
 }
 
+/* Main Content */
 .main-content {
     flex: 1;
     display: flex;
@@ -239,10 +211,35 @@ body {
     transition: margin-left 0.3s ease;
 }
 
+.sidebar.collapsed ~ .main-content {
+    margin-left: 0px; /* Adjust content margin for collapsed sidebar */
+}
+
+.header {
+    background: #DADADA;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header .time {
+    font-weight: bold;
+    color: #555;
+}
+
 .header-container {
-    align-items: center; /* Align items vertically in the center */
-    margin-bottom: 1rem; /* Add some space below the header */
-    margin: auto;
+    display: flex;
+    justify-content: space-between;  /* Space out the items */
+    align-items: center;  /* Align the items vertically */
+    margin-bottom: 0px;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;  /* Stack the title and grade vertically */
+    align-items: flex-start;  /* Align the items to the left */
 }
 
 .sidebar.collapsed~.main-content {
@@ -251,9 +248,11 @@ body {
 }
 
 .main-content h1 {
+    margin-bottom: 1rem;
     font-size: 1.5rem;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    padding-left: 2rem;
+    /* text-align: left; */
+    padding: 1rem;
     width: 90%;
 }
 
@@ -464,6 +463,7 @@ input[type="text"] {
     font-weight: bold;
     cursor: pointer;
     margin-left: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .back-btn:hover {
