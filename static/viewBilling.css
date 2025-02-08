@@ -212,6 +212,16 @@ body {
     transition: margin-left 0.3s ease;
 }
 
+select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    /* margin-left: 10px; */
+    background: #f7f7f7;
+}
+
 .sidebar.collapsed ~ .main-content {
     margin-left: 0px; /* Adjust content margin for collapsed sidebar */
 }
@@ -354,3 +364,33 @@ table tbody tr:last-child td {
     text-decoration: none;
 }
 
+input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    /* margin-left: 10px; */
+    background: #f7f7f7;
+}
+
+.update-btn {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-left: 10px;
+    background: #ffdd00;
+    cursor: pointer;
+}
+
+.delete-btn {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    background: red;
+    cursor: pointer;
+}

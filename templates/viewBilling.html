@@ -51,7 +51,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <header class="header">
-            <div class="time">08:27am</div>
+            <div class="time"></div>
             <div class="admin-section">
                 <span>Accountant</span>
             </div>
@@ -96,14 +96,13 @@
             <table id="myTable2">
                 <thead>
                     <tr>
-                        <th onclick="sortTable(0)">#Id <span class="sort"></span></th>
+                        <th onclick="sortTable(0)">#Inv <span class="sort"></span></th>
                         <th onclick="sortTable(1)">Name <span class="sort"></span></th>
                         <th onclick="sortTable(2)">Details <span class="sort"></span></th>
                         <th onclick="sortTable(3)">Amount <span class="sort"></span></th>
                         <th onclick="sortTable(4)">Due Date <span class="sort"></span></th>
                         <th onclick="sortTable(5)">Status <span class="sort"></span></th>
                         <th>Edit</th>
-                        <th>#Invoice</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -111,7 +110,7 @@
                         {% for fee in fees %}
                             <tr>
                                 <td>
-                                    <a href="#"><span class="invoice">{{ fee.id }}</span></a>
+                                    <a href="{{ url_for('accountant.viewInvoice') }}">{{ fee.invoice.id }}</a> 
                                 </td>
                                 <td>
                                     <span class="name">{{ fee.student.name }}</span>
@@ -135,9 +134,7 @@
                                     <button class="update-btn" data-id="{{ fee.id }}">Save</button>
                                     <button class="delete-btn" data-id="{{ fee.id }}">Delete</button>
                                 </td>
-                                <td>
-                                    <a href="{{ url_for('accountant.viewInvoice') }}">{{ fee.invoice.id }}</a> 
-                                </td>
+                                
                             </tr>
                         {% endfor %}
                     {% else %}

@@ -78,7 +78,7 @@ class Invoice(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     total_amount = db.Column(NUMERIC(10, 2), nullable=False)
     # need to add a attribute call flag
-    # flag = db.Column(db.Boolean, default=False)  # True if paid before the due date
+    flag = db.Column(db.Boolean, default=False)  # True if paid before the due date
     
     fees = db.relationship('Fee', back_populates='invoice', lazy='joined')
 

@@ -120,12 +120,12 @@ def viewInvoice():
     ).order_by(Invoice.id.desc()).all()
     
     # Calculate flag status for each invoice
-    for invoice in invoices:
-        invoice.flag = False
-        for fee in invoice.fees:
-            if fee.due_date.date() < datetime.now().date() and fee.status == 'unpaid':
-                invoice.flag = True
-                break
+    # for invoice in invoices:
+    #     invoice.flag = False
+    #     for fee in invoice.fees:
+    #         if fee.due_date.date() < datetime.now().date() and fee.status == 'unpaid':
+    #             invoice.flag = True
+    #             break
 
     return render_template("viewInvoice.html", invoices=invoices)
 
