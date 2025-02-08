@@ -89,9 +89,7 @@
 <section class="content">
     <div class="header-container">
         <h1>Invoice Details</h1>
-        <button onclick="window.history.back()" class="back-btn">Back</button>
-        <!-- Download PDF button -->
-        <button id="downloadPDF" class="download-btn">Download PDF</button>
+       
     </div>
 
     <!-- Invoice summary header -->
@@ -128,6 +126,9 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <button onclick="window.history.back()" class="back-btn">Back</button>
+            <!-- Download PDF button -->
+            <button id="downloadPDF" class="download-btn">Download PDF</button>
             <div class="total-amount">
                 Total Invoice Amount: RM {{ "%.2f"|format(invoice.total_amount) }}
             </div>
