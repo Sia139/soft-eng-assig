@@ -48,13 +48,14 @@ $(document).ready(function () {
         "#student_results",
         "/accountant/search-students",
         function (student) {
-            return `<li><a href="#" data-id="${student.id}" data-studentname="${student.name}" data-grade="${student.grade}">ID: ${student.id}, Student name: ${student.name}, Grade: ${student.grade}</a></li>`;
+            return `<li><a href="#" data-id="${student.id}" data-name="${student.name}" data-grade="${student.grade}">
+                ID: ${student.id} - ${student.name} (Grade ${student.grade})
+            </a></li>`;
         },
         function ($selected) {
             var studentId = $selected.data("id");
-            var studentName = $selected.data("studentname");
-            var studentGrade = $selected.data("grade");
-            $("#student_search").val(`ID: ${studentId}, Student name: ${studentName}, Grade: ${studentGrade}`);
+            var studentName = $selected.data("name");
+            $("#student_search").val(`ID: ${studentId} - ${studentName}`);
             $("#student_id").val(studentId);
         }
     );
