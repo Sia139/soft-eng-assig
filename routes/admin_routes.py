@@ -37,7 +37,7 @@ def manageAccount():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
-@admin_blueprint.route("/updateUserRole", methods=["GET", "POST"])
+@admin_blueprint.route("/update_user_role", methods=["GET", "POST"])
 @login_required
 def update_user_role():
     data = request.get_json()
@@ -57,7 +57,7 @@ def update_user_role():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
-@admin_blueprint.route("/deleteUser", methods=['POST'])
+@admin_blueprint.route("/delete_user", methods=['POST'])
 @login_required
 def delete_user():
     if current_user.role != "admin":
