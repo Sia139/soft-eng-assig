@@ -12,16 +12,19 @@ body {
 /* Sidebar Styles */
 .sidebar {
     width: 20%;
-    height: 100vh; /* Make the sidebar occupy full height */
+    height: 100vh;
+    /* Make the sidebar occupy full height */
     background-color: #FFDD00;
     color: #333;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    position: fixed; /* Fix the sidebar's position */
+    position: fixed;
+    /* Fix the sidebar's position */
     top: 0;
     left: 0;
-    z-index: 2; /* Keep above other content */
+    z-index: 2;
+    /* Keep above other content */
     padding: 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: width 0.3s ease, visibility 0.3s ease;
@@ -34,7 +37,8 @@ body {
 }
 
 .dropdown {
-    text-align: center; /* Ensures container aligns content */
+    text-align: center;
+    /* Ensures container aligns content */
     width: 100%;
 }
 
@@ -49,23 +53,28 @@ body {
     cursor: pointer;
     color: #333;
     display: flex;
-    justify-content: center; /* Ensures text is centered */
-    align-items: center; /* Centers vertically */
+    justify-content: center;
+    /* Ensures text is centered */
+    align-items: center;
+    /* Centers vertically */
     text-align: center;
     transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .dropdown-btn:hover {
     transform: scale(1.05);
-    background: rgba(0, 0, 0, 0.1); /* Subtle hover effect */
+    background: rgba(0, 0, 0, 0.1);
+    /* Subtle hover effect */
 }
 
 /* Dropdown Content */
 .dropdown-content {
     display: block;
     opacity: 0;
-    position: relative; /* Change to relative */
-    width: 100%; /* Ensure it takes full width */
+    position: relative;
+    /* Change to relative */
+    width: 100%;
+    /* Ensure it takes full width */
     background: #ffc107;
     border-radius: 5px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
@@ -79,7 +88,8 @@ body {
 .dropdown.active .dropdown-content {
     opacity: 1;
     transform: translateY(0);
-    max-height: 300px; /* Adjust as needed */
+    max-height: 300px;
+    /* Adjust as needed */
 }
 
 /* Dropdown Links */
@@ -98,10 +108,12 @@ body {
 
 .logo-section {
     width: 100%;
-    height: 20%; /* Set a fixed height for the logo */
+    height: 20%;
+    /* Set a fixed height for the logo */
     display: flex;
     justify-content: center;
-    align-items: center; /* Center the logo vertically */
+    align-items: center;
+    /* Center the logo vertically */
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -120,9 +132,12 @@ body {
     display: flex;
     flex-direction: column;
     text-align: center;
-    gap: 1rem; /* Reduce the gap between menu items */
-    margin-top: 1rem; /* Remove extra top margin */
-    padding: 0; /* Remove any padding */
+    gap: 1rem;
+    /* Reduce the gap between menu items */
+    margin-top: 1rem;
+    /* Remove extra top margin */
+    padding: 0;
+    /* Remove any padding */
 }
 
 .menu a {
@@ -142,12 +157,15 @@ body {
 }
 
 .sidebar.collapsed .menu a {
-    font-size: 0; /* Hide text when collapsed */
-    padding: 0rem; /* Shrink padding */
+    font-size: 0;
+    /* Hide text when collapsed */
+    padding: 0rem;
+    /* Shrink padding */
 }
 
-.sidebar.collapsed + .main-content {
-    margin-left: 70px; /* Adjust the main content position */
+.sidebar.collapsed+.main-content {
+    margin-left: 70px;
+    /* Adjust the main content position */
 }
 
 .logout-section {
@@ -159,9 +177,12 @@ body {
 
 /* Logout Button */
 .logout-section a {
-    position: absolute; /* Position the logout button at the bottom-right */
-    bottom: 10px; /* Distance from the bottom of the sidebar */
-    right: 10px; /* Distance from the right of the sidebar */
+    position: absolute;
+    /* Position the logout button at the bottom-right */
+    bottom: 10px;
+    /* Distance from the bottom of the sidebar */
+    right: 10px;
+    /* Distance from the right of the sidebar */
     text-decoration: none;
     color: #333;
     font-size: 1.5rem;
@@ -173,7 +194,8 @@ body {
 }
 
 .logout-section a:hover {
-    color: red; /* Highlight on hover */
+    color: red;
+    /* Highlight on hover */
 }
 
 /* .menu-icon {
@@ -182,9 +204,12 @@ body {
 
 /* Collapse button styles */
 .collapse-button {
-    position: absolute; /* Always position outside the sidebar */
-    bottom: 10px; /* Adjust vertical positioning */
-    left: 10px; /* Fixed position to ensure visibility */
+    position: absolute;
+    /* Always position outside the sidebar */
+    bottom: 10px;
+    /* Adjust vertical positioning */
+    left: 10px;
+    /* Fixed position to ensure visibility */
     width: 30px;
     height: 30px;
     font-size: 1rem;
@@ -192,7 +217,8 @@ body {
     border: none;
     border-radius: 0;
     cursor: pointer;
-    z-index: 3; /* Ensure it stays on top of everything */
+    z-index: 3;
+    /* Ensure it stays on top of everything */
     transition: all 0.3s ease;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -200,7 +226,8 @@ body {
 
 /* Ensure collapse button is always visible when sidebar is collapsed */
 .sidebar.collapsed .collapse-button {
-    left: 10px; /* Adjust left position when collapsed */
+    left: 10px;
+    /* Adjust left position when collapsed */
 }
 
 /* Main Content */
@@ -222,8 +249,9 @@ select {
     background: #f7f7f7;
 }
 
-.sidebar.collapsed ~ .main-content {
-    margin-left: 0px; /* Adjust content margin for collapsed sidebar */
+.sidebar.collapsed~.main-content {
+    margin-left: 0px;
+    /* Adjust content margin for collapsed sidebar */
 }
 
 .header {
@@ -240,16 +268,27 @@ select {
     color: #555;
 }
 
-.header-container {
-    display: flex; /* Use flexbox to align items */
-    justify-content: space-between; /* Space between the heading and search bar */
-    align-items: center; /* Align items vertically in the center */
-    margin-bottom: 1rem; /* Add some space below the header */
+.header-container,
+.header-container form {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.header-top {
+    width: 100%;
+    /* Using flex here only to keep the title and date filters on one row */
+    display: flex;
+    align-items: center;
+}
+
+.header-top h1 {
+    margin: 0;
 }
 
 .search-bar {
-    display: flex;
-    gap: 0.5rem;
+    width: 100%;
+    text-align: right;
+    margin-top: 1rem;
 }
 
 .search-bar input {
@@ -270,8 +309,37 @@ select {
     transition: background 0.3s;
 }
 
+/* Make sure search bar elements behave as inline-blocks */
+.search-bar input,
+.search-bar select,
+.search-bar button {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+    /* Optional spacing */
+}
+
+/* Remove extra margin on the first element if needed */
+.search-bar input:first-child {
+    margin-left: 0;
+}
+
 .search-bar button:hover {
     background: #ffc107;
+}
+
+.date-filters {
+    /* width: 100%; */
+    text-align: right;
+    display: inline-block;
+    margin-left: auto;
+}
+
+/* Optional: if needed, force the date inputs to be inline-block */
+.date-filters input {
+    display: inline-block;
+    margin-left: 0.5rem;
+    /* Optional spacing between date inputs */
 }
 
 .admin-section {
@@ -331,7 +399,8 @@ table {
     overflow: hidden;
 }
 
-table th, table td {
+table th,
+table td {
     text-align: left;
     padding: 1rem;
     border-bottom: 1px solid #eee;
@@ -345,9 +414,12 @@ table th {
 }
 
 .sort {
-    font-size: 1.2rem; /* Increase font size */
-    color: #555; /* Adjust color as needed */
-    vertical-align: middle; /* Align the symbol vertically */
+    font-size: 1.2rem;
+    /* Increase font size */
+    color: #555;
+    /* Adjust color as needed */
+    vertical-align: middle;
+    /* Align the symbol vertically */
 }
 
 table tbody tr:last-child td {
@@ -380,7 +452,7 @@ input {
     border: 1px solid #ccc;
     border-radius: 20px;
     font-size: 14px;
-    margin-left: 10px;
+    /* margin-left: 10px; */
     background: #ffdd00;
     cursor: pointer;
 }

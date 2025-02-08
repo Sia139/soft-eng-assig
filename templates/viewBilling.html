@@ -59,35 +59,40 @@
 
         <section class="content">
             <div class="header-container">
-                <h1>View & Edit Billing</h1>
-
                 <form method="GET" action="{{ url_for('accountant.viewBilling') }}">
-                    <div class="search-bar">
-                        <input type="text" name="student_name" placeholder="Search by name" value="{{ request.args.get('student_name', '') }}">
-                        
-                        <!-- sort by due date -->
-                        <input type="date" name="start_date" 
-                               value="{{ request.args.get('start_date', '') }}" 
-                               placeholder="Start Due Date">
-                        <input type="date" name="end_date" 
-                               value="{{ request.args.get('end_date', '') }}" 
-                               placeholder="End Date">
+                    <!-- Top Row: Title and Date Filters -->
+                    <div class="header-top">
+                        <h1>View & Edit Billing</h1>
+                        <div class="date-filters">
+                            <span>Due Date:</span>
+                            <input type="date" name="start_date" value="{{ request.args.get('start_date', '') }}"
+                                placeholder="Start Due Date">
+                            <span> to </span>
+                            <input type="date" name="end_date" value="{{ request.args.get('end_date', '') }}"
+                                placeholder="End Date">
+                        </div>
+                    </div>
 
-                        <!-- <select id="grade" name="grade" onchange="this.form.submit();"> -->
+                    <!-- Bottom Row: Search Bar -->
+                    <div class="search-bar">
+                        <input type="text" name="student_name" placeholder="Search by name"
+                            value="{{ request.args.get('student_name', '') }}">
                         <select id="grade" name="grade">
                             <option value="">Select Grade</option>
-                            <option value="4" {% if request.args.get('grade') == "4" %}selected{% endif %}>Grade 4</option>
-                            <option value="5" {% if request.args.get('grade') == "5" %}selected{% endif %}>Grade 5</option>
-                            <option value="6" {% if request.args.get('grade') == "6" %}selected{% endif %}>Grade 6</option>
+                            <option value="4" {% if request.args.get('grade')=="4" %}selected{% endif %}>Grade 4
+                            </option>
+                            <option value="5" {% if request.args.get('grade')=="5" %}selected{% endif %}>Grade 5
+                            </option>
+                            <option value="6" {% if request.args.get('grade')=="6" %}selected{% endif %}>Grade 6
+                            </option>
                         </select>
-
-                        <!-- <select name="status" onchange="this.form.submit();"> -->
                         <select name="status">
                             <option value="">All Status</option>
-                            <option value="unpaid" {% if request.args.get('status') == 'unpaid' %}selected{% endif %}>Unpaid</option>
-                            <option value="paid" {% if request.args.get('status') == 'paid' %}selected{% endif %}>Paid</option>
+                            <option value="unpaid" {% if request.args.get('status')=='unpaid' %}selected{% endif %}>
+                                Unpaid</option>
+                            <option value="paid" {% if request.args.get('status')=='paid' %}selected{% endif %}>Paid
+                            </option>
                         </select>
-
                         <button>&#x27A4;</button>
                     </div>
                 </form>
@@ -107,40 +112,40 @@
                 </thead>
                 <tbody>
                     {% if fees %}
-                        {% for fee in fees %}
-                            <tr>
-                                <td>
-                                    <a href="{{ url_for('accountant.viewInvoice') }}">{{ fee.invoice.id }}</a> 
-                                </td>
-                                <td>
-                                    <span class="name">{{ fee.student.name }}</span>
-                                </td>
-                                <td>
-                                    <input type="text" class="details" data-id="{{ fee.id }}" value="{{ fee.fee_type }}">
-                                </td>
-                                <td>
-                                    <input type="number" class="amount" data-id="{{ fee.id }}" value="{{ fee.amount }}">
-                                </td>
-                                <td>
-                                    <input type="date" class="dueDate" data-id="{{ fee.id }}" value="{{ fee.due_date }}">
-                                </td>
-                                <td>
-                                    <select class="status" data-id="{{ fee.id }}">
-                                        <option value="unpaid" {% if fee.status == 'unpaid' %}selected{% endif %}>Unpaid</option>
-                                        <option value="paid" {% if fee.status == 'paid' %}selected{% endif %}>Paid</option>
-                                    </select>
-                                </td>
-                                <td class="edit">
-                                    <button class="update-btn" data-id="{{ fee.id }}">Save</button>
-                                    <button class="delete-btn" data-id="{{ fee.id }}">Delete</button>
-                                </td>
-                                
-                            </tr>
-                        {% endfor %}
+                    {% for fee in fees %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('accountant.viewInvoice') }}">{{ fee.invoice.id }}</a>
+                        </td>
+                        <td>
+                            <span class="name">{{ fee.student.name }}</span>
+                        </td>
+                        <td>
+                            <input type="text" class="details" data-id="{{ fee.id }}" value="{{ fee.fee_type }}">
+                        </td>
+                        <td>
+                            <input type="number" class="amount" data-id="{{ fee.id }}" value="{{ fee.amount }}">
+                        </td>
+                        <td>
+                            <input type="date" class="dueDate" data-id="{{ fee.id }}" value="{{ fee.due_date }}">
+                        </td>
+                        <td>
+                            <select class="status" data-id="{{ fee.id }}">
+                                <option value="unpaid" {% if fee.status=='unpaid' %}selected{% endif %}>Unpaid</option>
+                                <option value="paid" {% if fee.status=='paid' %}selected{% endif %}>Paid</option>
+                            </select>
+                        </td>
+                        <td class="edit">
+                            <button class="update-btn" data-id="{{ fee.id }}">Save</button>
+                            <button class="delete-btn" data-id="{{ fee.id }}">Delete</button>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
                     {% else %}
-                        <tr>
-                            <td colspan="7">No fee records found.</td>
-                        </tr>
+                    <tr>
+                        <td colspan="7">No fee records found.</td>
+                    </tr>
                     {% endif %}
                 </tbody>
             </table>
@@ -153,7 +158,7 @@
                 try {
                     const feeId = this.getAttribute('data-id');
                     const row = this.closest('tr');
-                    
+
                     // Add validation
                     const feeType = row.querySelector('.details').value;
                     const amount = row.querySelector('.amount').value;
@@ -180,7 +185,7 @@
                     });
 
                     const data = await response.json();
-                    
+
                     if (!response.ok) {
                         throw new Error(data.message || 'Update failed');
                     }
@@ -188,7 +193,7 @@
                     alert('Update successful!');
                     // Refresh the page to show updated data
                     location.reload();
-                    
+
                 } catch (error) {
                     console.error('Error:', error);
                     alert(`Update failed: ${error.message}`);
@@ -197,7 +202,7 @@
         });
 
         document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', async function() {
+            button.addEventListener('click', async function () {
                 try {
                     if (!confirm('Are you sure you want to delete this fee?')) {
                         return;
@@ -220,7 +225,7 @@
                     alert('Fee deleted successfully!');
                     // Remove the row from the table
                     this.closest('tr').remove();
-                    
+
                 } catch (error) {
                     console.error('Error:', error);
                     alert(`Delete failed: ${error.message}`);

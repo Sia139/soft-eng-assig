@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
 
-    {% block style %} {% endblock %}
+    {% block header %} {% endblock %}
 </head>
 
 <body>
@@ -19,14 +19,14 @@
             <div class="dropdown">
                 <button class="dropdown-btn">Fee</button>
                 <div class="dropdown-content">
-                    <a href="#">View & edit bill</a>
+                    <a href="{{ url_for('accountant.viewBilling') }}">View & edit bill</a>
                     <a href="#">Update bill</a>
-                </div>
+                </div>  
             </div>
             <div class="dropdown">
                 <button class="dropdown-btn">Create bill</button>
                 <div class="dropdown-content">
-                    <a href="#">By grade</a>
+                    <a href="{{ url_for('accountant.billBunch') }}">By grade</a>
                     <a href="#">By individual</a>
                 </div>
             </div>
