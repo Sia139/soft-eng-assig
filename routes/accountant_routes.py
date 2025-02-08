@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student, Invoice
-from function import create_fees_for_grade, update_fee, delete_fee, view_billing, search_parent_student, process_billing
+from function import create_fees_for_grade, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy.orm import joinedload
@@ -24,16 +24,24 @@ def billBunch():
         due_date = request.form.get("dueDate")
 
         if not grade or not due_date or not any(fee_details.values()):
-            flash("All fields are required.", "danger")
-            return redirect(url_for("accountant.billBunch"))
+            return jsonify({
+                "status": "error",
+                "message": "All fields are required."
+            }), 400
 
         # Call function without author (it uses current_user)
         success, message = create_fees_for_grade(grade, fee_details, due_date)
 
         if success:
-            flash("Fees created successfully!", "success")
+            return jsonify({
+                "status": "success",
+                "message": "Fees created successfully!"
+            }), 200
         else:
-            flash(f"Error: {message}", "danger")
+            return jsonify({
+                "status": "error",
+                "message": f"Error: {message}"
+            }), 400
 
     return render_template("billBunch.html")
 
@@ -42,10 +50,26 @@ def billBunch():
 @accountant_blueprint.route("/billSingle", methods=["GET", "POST"])
 @login_required
 def billSingle():
-    
     if request.method == "POST":
-        process_billing()
+        student_id = request.form.get("student_id")
+        fee_type = request.form.get("details")
+        amount = request.form.get("price")
+        due_date = request.form.get("due_date")
         
+        if not all([student_id, fee_type, amount, due_date]):
+            return jsonify({"status": "error", "message": "All fields are required"}), 400
+            
+        try:
+            # Create a single fee with invoice
+            success, message = create_single_fee(student_id, fee_type, amount, due_date)
+            
+            if success:
+                return jsonify({"status": "success", "message": message}), 200
+            return jsonify({"status": "error", "message": message}), 400
+            
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
+            
     return render_template("billSingle.html")
 
 #cause of (AJAX)

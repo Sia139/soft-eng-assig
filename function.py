@@ -286,60 +286,53 @@ def delete_fee(fee_id):
         db.session.rollback()
         return False, str(e)
     
-    
-def process_billing(students=None):
-    due_date = request.form.get('due_date')
-    create_date = request.form.get('create_date')
-    
-    if not due_date:
-        flash("Due Date is required.", "danger")
-        return False
-    
+
+def create_single_fee(student_id, fee_type, amount, due_date):
+    """
+    Create a single fee and its associated invoice for a student
+    """
     try:
-        due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
-        create_date = (
-            datetime.strptime(create_date, "%Y-%m-%d").date() 
-            if create_date 
-            else datetime.today().date()
-        )
-    except ValueError:
-        flash("Invalid date format. Please use YYYY-MM-DD.", "danger")
-        return False
-    
-        # if is_custom:
-        # Custom fee processing for a specific student
-        student_id = request.form.get('student_id')
-        fee_type = request.form.get('fee_type')
-        amount = request.form.get('amount')
-
-        # Validate required fields
-        if not student_id or not fee_type or not amount:
-            flash("Student ID, Fee Type, and Amount are required for custom fee.", "danger")
-            return False
-
-        # Skip if the amount is zero
-        amount = float(amount)
-        if amount == 0:
-            flash("Fee amount cannot be zero.", "danger")
-            return False
-
-        # Validate the student
+        # Validate student exists
         student = Student.query.get(student_id)
         if not student:
-            flash("Student not found.", "danger")
-            return False
-
-        # Create the custom fee record
-        new_fee = Fee(
+            return False, "Student not found"
+            
+        # Convert amount to Decimal
+        try:
+            amount_decimal = Decimal(str(amount))
+            if amount_decimal <= 0:
+                return False, "Amount must be greater than zero"
+        except:
+            return False, "Invalid amount format"
+            
+        # Convert due date string to date object
+        try:
+            due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
+        except ValueError:
+            return False, "Invalid date format. Please use YYYY-MM-DD"
+            
+        # Create invoice first
+        invoice = Invoice(
+            total_amount=amount_decimal
+        )
+        db.session.add(invoice)
+        db.session.flush()  # This assigns an ID to the invoice
+        
+        # Create the fee
+        fee = Fee(
             student_id=student.id,
             fee_type=fee_type,
-            amount=amount,
-            create_date=create_date,
+            amount=amount_decimal,
             due_date=due_date,
-            status="unpaid"
+            status='unpaid',
+            invoice_id=invoice.id
         )
         
-        db.session.add(new_fee)
+        db.session.add(fee)
         db.session.commit()
-        flash("Fees processed successfully!", "success")
-        return True
+        
+        return True, f"Fee created successfully for {student.name}"
+        
+    except Exception as e:
+        db.session.rollback()
+        return False, f"Error creating fee: {str(e)}"
