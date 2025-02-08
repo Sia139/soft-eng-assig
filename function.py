@@ -285,3 +285,61 @@ def delete_fee(fee_id):
     except Exception as e:
         db.session.rollback()
         return False, str(e)
+    
+    
+def process_billing(students=None):
+    due_date = request.form.get('due_date')
+    create_date = request.form.get('create_date')
+    
+    if not due_date:
+        flash("Due Date is required.", "danger")
+        return False
+    
+    try:
+        due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
+        create_date = (
+            datetime.strptime(create_date, "%Y-%m-%d").date() 
+            if create_date 
+            else datetime.today().date()
+        )
+    except ValueError:
+        flash("Invalid date format. Please use YYYY-MM-DD.", "danger")
+        return False
+    
+        # if is_custom:
+        # Custom fee processing for a specific student
+        student_id = request.form.get('student_id')
+        fee_type = request.form.get('fee_type')
+        amount = request.form.get('amount')
+
+        # Validate required fields
+        if not student_id or not fee_type or not amount:
+            flash("Student ID, Fee Type, and Amount are required for custom fee.", "danger")
+            return False
+
+        # Skip if the amount is zero
+        amount = float(amount)
+        if amount == 0:
+            flash("Fee amount cannot be zero.", "danger")
+            return False
+
+        # Validate the student
+        student = Student.query.get(student_id)
+        if not student:
+            flash("Student not found.", "danger")
+            return False
+
+        # Create the custom fee record
+        new_fee = Fee(
+            student_id=student.id,
+            fee_type=fee_type,
+            amount=amount,
+            create_date=create_date,
+            due_date=due_date,
+            status="unpaid"
+        )
+        
+        db.session.add(new_fee)
+        db.session.commit()
+        flash("Fees processed successfully!", "success")
+        return True

@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student, Invoice
-from function import create_fees_for_grade, update_fee, delete_fee, view_billing
+from function import create_fees_for_grade, update_fee, delete_fee, view_billing, search_parent_student, process_billing
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy.orm import joinedload
@@ -42,7 +42,22 @@ def billBunch():
 @accountant_blueprint.route("/billSingle", methods=["GET", "POST"])
 @login_required
 def billSingle():
+    
+    if request.method == "POST":
+        process_billing()
+        
     return render_template("billSingle.html")
+
+#cause of (AJAX)
+@accountant_blueprint.route("/search-students", methods=["GET"])
+@login_required
+def search_students_route():
+    if current_user.role not in ["teacher", "admin", "accountant"]:
+        return "Access Denied", 403
+
+    query = request.args.get("query", "").lower()
+    students = search_parent_student(query)  # No role parameter means search for students
+    return jsonify(students)
 
 """ -------------------------------------------------------------------------------------------------- """  
 # accountant_routes.py
