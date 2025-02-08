@@ -53,18 +53,49 @@ document.getElementById("calendar").addEventListener("change", function () {
     this.style.display = "none"; // Hide the date picker again
 });
 
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById('download-btn').addEventListener('click', function() {
-        const fileUrl = 'invoice.pdf'; // Ensure this is the correct file path
-        const anchor = document.createElement('a');
-        anchor.href = fileUrl;
-        anchor.download = 'Invoice_1003.pdf'; // Use a simple filename
-        document.body.appendChild(anchor);
-        anchor.click();
-        document.body.removeChild(anchor);
-    });
-});
+// document.addEventListener("DOMContentLoaded", function() {
+//     document.getElementById('download-btn').addEventListener('click', function() {
+//         const fileUrl = 'invoice.pdf'; // Ensure this is the correct file path
+//         const anchor = document.createElement('a');
+//         anchor.href = fileUrl;
+//         anchor.download = 'Invoice_1003.pdf'; // Use a simple filename
+//         document.body.appendChild(anchor);
+//         anchor.click();
+//         document.body.removeChild(anchor);
+//     });
+// });
+
+// function clearForm() {
+//     document.querySelector('.form').reset();
+// }
+
+function updateTime() {
+    // Get the current time
+    const now = new Date();
+    
+    // Extract hours, minutes, and am/pm
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let ampm = hours >= 12 ? 'pm' : 'am';
+
+    // Convert 24-hour time to 12-hour time
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+
+    // Format the time
+    const timeString = `${hours}:${minutes} ${ampm}`;
+
+    // Update the content of the .time element
+    document.querySelector('.time').textContent = timeString;
+}
 
 function clearForm() {
     document.querySelector('.form').reset();
 }
+
+// Call the function immediately to set the time when the page loads
+updateTime();
+
+// Update the time every minute
+setInterval(updateTime, 60000);
