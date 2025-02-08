@@ -1,72 +1,21 @@
 <!--billBunch.html-->
-<!DOCTYPE html>
-<html lang="en">
+{% if current_user.role == 'teacher' %}
+    {% extends "teacherBase.html" %}
+{% elif current_user.role == 'admin'%}
+    {% extends "adminBase.html" %}
+{% elif current_user.role == 'accountant' %}
+    {% extends "accountantBase.html" %}
+{% elif current_user.role == 'parent'%}
+    {% extends "parentBase.html" %}
+{% endif %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Bill Grade</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+{% block header %}
+    <title>Create Bill Bunch</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='billBunch.css') }}">
-</head>
+{% endblock %}
 
-<body>
-    <!-- Sidebar -->
-    <div id="mySidebar" class="sidebar">
-        <div class="logo-section">
-            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
-        </div>
-        <nav class="menu">
-            <div class="dropdown">
-                <button class="dropdown-btn">Account</button>
-                <div class="dropdown-content">
-                    <a href="#">Manage account</a>
-                    <a href="#">Create account</a>
-                </div>
-            </div>
-            <div class="dropdown">
-                <button class="dropdown-btn">System</button>
-                <div class="dropdown-content">
-                    <a href="#">Configure system</a>
-                    <a href="#">Fee structure</a>
-                    <a href="#">Role permission</a>
-                </div>
-            </div>
-            <div class="dropdown">
-                <button class="dropdown-btn">Student</button>
-                <div class="dropdown-content">
-                    <a href="#">Add student</a>
-                </div>
-            </div>
-            <div class="dropdown">
-                <button class="dropdown-btn">Fee</button>
-                <div class="dropdown-content">
-                    <a href="{{ url_for('accountant.viewBilling') }}">View & edit bill</a>
-                    <a href="#">Update bill</a>
-                    <a href="{{ url_for('accountant.billBunch') }}">Create bill bunch</a>
-                    <a href="#">Create bill single</a>
-                </div>
-            </div>
-            <div class="dropdown">
-                <button class="dropdown-btn">Payment</button>
-                <div class="dropdown-content">
-                    <a href="#">Payment tracking</a>
-                </div>
-            </div>
-        </nav>
-        <div class="logout-section">
-            <a href="/logout">&#x2190;</a>
-        </div>
-    </div>
+{% block content %}
 
-    <div class="main-content">
-        <button class="collapse-button">&#9776;</button>
-        <div class="header">
-            <div class="time"></div>
-            <div class="user">
-                <label for="role-toggle">Accountant</label>
-            </div>
-        </div>
         <section class="content">
             <div class="header-container">
                 <h1>Create Bill by Grade</h1>
@@ -199,6 +148,4 @@
     </script>
     
     <script src="{{ url_for('static', filename='billBunch.js') }}" ></script>
-</body>
-
-</html>
+{% endblock %}
