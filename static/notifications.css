@@ -1,0 +1,404 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(135deg, #93efff, #fdbffa);
+    transition: margin-left 0.3s ease;
+    overflow: hidden;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 20%;
+    height: 100vh; /* Make the sidebar occupy full height */
+    background-color: #FFDD00;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: fixed; /* Fix the sidebar's position */
+    top: 0;
+    left: 0;
+    z-index: 2; /* Keep above other content */
+    padding: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease, visibility 0.3s ease;
+    overflow: hidden;
+}
+
+.sidebar.collapsed {
+    width: 0%;
+    visibility: hidden;
+}
+
+.dropdown {
+    text-align: center; /* Ensures container aligns content */
+    width: 100%;
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn {
+    position: relative;
+    padding: 10px 20px;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    display: flex;
+    justify-content: center; /* Ensures text is centered */
+    align-items: center; /* Centers vertically */
+    text-align: center;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.dropdown-btn:hover {
+    transform: scale(1.05);
+    background: rgba(0, 0, 0, 0.1); /* Subtle hover effect */
+}
+
+/* Dropdown Content */
+.dropdown-content {
+    display: block;
+    opacity: 0;
+    position: relative; /* Change to relative */
+    width: 100%; /* Ensure it takes full width */
+    background: #ffc107;
+    border-radius: 5px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    transform: translateY(-10px);
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.5s ease;
+}
+
+/* Show Dropdown */
+.dropdown.active .dropdown-content {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 300px; /* Adjust as needed */
+}
+
+/* Dropdown Links */
+.dropdown-content a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+    font-size: 1.2rem;
+    transition: background 0.3s;
+}
+
+.dropdown-content a:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.logo-section {
+    width: 100%;
+    height: 20%; /* Set a fixed height for the logo */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center the logo vertically */
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.logo-section img {
+    width: 100%;
+    height: auto;
+}
+
+.sidebar.collapded .logo-section img {
+    opacity: 0;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem; /* Reduce the gap between menu items */
+    margin-top: 1rem; /* Remove extra top margin */
+    padding: 0; /* Remove any padding */
+}
+
+.menu a {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    transition: background 0.3s;
+    width: auto;
+    text-align: center;
+}
+
+.menu a:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.collapsed .menu a {
+    font-size: 0; /* Hide text when collapsed */
+    padding: 0rem; /* Shrink padding */
+}
+
+.sidebar.collapsed + .main-content {
+    margin-left: 70px; /* Adjust the main content position */
+}
+
+.logout-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+/* Logout Button */
+.logout-section a {
+    position: absolute; /* Position the logout button at the bottom-right */
+    bottom: 10px; /* Distance from the bottom of the sidebar */
+    right: 10px; /* Distance from the right of the sidebar */
+    text-decoration: none;
+    color: #333;
+    font-size: 1.5rem;
+    padding: 5px 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.logout-section a:hover {
+    color: red; /* Highlight on hover */
+}
+
+/* .menu-icon {
+    font-size: 1.5rem;
+} */
+
+/* Collapse button styles */
+.collapse-button {
+    position: absolute; /* Always position outside the sidebar */
+    bottom: 10px; /* Adjust vertical positioning */
+    left: 10px; /* Fixed position to ensure visibility */
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+    background: #FFDD00;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    z-index: 3; /* Ensure it stays on top of everything */
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure collapse button is always visible when sidebar is collapsed */
+.sidebar.collapsed .collapse-button {
+    left: 10px; /* Adjust left position when collapsed */
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 20%;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed ~ .main-content {
+    margin-left: 0px; /* Adjust content margin for collapsed sidebar */
+}
+
+.header {
+    background: #DADADA;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header .time {
+    font-weight: bold;
+    color: #555;
+}
+
+.header-container {
+    display: flex; /* Use flexbox to align items */
+    justify-content: space-between; /* Space between the heading and search bar */
+    align-items: center; /* Align items vertically in the center */
+    margin-bottom: 1rem; /* Add some space below the header */
+}
+
+.search-bar {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.search-bar input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    font-size: 1rem;
+}
+
+.search-bar button {
+    padding: 0.5rem 1rem;
+    background: #FFDD00;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background 0.3s;
+}
+
+.search-bar button:hover {
+    background: #ffc107;
+}
+
+.admin-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-toggle {
+    width: 40px;
+    height: 20px;
+    appearance: none;
+    background: #ccc;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.admin-toggle:checked {
+    background: #4CAF50;
+}
+
+.admin-toggle:checked::after {
+    transform: translateX(20px);
+}
+
+.admin-toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    top: 1px;
+    left: 1px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.container {
+    margin: auto;
+    width: 90%;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px 30px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.header-container h1 {
+    font-size: 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    padding-left: 2rem;
+    width: 90%;
+}
+
+/* Notification Header */
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.notification-header .sender {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification-header .time {
+    color: gray;
+}
+
+/* Notification Actions */
+.notification-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.mark-read-btn, .delete-btn {
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+    border: none;
+}
+
+.mark-read-btn {
+    background-color: #FFDD00;
+    color: black;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.delete-btn {
+    background-color: transparent;
+    color: red;
+    font-size: 18px;
+    border: none;
+}
+
+.mark-read-btn:hover {
+    background-color: #f5c518;
+}
+
+.delete-btn:hover {
+    color: darkred;
+    transform: scale(1.2);
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn {
+    position: relative;
+    padding: 10px 20px;
+}
+
+.red-dot {
+    width: 10px;
+    height: 10px;
+    background: red;
+    border-radius: 50%;
+    position: absolute;
+    top: 5px;  /* Adjust position */
+    right: 5px;
+    display: block; /* Always visible unless hidden by JavaScript */
+    transition: opacity 0.3s ease-in-out;
+}
+

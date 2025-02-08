@@ -69,7 +69,7 @@ def initial_page():
         "admin": "admin.manageAccount",
         "accountant": "accountant.billBunch",
         "teacher": "teacher.viewStudents",
-        "parent": "parent.parent_dashboard",
+        "parent": "parent.notification",
     }
 
     # Retrieve the target route based on user role
