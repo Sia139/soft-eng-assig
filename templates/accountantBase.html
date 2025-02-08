@@ -27,7 +27,7 @@
                 <button class="dropdown-btn">Create bill</button>
                 <div class="dropdown-content">
                     <a href="{{ url_for('accountant.billBunch') }}">By grade</a>
-                    <a href="#">By individual</a>
+                    <a href="{{ url_for('accountant.billSingle') }}">By individual</a>
                 </div>
             </div>
             <div class="dropdown">
@@ -38,7 +38,7 @@
                 </div>
         </nav>
         <div class="logout-section">
-            <a href="#">&#x2190;</a>
+            <a href="/logout">&#x2190;</a>
         </div>
     </div>
 

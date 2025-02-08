@@ -39,6 +39,12 @@ def billBunch():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
+@accountant_blueprint.route("/billSingle", methods=["GET", "POST"])
+@login_required
+def billSingle():
+    return render_template("billSingle.html")
+
+""" -------------------------------------------------------------------------------------------------- """  
 # accountant_routes.py
 @accountant_blueprint.route("/viewBilling", methods=["GET"])
 @login_required
