@@ -1,50 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
+{% if current_user.role == 'teacher' %}
+{% extends "teacherBase.html" %}
+{% elif current_user.role == 'admin'%}
+{% extends "adminBase.html" %}
+{% elif current_user.role == 'accountant' %}
+{% extends "accountantBase.html" %}
+{% elif current_user.role == 'parent'%}
+{% extends "parentBase.html" %}
+{% endif %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Invoices</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='viewInvoice.css') }}">
-</head>
+{% block header %}
+<title>View Bill</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='viewInvoice.css') }}">
+{% endblock %}
 
-<body>
+{% block content %}
 
-
-</body>
-
-    <!-- Sidebar -->
-    <div id="mySidebar" class="sidebar">
-        <div class="logo-section">
-            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
-        </div>
-        <nav class="menu">
-            <div class="dropdown">
-                <button class="dropdown-btn">Fee</button>
-                <div class="dropdown-content">
-                    <a href="{{ url_for('accountant.viewBilling') }}">View & edit bill</a>
-                    <a href="{{ url_for('accountant.viewInvoice') }}">View Invoices</a>
-                    <a href="{{ url_for('accountant.billBunch') }}">Create bill bunch</a>
-                </div>
-            </div>
-        </nav>
-        <div class="logout-section">
-            <a href="/logout">&#x2190;</a>
-        </div>
-    </div>
-
-    <button class="collapse-button">&#9776;</button>
-
-    <!-- Main Content -->
-    <div class="main-content">
-
-        <header class="header">
-            <div class="time">08:27am</div>
-            <div class="admin-section">
-                <span>Accountant</span>
-            </div>
-        </header>
 
         <section class="content">
 
@@ -115,6 +85,6 @@
     </div>
 
     <script src="{{ url_for('static', filename='viewBilling.js') }}"></script>
-</body>
+{% endblock %}
 
 
