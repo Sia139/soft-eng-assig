@@ -73,6 +73,8 @@ def update_fee_route(fee_id):
         return jsonify({"message": message}), 200
     return jsonify({"message": f"Error updating fee: {message}"}), 400
 
+""" -------------------------------------------------------------------------------------------------- """
+
 @accountant_blueprint.route("/delete_fee/<int:fee_id>", methods=["DELETE"])
 @login_required
 def delete_fee_route(fee_id):
@@ -81,6 +83,8 @@ def delete_fee_route(fee_id):
     if success:
         return jsonify({"message": message}), 200
     return jsonify({"message": f"Error deleting fee: {message}"}), 400
+
+""" -------------------------------------------------------------------------------------------------- """
 
 @accountant_blueprint.route("/viewInvoice", methods=["GET"])
 @login_required
@@ -129,33 +133,30 @@ def viewInvoice():
 
     return render_template("viewInvoice.html", invoices=invoices)
 
-@accountant_blueprint.route("/download_invoice/<int:invoice_id>")
-@login_required
-def download_invoice(invoice_id):
-    # Implement invoice download functionality
-    # This could generate a PDF or Excel file of the invoice
-    pass
+""" -------------------------------------------------------------------------------------------------- """
 
-@accountant_blueprint.route("/preview_fees/<grade>", methods=["POST"])
-@login_required
-def preview_fees(grade):
-    try:
-        # Get students in the specified grade
-        students = Student.query.filter_by(grade=grade).all()
+# @accountant_blueprint.route("/preview_fees/<grade>", methods=["POST"])
+# @login_required
+# def preview_fees(grade):
+#     try:
+#         # Get students in the specified grade
+#         students = Student.query.filter_by(grade=grade).all()
         
-        if not students:
-            return jsonify({"error": "No students found in this grade"}), 404
+#         if not students:
+#             return jsonify({"error": "No students found in this grade"}), 404
             
-        # Format student data for preview
-        students_data = [{
-            "name": student.name,
-            "transport": student.transport
-        } for student in students]
+#         # Format student data for preview
+#         students_data = [{
+#             "name": student.name,
+#             "transport": student.transport
+#         } for student in students]
         
-        return jsonify({"students": students_data})
+#         return jsonify({"students": students_data})
         
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
+""" -------------------------------------------------------------------------------------------------- """
 
 @accountant_blueprint.route("/fee_preview", methods=["GET"])
 @login_required
@@ -165,6 +166,10 @@ def fee_preview():
     lunch = request.args.get('lunch', '0')
     transport = request.args.get('transport', '0')
     
+    tuition_float = float(tuition)
+    lunch_float = float(lunch)
+    transport_float = float(transport)
+    
     # Get students in the specified grade
     students = Student.query.filter_by(grade=grade).all()
     
@@ -172,20 +177,36 @@ def fee_preview():
     preview_data = []
     for student in students:
         total = (
-            float(transport) if student.transport else 0 +
-            float(tuition) +
-            float(lunch)
+            (transport_float if student.transport else 0) +
+            tuition_float +
+            lunch_float
         )
         
         preview_data.append({
             'name': student.name,
             'grade': grade,
-            'tuition': tuition,
-            'lunch': lunch,
-            'transport': transport if student.transport else '0.00',
+            'tuition': f"{tuition_float:.2f}",
+            'lunch': f"{lunch_float:.2f}",
+            'transport': f"{transport_float:.2f}" if student.transport else '0.00',
             'total': f"{total:.2f}"
         })
     
     return render_template('feePreview.html', 
                          preview_data=preview_data, 
                          grade=grade)
+    
+""" -------------------------------------------------------------------------------------------------- """
+
+@accountant_blueprint.route("/invoice_Details/<int:invoice_id>", methods=["GET"])
+@login_required
+def invoice_details(invoice_id):
+    # Retrieve the invoice along with its fee and student details.
+    invoice = Invoice.query.options(
+        joinedload(Invoice.fees).joinedload(Fee.student)
+    ).get(invoice_id)
+    
+    if not invoice:
+         flash("Invoice not found", "danger")
+         return redirect(url_for("accountant.viewInvoice"))
+         
+    return render_template('invoiceDetail.html', invoice=invoice)

@@ -10,6 +10,10 @@
 </head>
 
 <body>
+
+
+</body>
+
     <!-- Sidebar -->
     <div id="mySidebar" class="sidebar">
         <div class="logo-section">
@@ -34,6 +38,7 @@
 
     <!-- Main Content -->
     <div class="main-content">
+
         <header class="header">
             <div class="time">08:27am</div>
             <div class="admin-section">
@@ -42,19 +47,21 @@
         </header>
 
         <section class="content">
+
             <div class="header-container">
+
                 <h1>View Invoices</h1>
 
                 <form method="GET" action="{{ url_for('accountant.viewInvoice') }}">
                     <div class="search-bar">
                         <input type="text" name="student_name" placeholder="Search by student name" 
-                               value="{{ request.args.get('student_name', '') }}">
+                            value="{{ request.args.get('student_name', '') }}">
                         <input type="date" name="start_date" 
-                               value="{{ request.args.get('start_date', '') }}" 
-                               placeholder="Start Date">
+                            value="{{ request.args.get('start_date', '') }}" 
+                            placeholder="Start Date">
                         <input type="date" name="end_date" 
-                               value="{{ request.args.get('end_date', '') }}" 
-                               placeholder="End Date">
+                            value="{{ request.args.get('end_date', '') }}" 
+                            placeholder="End Date">
                         <select name="grade">
                             <option value="">Select Grade</option>
                             <option value="4" {% if request.args.get('grade') == "4" %}selected{% endif %}>Grade 4</option>
@@ -74,61 +81,26 @@
                         <th onclick="sortTable(2)">Grade <span class="sort"></span></th>
                         <th onclick="sortTable(3)">Due Date <span class="sort"></span></th>
                         <th onclick="sortTable(4)">Total Amount <span class="sort"></span></th>
-                        <th>Flag</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {% if invoices %}
                         {% for invoice in invoices %}
+
                             <tr>
                                 <td>{{ invoice.id }}</td>
                                 <td>{{ invoice.fees[0].student.name }}</td>
                                 <td>{{ invoice.fees[0].student.grade }}</td>
                                 <td>{{ invoice.fees[0].due_date.strftime('%Y-%m-%d') }}</td>
                                 <td>RM {{ "%.2f"|format(invoice.total_amount) }}</td>
-                                
-                                <td class="flag">
-                                    {% if invoice.flag %}
-                                        <button class="flag-btn red">&#9873;</button>
-                                    {% else %}
-                                        <button class="flag-btn">&#9873;</button>
-                                    {% endif %}
+                               <td>
+                                    <!-- Pass the invoice id to the invoice_details route -->
+                                    <a href="{{ url_for('accountant.invoice_details', invoice_id=invoice.id) }}">View Details</a>
                                 </td>
+                            </tr>
 
-                                <td>
-                                    <button class="view-btn" onclick="viewInvoiceDetails({{ invoice.id }})">View Details</button>
-                                    <button class="download-btn" onclick="downloadInvoice({{ invoice.id }})">Download</button>
-                                </td>
-                            </tr>
-                            <!-- Hidden row for invoice details -->
-                            <tr class="invoice-details" id="details-{{ invoice.id }}" style="display: none;">
-                                <td colspan="6">
-                                    <div class="fee-details">
-                                        <h4>Fee Details:</h4>
-                                        <table class="inner-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Fee Type</th>
-                                                    <th>Amount</th>
-                                                    <th>Due Date</th>
-                                                    <th>Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for fee in invoice.fees %}
-                                                    <tr>
-                                                        <td>{{ fee.fee_type }}</td>
-                                                        <td>RM {{ "%.2f"|format(fee.amount) }}</td>
-                                                        <td>{{ fee.due_date.strftime('%Y-%m-%d') }}</td>
-                                                        <td>{{ fee.status }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </td>
-                            </tr>
                         {% endfor %}
                     {% else %}
                         <tr>
@@ -137,31 +109,12 @@
                     {% endif %}
                 </tbody>
             </table>
+
         </section>
+
     </div>
-
-    <script>
-        function viewInvoiceDetails(invoiceId) {
-            const detailsRow = document.getElementById(`details-${invoiceId}`);
-            if (detailsRow.style.display === 'none') {
-                detailsRow.style.display = 'table-row';
-            } else {
-                detailsRow.style.display = 'none';
-            }
-        }
-
-        function downloadInvoice(invoiceId) {
-            // Implement download functionality
-            window.location.href = `/accountant/download_invoice/${invoiceId}`;
-        }
-
-        function sortTable(n) {
-            // Implement table sorting functionality
-            // ... (you can reuse the sorting logic from viewBilling.js)
-        }
-    </script>
 
     <script src="{{ url_for('static', filename='viewBilling.js') }}"></script>
 </body>
 
-</html>
+
