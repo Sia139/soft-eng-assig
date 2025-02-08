@@ -19,3 +19,10 @@ def parent_dashboard():
                 'due_date': fee.due_date
             })
     return render_template("dashboard.html", role="Parent", student_fees=student_fees)
+
+""" -------------------------------------------------------------------------------------------------- """  
+
+@parent_blueprint.route("/notification")
+@login_required
+def notification():
+    return render_template("notifications.html", role="Parent")

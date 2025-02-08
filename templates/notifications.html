@@ -1,0 +1,38 @@
+{% extends "parentBase.html" %}
+
+{% block style %}
+<title>Notifications</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='notifications.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="content">
+    <div class="header-container">
+        <h1>View notifications</h1>
+        <div class="search-bar">
+            <input type="text" placeholder="Search by name">
+            <button>&#x27A4;</button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="notification-header">
+            <div class="sender">
+                &#128100; <strong>Teacher Yeoh</strong>
+            </div>
+            <div class="time">7:15am 05/03/2003</div>
+        </div>
+
+        <p>Dear Mr. Sia, <br><br>
+            Just to remind that the payment of RM3507 for your child Adolf Yeoh is due soon. <br><br>
+            Thank you.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="notification-actions">
+            <button class="mark-read-btn" onclick="markAsRead(this)">Mark as read</button>
+            <button class="delete-btn" onclick="deleteNotification(this)">&#128465;</button>
+        </div>
+    </div>
+</section>
+<script src="{{ url_for('static', filename='notifications.js') }}"></script>
+{% endblock %}
