@@ -359,8 +359,11 @@ table tbody tr:last-child td {
     color: red;
     font-size: 1.2rem;
     cursor: pointer;
+    background: #cfcfcf;
+    border-radius: 0.5rem;
 }
 
 .delete-icon:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    background: #a8a8a8;
 }
