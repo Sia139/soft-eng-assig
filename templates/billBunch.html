@@ -118,11 +118,7 @@
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
-            </div>
-
-        </section>
-    </div>
-    
+            </div>    
     <script>
         document.querySelector('form').addEventListener('submit', function(event) {
             const day = document.getElementById('day').value;
@@ -146,6 +142,7 @@
             window.location.href = `/accountant/fee_preview?grade=${grade}&tuition=${tuitionFee}&lunch=${lunchFee}&transport=${transportFee}`;
         });
     </script>
+    </section>
     
     <script src="{{ url_for('static', filename='billBunch.js') }}" ></script>
 {% endblock %}
