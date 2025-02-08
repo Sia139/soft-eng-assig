@@ -1,118 +1,158 @@
-<!DOCTYPE html>
-<html lang="en">
+{% if current_user.role == 'teacher' %}
+{% extends "teacherBase.html" %}
+{% elif current_user.role == 'admin'%}
+{% extends "adminBase.html" %}
+{% elif current_user.role == 'accountant' %}
+{% extends "accountantBase.html" %}
+{% elif current_user.role == 'parent'%}
+{% extends "parentBase.html" %}
+{% endif %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Details</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='billBunch.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+{% block header %}
+<title>Invoice Details</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='viewBilling.css') }}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+{% endblock %}
 
-    <style>
-        /* Optional: Add some simple styling to improve the invoice look */
-        .invoice-summary {
-            margin-bottom: 20px;
-        }
+{% block content %}
 
-        .invoice-summary p {
-            margin: 0 0 5px 0;
-        }
+<style>
+    /* Optional: Add some simple styling to improve the invoice look */
+    .invoice-summary {
+        margin-bottom: 20px;
+    }
 
-        .preview-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
+    .invoice-summary p {
+        margin: 0 0 5px 0;
+    }
 
-        .preview-table th,
-        .preview-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
+    .preview-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
 
-        .preview-table th {
-            background-color: #f2f2f2;
-        }
+    .preview-table th,
+    .preview-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
 
-        .total-amount {
-            text-align: right;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-    </style>
-</head>
+    .preview-table th {
+        background-color: #f2f2f2;
+    }
 
-<body>
-    <div class="main-content">
-        <section class="content">
-            <div class="header-container">
-                <h1>Invoice Details</h1>
-                <button onclick="window.history.back()" class="back-btn">Back</button>
-                <!-- Download PDF button -->
-                <button id="downloadPDF" class="download-btn">Download PDF</button>
-            </div>
+    .total-amount {
+        text-align: right;
+        font-size: 1.2em;
+        font-weight: bold;
+    }
 
-            <!-- Invoice summary header -->
-            <div id="makepdf">
-                <div class="invoice-summary">
-                    <h2>Invoice #{{ invoice.id }}</h2>
-                    {% if invoice.fees|length > 0 %}
-                        <p><strong>Student Name:</strong> {{ invoice.fees[0].student.name }}</p>
-                        <p><strong>Grade:</strong> {{ invoice.fees[0].student.grade }}</p>
-                    {% else %}
-                        <p>No fee items available.</p>
-                    {% endif %}
-                </div>
+    .back-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        background: #ffdd00;
+        color: black;
+        /* margin-left: 10px; */
+    }
 
-                <!-- Detailed fee list -->
-                <div class="preview-container">
-                    <table class="preview-table">
-                        <thead>
-                            <tr>
-                                <th>Fee Type</th>
-                                <th>Due Date</th>
-                                <th>Amount (RM)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% set total = 0 %}
-                            {% for fee in invoice.fees %}
-                                <tr>
-                                    <td>{{ fee.fee_type }}</td>
-                                    <td>{{ fee.due_date.strftime('%Y-%m-%d') }}</td>
-                                    <td>{{ "%.2f"|format(fee.amount) }}</td>
-                                </tr>
-                                {% set total = total + fee.amount %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    <div class="total-amount">
-                        Total Invoice Amount: RM {{ "%.2f"|format(invoice.total_amount) }}
-                    </div>
-                </div>
-            </div>
-        </section>
+    .download-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        background: #007bff;
+        color: white;
+        margin-left: 10px;
+    }
+
+    .download-btn:hover {
+        background: #0056b3;
+    }
+
+    .back-btn:hover {
+        background: #ffcc07;
+    }
+</style>
+
+<section class="content">
+    <div class="header-container">
+        <h1>Invoice Details</h1>
+        <button onclick="window.history.back()" class="back-btn">Back</button>
+        <!-- Download PDF button -->
+        <button id="downloadPDF" class="download-btn">Download PDF</button>
     </div>
 
-    <script>
-        // When the downloadPDF button is clicked, generate the PDF from the invoiceDetails div
-        let button = document.getElementById("downloadPDF");
-        let makepdf = document.getElementById("makepdf");
+    <!-- Invoice summary header -->
+    <div id="makepdf">
+        <div class="invoice-summary">
+            <h2>Invoice #{{ invoice.id }}</h2>
+            {% if invoice.fees|length > 0 %}
+            <p><strong>Student Name:</strong> {{ invoice.fees[0].student.name }}</p>
+            <p><strong>Grade:</strong> {{ invoice.fees[0].student.grade }}</p>
+            {% else %}
+            <p>No fee items available.</p>
+            {% endif %}
+        </div>
 
-        button.addEventListener("click", function () {
-            let mywindow = window.open("", "PRINT", "height=400,width=600");
+        <!-- Detailed fee list -->
+        <div class="preview-container">
+            <table class="preview-table">
+                <thead>
+                    <tr>
+                        <th>Fee Type</th>
+                        <th>Due Date</th>
+                        <th>Amount (RM)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set total = 0 %}
+                    {% for fee in invoice.fees %}
+                    <tr>
+                        <td>{{ fee.fee_type }}</td>
+                        <td>{{ fee.due_date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ "%.2f"|format(fee.amount) }}</td>
+                    </tr>
+                    {% set total = total + fee.amount %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="total-amount">
+                Total Invoice Amount: RM {{ "%.2f"|format(invoice.total_amount) }}
+            </div>
+        </div>
+    </div>
+</section>
+</div>
 
-            mywindow.document.write(makepdf.innerHTML);
-            mywindow.document.close();
-            mywindow.focus();
+<script>
+    // When the downloadPDF button is clicked, generate the PDF from the invoiceDetails div
+    let button = document.getElementById("downloadPDF");
+    let makepdf = document.getElementById("makepdf");
 
-            mywindow.print();
-            mywindow.close();
+    button.addEventListener("click", function () {
+        let mywindow = window.open("", "PRINT", "height=400,width=600");
 
-            return true;
-        });
-    </script>
-</body>
+        mywindow.document.write(makepdf.innerHTML);
+        mywindow.document.close();
+        mywindow.focus();
 
-</html>
+        mywindow.print();
+        mywindow.close();
+
+        return true;
+    });
+</script>
+<script src="{{ url_for('static', filename='viewBilling.js') }}"></script>
+{% endblock %}

@@ -1,120 +1,89 @@
-<!DOCTYPE html>
-<html lang="en">
+{% if current_user.role == 'teacher' %}
+{% extends "teacherBase.html" %}
+{% elif current_user.role == 'admin'%}
+{% extends "adminBase.html" %}
+{% elif current_user.role == 'accountant' %}
+{% extends "accountantBase.html" %}
+{% elif current_user.role == 'parent'%}
+{% extends "parentBase.html" %}
+{% endif %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Invoices</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='viewInvoice.css') }}">
-</head>
+{% block header %}
+<title>View Invoices</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='viewInvoice.css') }}">
+{% endblock %}
 
-<body>
-
-
-</body>
-
-    <!-- Sidebar -->
-    <div id="mySidebar" class="sidebar">
-        <div class="logo-section">
-            <img src="{{ url_for('static', filename='images/kids.jpeg') }}">
-        </div>
-        <nav class="menu">
-            <div class="dropdown">
-                <button class="dropdown-btn">Fee</button>
-                <div class="dropdown-content">
-                    <a href="{{ url_for('accountant.viewBilling') }}">View & edit bill</a>
-                    <a href="{{ url_for('accountant.viewInvoice') }}">View Invoices</a>
-                    <a href="{{ url_for('accountant.billBunch') }}">Create bill bunch</a>
+{% block content %}
+<section class="content">
+    <div class="header-container">
+        <form method="GET" action="{{ url_for('accountant.viewInvoice') }}">
+            <div class="header-top">
+                <h1>View Invoice</h1>
+                <div class="date-filters">
+                    <span>Due Date:</span>
+                    <input type="date" name="start_date" value="{{ request.args.get('start_date', '') }}"
+                        placeholder="Start Due Date">
+                    <span> to </span>
+                    <input type="date" name="end_date" value="{{ request.args.get('end_date', '') }}"
+                        placeholder="End Date">
                 </div>
             </div>
-        </nav>
-        <div class="logout-section">
-            <a href="/logout">&#x2190;</a>
-        </div>
+
+            <div class="search-bar">
+                <input type="text" name="student_name" placeholder="Search by student name"
+                    value="{{ request.args.get('student_name', '') }}">
+                
+                <select name="grade">
+                    <option value="">Select Grade</option>
+                    <option value="4" {% if request.args.get('grade')=="4" %}selected{% endif %}>Grade 4</option>
+                    <option value="5" {% if request.args.get('grade')=="5" %}selected{% endif %}>Grade 5</option>
+                    <option value="6" {% if request.args.get('grade')=="6" %}selected{% endif %}>Grade 6</option>
+                </select>
+                <button type="submit">&#x27A4;</button>
+            </div>
+        </form>
     </div>
 
-    <button class="collapse-button">&#9776;</button>
+    <table id="invoiceTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Invoice ID <span class="sort"></span></th>
+                <th onclick="sortTable(1)">Student Name <span class="sort"></span></th>
+                <th onclick="sortTable(2)">Grade <span class="sort"></span></th>
+                <th onclick="sortTable(3)">Due Date <span class="sort"></span></th>
+                <th onclick="sortTable(4)">Total Amount <span class="sort"></span></th>
+                <th>Actions</th>
+            </tr>
+        </thead>
 
-    <!-- Main Content -->
-    <div class="main-content">
+        <tbody>
+            {% if invoices %}
+            {% for invoice in invoices %}
 
-        <header class="header">
-            <div class="time">08:27am</div>
-            <div class="admin-section">
-                <span>Accountant</span>
-            </div>
-        </header>
+            <tr>
+                <td>{{ invoice.id }}</td>
+                <td>{{ invoice.fees[0].student.name }}</td>
+                <td>{{ invoice.fees[0].student.grade }}</td>
+                <td>{{ invoice.fees[0].due_date.strftime('%Y-%m-%d') }}</td>
+                <td>RM {{ "%.2f"|format(invoice.total_amount) }}</td>
+                <td>
+                    <!-- Pass the invoice id to the invoice_details route -->
+                    <a class="view-detail" href="{{ url_for('accountant.invoice_details', invoice_id=invoice.id) }}">View Details</a>
+                </td>
+            </tr>
 
-        <section class="content">
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="6">No invoices found.</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
 
-            <div class="header-container">
+</section>
 
-                <h1>View Invoices</h1>
+</div>
 
-                <form method="GET" action="{{ url_for('accountant.viewInvoice') }}">
-                    <div class="search-bar">
-                        <input type="text" name="student_name" placeholder="Search by student name" 
-                            value="{{ request.args.get('student_name', '') }}">
-                        <input type="date" name="start_date" 
-                            value="{{ request.args.get('start_date', '') }}" 
-                            placeholder="Start Date">
-                        <input type="date" name="end_date" 
-                            value="{{ request.args.get('end_date', '') }}" 
-                            placeholder="End Date">
-                        <select name="grade">
-                            <option value="">Select Grade</option>
-                            <option value="4" {% if request.args.get('grade') == "4" %}selected{% endif %}>Grade 4</option>
-                            <option value="5" {% if request.args.get('grade') == "5" %}selected{% endif %}>Grade 5</option>
-                            <option value="6" {% if request.args.get('grade') == "6" %}selected{% endif %}>Grade 6</option>
-                        </select>
-                        <button type="submit">&#x27A4;</button>
-                    </div>
-                </form>
-            </div>
-
-            <table id="invoiceTable">
-                <thead>
-                    <tr>
-                        <th onclick="sortTable(0)">Invoice ID <span class="sort"></span></th>
-                        <th onclick="sortTable(1)">Student Name <span class="sort"></span></th>
-                        <th onclick="sortTable(2)">Grade <span class="sort"></span></th>
-                        <th onclick="sortTable(3)">Due Date <span class="sort"></span></th>
-                        <th onclick="sortTable(4)">Total Amount <span class="sort"></span></th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% if invoices %}
-                        {% for invoice in invoices %}
-
-                            <tr>
-                                <td>{{ invoice.id }}</td>
-                                <td>{{ invoice.fees[0].student.name }}</td>
-                                <td>{{ invoice.fees[0].student.grade }}</td>
-                                <td>{{ invoice.fees[0].due_date.strftime('%Y-%m-%d') }}</td>
-                                <td>RM {{ "%.2f"|format(invoice.total_amount) }}</td>
-                               <td>
-                                    <!-- Pass the invoice id to the invoice_details route -->
-                                    <a href="{{ url_for('accountant.invoice_details', invoice_id=invoice.id) }}">View Details</a>
-                                </td>
-                            </tr>
-
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="6">No invoices found.</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-
-        </section>
-
-    </div>
-
-    <script src="{{ url_for('static', filename='viewBilling.js') }}"></script>
-</body>
-
-
+<script src="{{ url_for('static', filename='viewInvoice.js') }}"></script>
+{% endblock %}
