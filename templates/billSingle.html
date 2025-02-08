@@ -1,0 +1,74 @@
+<!--billSingle.html-->
+{% if current_user.role == 'teacher' %}
+    {% extends "teacherBase.html" %}
+{% elif current_user.role == 'admin'%}
+    {% extends "adminBase.html" %}
+{% elif current_user.role == 'accountant' %}
+    {% extends "accountantBase.html" %}
+{% elif current_user.role == 'parent'%}
+    {% extends "parentBase.html" %}
+{% endif %}
+
+{% block header %}
+    <title>Create Bill Single</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='billSingle.css') }}">
+{% endblock %}
+
+{% block content %}
+        <section class="content">
+            <div class="header-container">
+                <h1>Create Bill by Individual</h1>
+            </div>
+
+            <div class="container">
+                <form class="form" action="#">
+                    <div class="form-group">
+                        <label for="people">Student:</label>
+                        <input type="text" id="people">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="details">Details:</label>
+                        <input type="text" id="details">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Price(RM):</label>
+                        <input type="text" id="price">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Due date:</label>
+                        <div class="birthday">
+                            <input type="text" id="day" maxlength="2" placeholder="DD">
+                            <span>/</span>
+                            <input type="text" id="month" maxlength="2" placeholder="MM">
+                            <span>/</span>
+                            <input type="text" id="year" maxlength="4" placeholder="YYYY">
+                            <button type="button" id="calendar-btn">📅</button>
+                            <input type="date" id="calendar" style="display: none;" />
+                        </div>
+                    </div>
+
+                    <!--
+                    <div class="form-group">
+                        <label for="author">Author:</label>
+                        <input type="text" id="author">
+                    </div>
+                    -->
+
+                    <div class="form-group">
+                        <label for="download">Download Invoice Preview:</label>
+                        <button type="button" class="download-btn" id="download-btn">Download</button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Save</button>
+                        <button type="button" class="cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        </div>  
+        <script src="{{ url_for('static', filename='billSingle.js') }}"></script>
+{% endblock %}
