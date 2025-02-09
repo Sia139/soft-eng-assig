@@ -309,7 +309,8 @@ body {
 /* Content Section */
 .content {
     padding: 2rem;
-    overflow-y: auto;
+    height: calc(100vh - 2rem); /* Set height to viewport height minus padding */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .content h1 {
