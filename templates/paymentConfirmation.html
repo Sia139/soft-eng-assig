@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="main-content">
+
     <section class="content">
         <div class="confirmation-container">
             <h1>Payment Confirmation</h1>
@@ -22,30 +22,29 @@
             <a href="{{ url_for('parent.make_payment', student_id=student_id) }}" class="cancel-btn">Cancel</a>
         </div>
     </section>
-</div>
 
-<script>
-document.getElementById('payment-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    fetch(this.action, {
-        method: 'POST',
-        body: new FormData(this),
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message);
-        if (data.status === 'success') {
-            window.location.href = "{{ url_for('parent.make_payment', student_id=student_id) }}";
-        }
-    })
-    .catch(error => {
-        alert('An error occurred while processing payment');
-        console.error('Error:', error);
-    });
-});
-</script>
+    <script>
+        document.getElementById('payment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === 'success') {
+                    window.location.href = "{{ url_for('parent.make_payment', student_id=student_id) }}";
+                }
+            })
+            .catch(error => {
+                alert('An error occurred while processing payment');
+                console.error('Error:', error);
+            });
+        });
+    </script>
 {% endblock %} 

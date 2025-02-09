@@ -7,91 +7,91 @@
 
 {% block content %}
     <!-- Main Content -->
-    <div class="main-content">
-        <section class="content">
-            <div class="header-container">
-                <div class="header-left">
-                    <h1>Make Payment</h1>
-                    {% if students|length > 1 %}
-                    <div class="student-selector">
-                        <select id="student-select" onchange="window.location.href=this.value">
-                            <option value="">Select Student</option>
-                            {% for s in students %}
-                            <option value="{{ url_for('parent.make_payment', student_id=s.id) }}"
-                                    {% if student and student.id == s.id %}selected{% endif %}>
-                                {{ s.name }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="header-right">
-                    <h1 class="overdue">Total overdue: RM
-                        <span class="overdue-amount">{{ "%.2f"|format(total_overdue) }}</span>
-                    </h1>
-                    {% if student %}
-                    <form action="{{ url_for('parent.process_payment', student_id=student.id) }}" method="POST">
-                        <select id="payment-method" name="payment_method" class="payment-method" required>
-                            <option value="">Select payment method</option>
-                            <option value="online-banking">Online banking</option>
-                            <option value="card">Cards</option>
-                        </select>
-                        <input type="hidden" name="fee_ids" value="{{ fee_ids }}">
-                        <button type="submit" class="submit-btn" id="submit-btn">
-                            Submit payment
-                        </button>
-                    </form>
-                    {% endif %}
-                </div>
-            </div>
 
-            {% if student and fees %}
-            <table id="myTable2">
-                <thead>
-                    <tr>
-                        <th onclick="sortTable(0)"># <span class="sort"></span></th>
-                        <th onclick="sortTable(1)">Invoice <span class="sort"></span></th>
-                        <th onclick="sortTable(2)">Details <span class="sort"></span></th>
-                        <th onclick="sortTable(3)">Charges <span class="sort"></span></th>
-                        <th onclick="sortTable(4)">Due date <span class="sort"></span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for fee in fees %}
-                    <tr>
-                        <td>
-                            <span class="id">{{ loop.index }}</span>
-                        </td>
-                        <td>
-                            <span class="invoice">
-                                <a href="#">#{{ fee.invoice_id }}</a>
-                            </span>
-                        </td>
-                        <td>
-                            <span class="details">{{ fee.fee_type }}</span>
-                        </td>
-                        <td>
-                            <span class="charges">{{ "%.2f"|format(fee.amount) }}</span>
-                        </td>
-                        <td>
-                            <span class="dueDate">{{ fee.due_date.strftime('%d/%m/%Y') }}</span>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% elif not student %}
-            <div class="no-student-selected">
-                <p>Please select a student to view their payment details.</p>
+    <section class="content">
+        <div class="header-container">
+            <div class="header-left">
+                <h1>Make Payment</h1>
+                {% if students|length > 1 %}
+                <div class="student-selector">
+                    <select id="student-select" onchange="window.location.href=this.value">
+                        <option value="">Select Student</option>
+                        {% for s in students %}
+                        <option value="{{ url_for('parent.make_payment', student_id=s.id) }}"
+                                {% if student and student.id == s.id %}selected{% endif %}>
+                            {{ s.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
             </div>
-            {% else %}
-            <div class="no-fees">
-                <p>No unpaid fees found for this student.</p>
+            <div class="header-right">
+                <h1 class="overdue">Total overdue: RM
+                    <span class="overdue-amount">{{ "%.2f"|format(total_overdue) }}</span>
+                </h1>
+                {% if student %}
+                <form action="{{ url_for('parent.process_payment', student_id=student.id) }}" method="POST">
+                    <select id="payment-method" name="payment_method" class="payment-method" required>
+                        <option value="">Select payment method</option>
+                        <option value="online-banking">Online banking</option>
+                        <option value="card">Cards</option>
+                    </select>
+                    <input type="hidden" name="fee_ids" value="{{ fee_ids }}">
+                    <button type="submit" class="submit-btn" id="submit-btn">
+                        Submit payment
+                    </button>
+                </form>
+                {% endif %}
             </div>
-            {% endif %}
-        </section>
-    </div>
+        </div>
+
+        {% if student and fees %}
+        <table id="myTable2">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Index <span class="sort"></span></th>
+                    <th onclick="sortTable(1)">Invoice <span class="sort"></span></th>
+                    <th onclick="sortTable(2)">Details <span class="sort"></span></th>
+                    <th onclick="sortTable(3)">Charges <span class="sort"></span></th>
+                    <th onclick="sortTable(4)">Due date <span class="sort"></span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fee in fees %}
+                <tr>
+                    <td>
+                        <span class="id">{{ loop.index }}</span>
+                    </td>
+                    <td>
+                        <span class="invoice">
+                            <a href="#">#{{ fee.invoice_id }}</a>
+                        </span>
+                    </td>
+                    <td>
+                        <span class="details">{{ fee.fee_type }}</span>
+                    </td>
+                    <td>
+                        <span class="charges">{{ "%.2f"|format(fee.amount) }}</span>
+                    </td>
+                    <td>
+                        <span class="dueDate">{{ fee.due_date.strftime('%d/%m/%Y') }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% elif not student %}
+        <div class="no-student-selected">
+            <p>Please select a student to view their payment details.</p>
+        </div>
+        {% else %}
+        <div class="no-fees">
+            <p>No unpaid fees found for this student.</p>
+        </div>
+        {% endif %}
+    </section>
+
     <script src="{{ url_for('static', filename='makePayment.js') }}"></script>
 
 {% endblock %}

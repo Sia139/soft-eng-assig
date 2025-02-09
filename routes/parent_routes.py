@@ -162,13 +162,10 @@ def complete_payment(student_id):
 @login_required
 def payment_history():
     # Get only the specific user's paid payments first
-    payments = Payment.query\
-        .filter_by(
-            user_id=current_user.id,
-            status='paid'
-        )\
-        .order_by(Payment.id.asc())\
-        .all()
+    payments = Payment.query.filter_by(
+                user_id=current_user.id,
+                status='paid'
+            ).order_by(Payment.id.asc()).all()
     
     payment_history = []
     
