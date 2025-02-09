@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student, Invoice
-from function import create_fees_for_grade, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details
+from function import create_fees_for_grade, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details, toggle_invoice_flag
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy.orm import joinedload
@@ -252,6 +252,8 @@ def invoice_details(invoice_id):
     
     return render_template('invoiceDetail.html', invoice=invoice)
 
+""" -------------------------------------------------------------------------------------------------- """
+
 @accountant_blueprint.route("/single_fee_preview", methods=["GET"])
 @login_required
 def single_fee_preview():
@@ -273,3 +275,68 @@ def single_fee_preview():
                          student=student,
                          details=details,
                          price=f"{price_float:.2f}")
+    
+    
+@accountant_blueprint.route("/payment_tracking", methods=["GET"])
+@login_required
+def payment_tracking():
+    # Get query parameters
+    student_name = request.args.get("name")  # Fixed parameter for student name search
+    grade = request.args.get("grade")
+    status = request.args.get("status")  # Paid/Unpaid filter
+
+
+    # Build the query
+    query = Invoice.query.join(Fee).join(Student)
+
+    # Filter by student name
+    if student_name:
+        query = query.filter(Student.name.ilike(f"%{student_name}%"))
+
+    # Filter by grade
+    if grade:
+        query = query.filter(Student.grade == grade)
+
+    # Filter by payment status (paid/unpaid)
+    if status == "paid":
+        query = query.filter(Fee.status == "paid")
+    elif status == "unpaid":
+        query = query.filter(Fee.status == "unpaid")
+
+    # Retrieve and sort invoices
+    invoices = query.options(
+        joinedload(Invoice.fees).joinedload(Fee.student)
+    ).order_by(Invoice.id.desc()).all()
+
+    return render_template(
+        "paymentTracking.html",
+        invoices=invoices,
+        filter_status=status,
+        filter_grade=grade,
+        search_name=student_name
+    )
+
+@accountant_blueprint.route("/toggle_invoice_flag/<int:invoice_id>", methods=["POST"])
+@login_required
+def toggle_invoice_flag(invoice_id):
+    try:
+        invoice = Invoice.query.get_or_404(invoice_id)
+        invoice.flag = not invoice.flag  # Set flag to True when clicked
+        db.session.commit()
+        return jsonify({"status": "success"}), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "status": "error", 
+            "message": str(e)
+        }), 500
+
+# @accountant_blueprint.route("/toggle_invoice_flag/<int:invoice_id>", methods=["POST"])
+# @login_required
+# def toggle_invoice_flag_route(invoice_id):
+#     """
+#     Route to toggle invoice flag.
+#     """
+#     response, status_code = toggle_invoice_flag(invoice_id)
+#     return jsonify(response), status_code

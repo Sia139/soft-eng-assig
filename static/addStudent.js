@@ -54,6 +54,8 @@ document.getElementById("calendar").addEventListener("change", function () {
 });
 
 document.querySelector('form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+
     const day = document.getElementById('day').value;
     const month = document.getElementById('month').value;
     const year = document.getElementById('year').value;
@@ -63,6 +65,29 @@ document.querySelector('form').addEventListener('submit', function(event) {
 
     // Set the combined date to the hidden input
     document.getElementById('dob').value = dob;
+
+    // Create FormData object from the form
+    const formData = new FormData(this);
+
+    // Send POST request
+    fetch(this.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Show alert based on the response
+        alert(data.message);
+        
+        // If successful, optionally clear the form
+        if (data.status === 'success') {
+            clearForm();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while submitting the form');
+    });
 });
 
 function updateTime() {
@@ -95,3 +120,14 @@ updateTime();
 
 // Update the time every minute
 setInterval(updateTime, 60000);
+
+fetch(window.location.href)
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    alert("Error: " + data.error);
+                });
+            }
+            return response.text();
+        })
+        .catch(error => console.error("Fetch error:", error));

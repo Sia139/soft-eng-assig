@@ -1,0 +1,82 @@
+<!-- paymentTracking.html -->
+{% if current_user.role == 'teacher' %}
+    {% extends "teacherBase.html" %}
+{% elif current_user.role == 'admin'%}
+    {% extends "adminBase.html" %}
+{% elif current_user.role == 'accountant' %}
+    {% extends "accountantBase.html" %}
+{% elif current_user.role == 'parent'%}
+    {% extends "parentBase.html" %}
+{% endif %}
+
+{% block header %}
+    <title>Payment Tracking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='paymentTracking.css') }}">
+{% endblock %}
+
+
+{% block content %}
+    <section class="content">
+        <div class="header-container">         
+            <div class="header-left">
+                <h1>Payment Tracking</h1>
+                <form method="get" id="search-form">
+                    <select id="grade" name="grade" onchange="this.form.submit();">
+                        <option value="">Select Grade</option>
+                        <option value="4" {% if filter_grade == "4" %}selected{% endif %}>Grade 4</option>
+                        <option value="5" {% if filter_grade == "5" %}selected{% endif %}>Grade 5</option>
+                        <option value="6" {% if filter_grade == "6" %}selected{% endif %}>Grade 6</option>
+                    </select>
+
+                    <select id="status" name="status" onchange="this.form.submit();">
+                        <option value="">All Invoices</option>
+                        <option value="paid" {% if filter_status == "paid" %}selected{% endif %}>Paid</option>
+                        <option value="unpaid" {% if filter_status == "unpaid" %}selected{% endif %}>Unpaid</option>
+                    </select>
+                </from>
+            </div>
+        
+
+            <div class="search-bar">
+                <form method="get" id="search-form">
+                    <input type="text" id="search-name" name="name" placeholder="Search by name" value="{{ request.args.get('name', '') }}">
+                    <button>&#x27A4;</button>
+                </form>
+            </div>
+
+        </div>
+
+        <table id="myTable2">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)"># <span class="sort"></span></th>
+                    <th onclick="sortTable(1)">Name <span class="sort"></span></th>
+                    <th onclick="sortTable(2)">Parent <span class="sort"></span></th>
+                    <th onclick="sortTable(3)">Overdue <span class="sort"></span></th>
+                    <th onclick="sortTable(4)">Due date <span class="sort"></span></th>
+                    <th>Flag</th>
+                </tr>
+            </thead>
+            <tbody>
+               
+                {% for invoice in invoices %}
+                    <tr>
+                        <td><span class="id">{{ invoice.id }}</span></td>
+                        <td><span class="name">{{ invoice.fees[0].student.name }}</span></td>
+                        <td><span class="parent">{{ invoice.fees[0].student.guardian.username if invoice.fees[0].student.guardian else 'No Guardian Assigned' }}</span></td>
+                        <td><span class="overdue">{{ "%.2f"|format(invoice.total_amount) }}</span></td>
+                        <td><span class="dueDate">{{ invoice.fees[0].due_date.strftime('%Y-%m-%d') }}</span></td>
+                        <td class="flag">
+                            <button class="flag-btn {% if invoice.flag %}flagged{% endif %}" 
+                                    onclick="toggleFlag(this, {{ invoice.id }})">&#9873;</button>
+                        </td>
+                        
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </section>
+    
+    <script src="{{ url_for('static', filename='paymentTracking.js') }}"></script>
+{% endblock %}

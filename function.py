@@ -12,10 +12,7 @@ from decimal import Decimal
 def create_student():
     # Ensure only teachers or admins can access this route
     if current_user.role not in ["teacher", "admin"]:
-        flash("Access denied. Only teachers and admins can add students.", "danger")
-        return redirect(url_for("initial page"))
-
-    # if request.method == "POST":
+        return {"status": "error", "message": "Access denied. Only teachers and admins can add students."}
 
     name = request.form.get("name")
     grade = request.form.get("grade")
@@ -25,26 +22,19 @@ def create_student():
 
     # Validate inputs
     if not name or not grade or not dob or not guardian_id:
-        flash("All fields are required.", "danger")
-        return False
-        # return redirect(url_for("teacher.add_student"))
+        return {"status": "error", "message": "All fields are required."}
             
     try:
         dob = datetime.strptime(dob, "%Y-%m-%d").date()
         guardian_id = int(guardian_id)
         
     except ValueError:
-        flash("Invalid input provided.", "danger")
-        # return redirect(url_for("teacher.add_student"))
-        return False   
-        
+        return {"status": "error", "message": "Invalid input provided."}
    
     # Ensure guardian exists and is a parent
     guardian = User.query.filter_by(id=guardian_id, role="parent").first()
     if not guardian:
-        flash("Selected guardian is invalid.", "danger")
-        return False
-        # return redirect(url_for("teacher.add_student"))
+        return {"status": "error", "message": "Selected guardian is invalid."}
             
     # Create and save the new student
     student = Student(
@@ -58,15 +48,11 @@ def create_student():
     try:
         db.session.add(student)
         db.session.commit()
-        flash(f"Student {name} added successfully!", "success")
-        return True
-        # return redirect(url_for("teacher.add_student"))
+        return {"status": "success", "message": f"Student {name} added successfully!"}
             
     except Exception as e:
         db.session.rollback()
-        flash(f"Error adding student: {str(e)}", "danger")
-        return False
-        # return redirect(url_for("teacher.add_student"))
+        return {"status": "error", "message": f"Error adding student: {str(e)}"}
         
 """ -------------------------------------------------------------------------------------------------- """  
  
@@ -353,3 +339,17 @@ def get_invoice_details(invoice_id):
         # return redirect(url_for("accountant.viewInvoice"))
      
     return invoice
+
+
+def toggle_invoice_flag(invoice_id):
+    try:
+        invoice = Invoice.query.get_or_404(invoice_id)
+        invoice.flag = not invoice.flag  # Set flag to True when clicked
+        db.session.commit()
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "status": "error", 
+            "message": str(e)
+        }), 500

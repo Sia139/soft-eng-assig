@@ -9,7 +9,7 @@
     {% block header %} {% endblock %}
 </head>
 
-<body>
+<body  data-role="{{ current_user.role }}">
     <!-- Sidebar -->
     <div id="mySidebar" class="sidebar">
         <div class="logo-section">
@@ -34,7 +34,7 @@
                 <button class="dropdown-btn">Financial</button>
                 <div class="dropdown-content">
                     <a href="#">Financial report</a>
-                    <a href="#">Payment tracking</a>
+                    <a href="{{ url_for('accountant.payment_tracking') }}">Payment tracking</a>
                 </div>
         </nav>
         <div class="logout-section">
@@ -53,7 +53,8 @@
             </div>
         </header>
 
-    {% block content %} {% endblock %}
+        {% block content %} {% endblock %}
+
     </div>
 </body>
 </html>

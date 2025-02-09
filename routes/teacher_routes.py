@@ -18,10 +18,10 @@ def addStudent():
         return "Access Denied", 403
 
     if request.method == "POST":
-        create_student()
+        result = create_student()
+        return jsonify(result)
             
     # Get parents for the dropdown search in the form
-    parents = search_parents_route()
     return render_template("addStudent.html")
 
 """ -------------------------------------------------------------------------------------------------- """  
