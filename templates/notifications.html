@@ -15,6 +15,7 @@
         </div>
     </div>
 
+    <div class="content">
     {% if notifications %}
         {% for notification in notifications %}
         <div class="container">
@@ -24,7 +25,7 @@
                 </div>
             </div>
 
-            <p>{{ notification.message }}</p>
+            <p class="notification">{{ notification.message }}</p>
 
             <!-- Action Buttons -->
             <div class="notification-actions">
@@ -34,8 +35,9 @@
         <br>
         {% endfor %}
     {% else %}
-        <p>No new notifications.</p>
+        <p class="notification">No new notifications.</p>
     {% endif %}
+    </div>
 </section>
 <script>
     function delete_notification(notificationId) {
