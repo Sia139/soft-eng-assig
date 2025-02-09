@@ -356,26 +356,18 @@ table tbody tr:last-child td {
     border-bottom: none;
 }
 
-.flag-btn {
-    color: rgb(150, 150, 150);
-    background-color: white;
-    font-size: 18px;
-    padding: 5px;
-    cursor: pointer;
-    transition: color 0.3s;
-    border: none;
+.receipt {
+    text-decoration: none;
+    background-color: #ffdd00;
+    padding: 10px 10px;
+    margin: auto;
+    border-radius: 25px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    color: black;
+    transition: background-color 0.3s ease;;
 }
 
-.flag-btn.flagged {
-    color: red;
-}
-
-.notify-btn {
-    background-color: white;
-    font-size: 18px;
-    padding: 5px;
-    cursor: pointer;
-    transition: color 0.3s;
-    border: none;
+.receipt:hover {
+    background-color: #ffc107;
 }
 

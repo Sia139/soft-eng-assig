@@ -17,9 +17,12 @@
             <form id="payment-form" action="{{ url_for('parent.complete_payment', student_id=student_id) }}" method="POST">
                 <input type="hidden" name="fee_ids" value="{{ fee_ids }}">
                 <input type="hidden" name="payment_method" value="{{ payment_method }}">
-                <button type="submit" class="pay-btn">Pay Now</button>
+                <div class="button-container">
+                    <button type="submit" class="pay-btn">Pay Now</button>
+                    <a href="{{ url_for('parent.make_payment', student_id=student_id) }}" class="cancel-btn">Cancel</a>
+                </div>
             </form>
-            <a href="{{ url_for('parent.make_payment', student_id=student_id) }}" class="cancel-btn">Cancel</a>
+            
         </div>
     </section>
 
@@ -47,4 +50,5 @@
             });
         });
     </script>
+    <script src="{{ url_for('static', filename='makePayment.js') }}"></script>
 {% endblock %} 
