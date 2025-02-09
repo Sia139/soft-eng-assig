@@ -15,77 +15,100 @@
 {% endblock %}
 
 {% block content %}
-        <section class="content">
-            <div class="header-container">
-                <h1>Create Bill by Individual</h1>
-            </div>
+    <section class="content">
+        <div class="header-container">
+            <h1>Create Bill by Individual</h1>
+        </div>
 
-            <div class="container">
-                <form class="form" action="#">
-                    <div class="form-group">
-                        <label for="studet">Student:</label>
-                        <input type="text" id="student_search" name="student_search" autocomplete="off" required>
-                        <input type="hidden" id="student_id" name="student_id" required>
-                        <ul id="student_results"></ul>
+        <div class="container">
+            <form class="form" action="#">
+                <div class="form-group">
+                    <label for="studet">Student:</label>
+                    <input type="text" id="student_search" name="student_search" autocomplete="off" required>
+                    <input type="hidden" id="student_id" name="student_id" required>
+                    <ul id="student_results"></ul>
+                </div>
+                
+                <div class="form-group">
+                    <label for="details">Details:</label>
+                    <input type="text" id="details">
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Price(RM):</label>
+                    <input type="text" id="price">
+                </div>
+
+                <div class="form-group">
+                    <label>Due date:</label>
+                    <div class="birthday">
+                        <input type="text" id="day" maxlength="2" placeholder="DD">
+                        <span>/</span>
+                        <input type="text" id="month" maxlength="2" placeholder="MM">
+                        <span>/</span>
+                        <input type="text" id="year" maxlength="4" placeholder="YYYY">
+                        <button type="button" id="calendar-btn">📅</button>
+                        <input type="date" id="calendar" style="display: none;" />
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="details">Details:</label>
-                        <input type="text" id="details">
-                    </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="price">Price(RM):</label>
-                        <input type="text" id="price">
-                    </div>
+                <!--
+                <div class="form-group">
+                    <label for="author">Author:</label>
+                    <input type="text" id="author">
+                </div>
+                -->
 
-                    <div class="form-group">
-                        <label>Due date:</label>
-                        <div class="birthday">
-                            <input type="text" id="day" maxlength="2" placeholder="DD">
-                            <span>/</span>
-                            <input type="text" id="month" maxlength="2" placeholder="MM">
-                            <span>/</span>
-                            <input type="text" id="year" maxlength="4" placeholder="YYYY">
-                            <button type="button" id="calendar-btn">📅</button>
-                            <input type="date" id="calendar" style="display: none;" />
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="download">Invoice Preview:</label>
+                    <button type="button" class="download-btn" id="download-btn">Preview</button>
+                </div>
 
-                    <!--
-                    <div class="form-group">
-                        <label for="author">Author:</label>
-                        <input type="text" id="author">
-                    </div>
-                    -->
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">Save</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
 
-                    <div class="form-group">
-                        <label for="download">Download Invoice Preview:</label>
-                        <button type="button" class="download-btn" id="download-btn">Download</button>
-                    </div>
+        <!-- Flash messages -->
+        <div class="flash-messages-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}" style="margin: 0 auto;">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="save-btn">Save</button>
-                        <button type="button" class="cancel-btn">Cancel</button>
-                    </div>
-                </form>
-            </div>
+    </section>
 
-            <!-- Flash messages -->
-            <div class="flash-messages-container">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert {{ category }}" style="margin: 0 auto;">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-            </div>
 
-        </section>
-        </div>  
+   <script>      
+        document.getElementById('download-btn').addEventListener('click', function() {
+            const studentId = document.getElementById('student_id').value;
+            const details = document.getElementById('details').value;
+            const price = document.getElementById('price').value || '0';
+            
+            // Make a fetch request first to check if student exists
+            fetch(`/accountant/single_fee_preview?student_id=${studentId}&details=${details}&price=${price}`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message);
+                        });
+                    }
+                    // If successful, redirect to the preview page
+                    window.location.href = `/accountant/single_fee_preview?student_id=${studentId}&details=${details}&price=${price}`;
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        });
+    </script>
         
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-        <script src="{{ url_for('static', filename='billSingle.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='billSingle.js') }}"></script>
 {% endblock %}

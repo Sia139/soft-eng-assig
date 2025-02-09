@@ -1,12 +1,12 @@
-<!--fee_preview-->
+<!--single_fee_preview.html-->
 {% if current_user.role == 'teacher' %}
-{% extends "teacherBase.html" %}
+    {% extends "teacherBase.html" %}
 {% elif current_user.role == 'admin'%}
-{% extends "adminBase.html" %}
+    {% extends "adminBase.html" %}
 {% elif current_user.role == 'accountant' %}
-{% extends "accountantBase.html" %}
+    {% extends "accountantBase.html" %}
 {% elif current_user.role == 'parent'%}
-{% extends "parentBase.html" %}
+    {% extends "parentBase.html" %}
 {% endif %}
 
 {% block header %}
@@ -15,11 +15,9 @@
 {% endblock %}
 
 {% block content %}
-
 <section class="content">
     <div class="header-container">
         <h1>Fee Preview</h1>
-        
     </div>
 
     <div class="preview-container">
@@ -27,28 +25,19 @@
             <thead>
                 <tr>
                     <th>Student Name</th>
-                    <th>Grade</th>
-                    <th>Tuition (RM)</th>
-                    <th>Lunch (RM)</th>
-                    <th>Transport (RM)</th>
-                    <th>Total (RM)</th>
+                    <th>Details</th>
+                    <th>Amount (RM)</th>
                 </tr>
             </thead>
             <tbody>
-                {% for data in preview_data %}
                 <tr>
-                    <td>{{ data.name }}</td>
-                    <td>{{ data.grade }}</td>
-                    <td>{{ data.tuition }}</td>
-                    <td>{{ data.lunch }}</td>
-                    <td>{{ data.transport }}</td>
-                    <td>{{ data.total }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ details }}</td>
+                    <td>{{ price }}</td>
                 </tr>
-                {% endfor %}
             </tbody>
         </table>
     </div>
     <button onclick="window.history.back()" class="back-btn">Back</button>
 </section>
-<script src="{{ url_for('static', filename='billBunch.js') }}"></script>
-{% endblock %}
+{% endblock %} 

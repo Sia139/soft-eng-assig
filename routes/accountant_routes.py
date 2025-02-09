@@ -251,3 +251,25 @@ def invoice_details(invoice_id):
     #     flash(error, "danger")
     
     return render_template('invoiceDetail.html', invoice=invoice)
+
+@accountant_blueprint.route("/single_fee_preview", methods=["GET"])
+@login_required
+def single_fee_preview():
+    student_id = request.args.get('student_id')
+    details = request.args.get('details')
+    price = request.args.get('price', '0')
+    
+    # Get student information
+    student = Student.query.get(student_id)
+    if not student:
+        return jsonify({
+            "status": "error",
+            "message": "Student not found"
+        }), 404
+    
+    price_float = float(price)
+    
+    return render_template('singleFeePreview.html', 
+                         student=student,
+                         details=details,
+                         price=f"{price_float:.2f}")
