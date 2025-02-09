@@ -84,7 +84,7 @@ def search_students_route():
     return jsonify(students)
 
 """ -------------------------------------------------------------------------------------------------- """  
-# accountant_routes.py
+
 @accountant_blueprint.route("/viewBilling", methods=["GET"])
 @login_required
 def viewBilling():
@@ -99,8 +99,8 @@ def viewBilling():
     fees, error = view_billing(student_name, grade, status, start_date, end_date)
     
     if error:
-        flash(error, "error")
         fees = []
+        return jsonify({"error": error}), 400
 
     return render_template("viewBilling.html", fees=fees)
 

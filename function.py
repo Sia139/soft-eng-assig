@@ -239,6 +239,8 @@ def view_billing(student_name=None, grade=None, status=None, start_date=None, en
     except Exception as e:
         return None, str(e)  # Return no fees and error message
 
+""" -------------------------------------------------------------------------------------------------- """
+
 def update_fee(fee_id, data):
     """
     Generic function to update fee information
@@ -271,6 +273,8 @@ def update_fee(fee_id, data):
     except Exception as e:
         db.session.rollback()
         return False, str(e)
+
+""" -------------------------------------------------------------------------------------------------- """
 
 def delete_fee(fee_id):
     """

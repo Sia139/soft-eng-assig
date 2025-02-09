@@ -122,3 +122,14 @@ updateTime();
 
 // Update the time every minute
 setInterval(updateTime, 60000);
+
+fetch(window.location.href)
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    alert("Error: " + data.error);
+                });
+            }
+            return response.text();
+        })
+        .catch(error => console.error("Fetch error:", error));
