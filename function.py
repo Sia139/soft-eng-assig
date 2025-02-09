@@ -336,3 +336,16 @@ def create_single_fee(student_id, fee_type, amount, due_date):
     except Exception as e:
         db.session.rollback()
         return False, f"Error creating fee: {str(e)}"
+    
+    
+def get_invoice_details(invoice_id):
+    
+    invoice = Invoice.query.options(
+        joinedload(Invoice.fees).joinedload(Fee.student)
+    ).get(invoice_id)
+    
+    # if not invoice:
+    #     return None, "Invoice not found"
+        # return redirect(url_for("accountant.viewInvoice"))
+     
+    return invoice

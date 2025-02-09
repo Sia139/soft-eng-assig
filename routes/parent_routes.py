@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from models import Fee, Student, Payment, Invoice, User, db
 from datetime import datetime
 from sqlalchemy.sql import func, and_
+from function import get_invoice_details
 # from function import view_fee_details, process_payment
 
 parent_blueprint = Blueprint("parent", __name__)
@@ -94,6 +95,8 @@ def process_payment(student_id):
                          total_amount=total_amount,
                          fee_ids=fee_ids)
 
+""" -------------------------------------------------------------------------------------------------- """  
+
 @parent_blueprint.route('/complete_payment/<int:student_id>', methods=['POST'])
 @login_required
 def complete_payment(student_id):
@@ -158,6 +161,8 @@ def complete_payment(student_id):
             'message': 'An error occurred while processing payment'
         }), 500
 
+""" -------------------------------------------------------------------------------------------------- """  
+
 @parent_blueprint.route("/payment-history")
 @login_required
 def payment_history():
@@ -193,3 +198,14 @@ def payment_history():
         payments=payment_history,
         role="Parent"
     )
+    
+""" -------------------------------------------------------------------------------------------------- """  
+
+
+@parent_blueprint.route("/invoice_Details/<int:invoice_id>", methods=["GET"])
+@login_required
+def invoice_details(invoice_id):
+
+    invoice = get_invoice_details(invoice_id)
+
+    return render_template('invoiceDetail.html', invoice=invoice)

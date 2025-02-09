@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student, Invoice
-from function import create_fees_for_grade, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee
+from function import create_fees_for_grade, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy.orm import joinedload
@@ -245,13 +245,9 @@ def fee_preview():
 @accountant_blueprint.route("/invoice_Details/<int:invoice_id>", methods=["GET"])
 @login_required
 def invoice_details(invoice_id):
-    # Retrieve the invoice along with its fee and student details.
-    invoice = Invoice.query.options(
-        joinedload(Invoice.fees).joinedload(Fee.student)
-    ).get(invoice_id)
+    invoice = get_invoice_details(invoice_id)  # Use the renamed function
     
-    if not invoice:
-         flash("Invoice not found", "danger")
-         return redirect(url_for("accountant.viewInvoice"))
-         
+    # if error:
+    #     flash(error, "danger")
+    
     return render_template('invoiceDetail.html', invoice=invoice)
