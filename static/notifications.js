@@ -42,6 +42,22 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let notificationId = this.getAttribute("data-id");
+            console.log("Delete button clicked for notification ID:", notificationId); // Debugging
+
+            if (!notificationId) {
+                console.error("Notification ID not found!");
+                return;
+            }
+
+            delete_notification(notificationId);
+        });
+    });
+});
+
 function updateTime() {
     // Get the current time
     const now = new Date();

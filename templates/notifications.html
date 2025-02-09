@@ -8,31 +8,55 @@
 {% block content %}
 <section class="content">
     <div class="header-container">
-        <h1>View notifications</h1>
+        <h1>View Notifications</h1>
         <div class="search-bar">
             <input type="text" placeholder="Search by name">
             <button>&#x27A4;</button>
         </div>
     </div>
-    <div class="container">
-        <div class="notification-header">
-            <div class="sender">
-                &#128100; <strong>Teacher Yeoh</strong>
+
+    {% if notifications %}
+        {% for notification in notifications %}
+        <div class="container">
+            <div class="notification-header">
+                <div class="sender">
+                    &#128100; <strong>System Notification</strong>
+                </div>
             </div>
-            <div class="time">7:15am 05/03/2003</div>
-        </div>
 
-        <p>Dear Mr. Sia, <br><br>
-            Just to remind that the payment of RM3507 for your child Adolf Yeoh is due soon. <br><br>
-            Thank you.
-        </p>
+            <p>{{ notification.message }}</p>
 
-        <!-- Action Buttons -->
-        <div class="notification-actions">
-            <button class="mark-read-btn" onclick="markAsRead(this)">Mark as read</button>
-            <button class="delete-btn" onclick="deleteNotification(this)">&#128465;</button>
+            <!-- Action Buttons -->
+            <div class="notification-actions">
+                <button class="delete-btn" data-id="{{ notification.id }}">&#128465;</button>
+            </div>
         </div>
-    </div>
+        <br>
+        {% endfor %}
+    {% else %}
+        <p>No new notifications.</p>
+    {% endif %}
 </section>
+<script>
+    function delete_notification(notificationId) {
+        fetch(`/parent/delete-notification/${notificationId}`, {  // Change if needed
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Notification deleted successfully!'); // Show success alert
+                location.reload();  // Refresh the page to update the UI
+            } else {
+                alert('Failed to delete notification: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the notification.');
+        });
+    }
+</script>
 <script src="{{ url_for('static', filename='notifications.js') }}"></script>
 {% endblock %}

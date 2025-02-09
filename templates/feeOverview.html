@@ -26,11 +26,18 @@
                             <option value="5" {% if filter_grade == "5" %}selected{% endif %}>Grade 5</option>
                             <option value="6" {% if filter_grade == "6" %}selected{% endif %}>Grade 6</option>
                         </select>
+
+                        <select id="status" name="status" onchange="this.form.submit();">
+                            <option value="">All Invoices</option>
+                            <option value="paid" {% if filter_status == "paid" %}selected{% endif %}>Paid</option>
+                            <option value="unpaid" {% if filter_status == "unpaid" %}selected{% endif %}>Unpaid</option>
+                        </select>
+        
                     </form>
                 </div>
                 <div class="search-bar">
                     <form method="get" id="search-form">
-                        <input type="text" id="search-name" name="name" placeholder="Search by name" value="{{ search_name }}">
+                        <input type="text" id="search-name" name="name" placeholder="Search by name" value="{{ request.args.get('name', '') }}">
                         <button>&#x27A4;</button>
                     </form>
                 </div>
@@ -49,15 +56,15 @@
                 </thead>
                 <tbody>
 
-                    {% for student in students %}
+                    {% for invoice in invoices %}
                         <tr>
-                            <td><span class="id">{{ student.id }}</span></td>
-                            <td><span class="name">{{ student.name }}</span></td>
-                            <td><span class="parent">{{ student.guardian.username }}</span></td>
-                            <td><span class="overdue">{{ student.overdue }}</span></td>
-                            <td><span class="dueDate">{{ student.dueDate }}</span></td>
+                            <td><span class="id">{{ invoice.id }}</span></td>
+                            <td><span class="name">{{ invoice.fees[0].student.name }}</span></td>
+                            <td><span class="parent">{{ invoice.fees[0].student.guardian.username if invoice.fees[0].student.guardian else 'No Guardian Assigned' }}</span></td>
+                            <td><span class="overdue">{{ "%.2f"|format(invoice.total_amount) }}</span></td>
+                            <td><span class="dueDate">{{ invoice.fees[0].due_date.strftime('%Y-%m-%d') }}</span></td>
                             <td class="flag">
-                                <button class="flag-btn">&#9873;</button>
+                                <button class="flag-btn {% if invoice.flag %}flagged{% endif %}">&#9873;</button>
                             </td>
                             <td class="notify">
                                 <button class="notify-btn" onclick="toggleBell(this)">&#128277;</button>
@@ -71,4 +78,43 @@
         </section>
     </div>
     <script src="{{ url_for('static', filename='feeOverview.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".notify-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    let row = this.closest("tr");
+                    let studentName = row.querySelector(".name").textContent;
+                    let parentUsername = row.querySelector(".parent").textContent;
+                    let amount = row.querySelector(".overdue").textContent;
+
+                    if (!parentUsername || parentUsername === "No Guardian Assigned") {
+                        alert("No guardian assigned for this student.");
+                        return;
+                    }
+
+                    fetch("/teacher/send-notification", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            parent: parentUsername,
+                            student: studentName,
+                            amount: amount
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Notification sent successfully!");
+                        } else {
+                            alert("Failed to send notification: " + data.message);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                });
+            });
+        });
+
+    </script>
 {% endblock %}

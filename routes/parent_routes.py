@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from models import Fee, Student, Payment, Invoice, User, db
+from models import Fee, Notification, Student, Payment, Invoice, User, db
 from datetime import datetime
 from sqlalchemy.sql import func, and_
 from function import get_invoice_details
@@ -28,7 +28,8 @@ def parent_dashboard():
 @parent_blueprint.route("/notification")
 @login_required
 def notification():
-    return render_template("notifications.html", role="Parent")
+    notifications = Notification.query.filter_by(user_id=current_user.id).all()
+    return render_template("notifications.html", notifications=notifications)
 
 """ -------------------------------------------------------------------------------------------------- """  
 
@@ -219,3 +220,21 @@ def receipt(receipt):
     return render_template("receipt.html", payment = payment)
 
 """ -------------------------------------------------------------------------------------------------- """
+
+@parent_blueprint.route("/delete-notification/<int:notification_id>", methods=['POST'])
+@login_required
+def delete_notification(notification_id):
+    print(f"Delete request received for notification ID: {notification_id}")  # Debugging
+
+    notification = Notification.query.filter_by(id=notification_id, user_id=current_user.id).first()
+    
+    if not notification:
+        print("Notification not found!")  # Debugging
+        return jsonify({'status': 'error', 'message': 'Notification not found'}), 404
+
+    db.session.delete(notification)
+    db.session.commit()
+
+    print(f"Notification {notification_id} deleted successfully")  # Debugging
+    return jsonify({'status': 'success', 'message': 'Notification deleted successfully'}), 200
+
