@@ -19,10 +19,11 @@
             <div class="dropdown">
                 <button class="dropdown-btn">Payment</button>
                 <div class="dropdown-content">
-                    <a href="#">Make payment</a>
-                    <a href="#">View history</a>
+                    <a href="{{ url_for('parent.make_payment') }}">Make payment</a>
+                    <a href="{{ url_for('parent.payment_history') }}">View history</a>
                 </div>
             </div>
+
             <div class="dropdown">
                 <button class="dropdown-btn">Notification</button>
                 <div class="dropdown-content">
@@ -31,7 +32,7 @@
             </div>
         </nav>
         <div class="logout-section">
-            <a href="/logout">&#x2190;</a>
+            <a href="\logout">&#x2190;</a>
         </div>
     </div>
 

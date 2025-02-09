@@ -12,20 +12,20 @@
         <section class="content">
             <div class="header-container">
                 <h1>Manage Account</h1>
-                <div class="search-bar">
-                    <form method="GET" action="{{ url_for('admin.manageAccount') }}">
-                        <input type="text" name="search" placeholder="Search by name" value="{{ request.args.get('search', '') }}">
-                        <select name="role">
-                            <option value="">All Roles</option>
-                            <option value="admin" {% if request.args.get('role') == 'admin' %}selected{% endif %}>Admin</option>
-                            <option value="teacher" {% if request.args.get('role') == 'teacher' %}selected{% endif %}>Teacher</option>
-                            <option value="accountant" {% if request.args.get('role') == 'accountant' %}selected{% endif %}>Accountant</option>
-                            <option value="parent" {% if request.args.get('role') == 'parent' %}selected{% endif %}>Parent</option>
-                        </select>
-                        <button type="submit">&#x27A4;</button>
-                    </form>
-                </div>
-            </div>            
+            </div>
+            <div class="search-bar">
+                <form method="GET" action="{{ url_for('admin.manageAccount') }}">
+                    <input type="text" name="search" placeholder="Search by name" value="{{ request.args.get('search', '') }}">
+                    <select name="role">
+                        <option value="">All Roles</option>
+                        <option value="admin" {% if request.args.get('role') == 'admin' %}selected{% endif %}>Admin</option>
+                        <option value="teacher" {% if request.args.get('role') == 'teacher' %}selected{% endif %}>Teacher</option>
+                        <option value="accountant" {% if request.args.get('role') == 'accountant' %}selected{% endif %}>Accountant</option>
+                        <option value="parent" {% if request.args.get('role') == 'parent' %}selected{% endif %}>Parent</option>
+                    </select>
+                    <button type="submit">&#x27A4;</button>
+                </form>
+            </div>
 
             <br><br>
 
@@ -68,9 +68,9 @@
         </section>
     </div>
     <script src="{{ url_for('static', filename='manageAccount.js') }}"></script>
-    
+
     <script>
-        
+    
     document.querySelectorAll('.role-select').forEach(select => {
         select.addEventListener('change', async function() {
             const userId = this.dataset.userId;
@@ -87,11 +87,13 @@
                         new_role: newRole
                     })
                 });
+
+                const data = await response.json();
                 
                 if (response.ok) {
                     alert('Role updated successfully');
                 } else {
-                    alert('Failed to update role');
+                    alert(data.message || 'Failed to update role');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -99,6 +101,8 @@
             }
         });
     });
+
+
 
     document.querySelectorAll('.delete-icon').forEach(button => {
         button.addEventListener('click', async function() {

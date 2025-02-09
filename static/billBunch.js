@@ -31,6 +31,28 @@ document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("click", function () {
         dropdowns.forEach((dropdown) => dropdown.classList.remove("active"));
     });
+
+    // Form submission
+    document.querySelector('.form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('/accountant/billBunch', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if (data.status === 'success') {
+                this.reset();
+            }
+        })
+        .catch(error => {
+            alert('An error occurred while processing your request.');
+        });
+    });
 });
 
 document.getElementById("calendar-btn").addEventListener("click", function () {
@@ -99,3 +121,26 @@ updateTime();
 
 // Update the time every minute
 setInterval(updateTime, 60000);
+
+// Popup message functionality
+function showPopupMessage(message, type) {
+    // Create popup container if it doesn't exist
+    let popup = document.getElementById('popup-message');
+    if (!popup) {
+        popup = document.createElement('div');
+        popup.id = 'popup-message';
+        document.body.appendChild(popup);
+    }
+
+    // Set popup content and style based on type
+    popup.textContent = message;
+    popup.className = `popup-message ${type}`;
+    
+    // Show popup
+    popup.style.display = 'block';
+    
+    // Hide popup after 3 seconds
+    setTimeout(() => {
+        popup.style.display = 'none';
+    }, 3000);
+}
