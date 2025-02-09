@@ -9,7 +9,7 @@
     {% block header %} {% endblock %}
 </head>
 
-<body  data-role="{{ current_user.role }}">
+<body>
     <!-- Sidebar -->
     <div id="mySidebar" class="sidebar">
         <div class="logo-section">
@@ -36,6 +36,7 @@
                     <a href="#">Financial report</a>
                     <a href="{{ url_for('accountant.payment_tracking') }}">Payment tracking</a>
                 </div>
+            </div>
         </nav>
         <div class="logout-section">
             <a href="/logout">&#x2190;</a>

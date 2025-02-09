@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student, Invoice
-from function import create_fees_for_grade, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details, toggle_invoice_flag
+from function import create_fees_for_grade, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy.orm import joinedload

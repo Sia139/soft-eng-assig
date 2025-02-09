@@ -315,3 +315,59 @@ def viewInvoice():
     #             break
 
     return render_template("viewInvoice.html", invoices=invoices)
+
+
+@admin_blueprint.route("/payment_tracking", methods=["GET"])
+@login_required
+def payment_tracking():
+    # Get query parameters
+    student_name = request.args.get("name")  # Fixed parameter for student name search
+    grade = request.args.get("grade")
+    status = request.args.get("status")  # Paid/Unpaid filter
+
+
+    # Build the query
+    query = Invoice.query.join(Fee).join(Student)
+
+    # Filter by student name
+    if student_name:
+        query = query.filter(Student.name.ilike(f"%{student_name}%"))
+
+    # Filter by grade
+    if grade:
+        query = query.filter(Student.grade == grade)
+
+    # Filter by payment status (paid/unpaid)
+    if status == "paid":
+        query = query.filter(Fee.status == "paid")
+    elif status == "unpaid":
+        query = query.filter(Fee.status == "unpaid")
+
+    # Retrieve and sort invoices
+    invoices = query.options(
+        joinedload(Invoice.fees).joinedload(Fee.student)
+    ).order_by(Invoice.id.desc()).all()
+
+    return render_template(
+        "paymentTracking.html",
+        invoices=invoices,
+        filter_status=status,
+        filter_grade=grade,
+        search_name=student_name
+    )
+
+# @admin_blueprint.route("/toggle_invoice_flag/<int:invoice_id>", methods=["POST"])
+# @login_required
+# def toggle_invoice_flag(invoice_id):
+#     try:
+#         invoice = Invoice.query.get_or_404(invoice_id)
+#         invoice.flag = not invoice.flag  # Set flag to True when clicked
+#         db.session.commit()
+#         return jsonify({"status": "success"}), 200
+    
+#     except Exception as e:
+#         db.session.rollback()
+#         return jsonify({
+#             "status": "error", 
+#             "message": str(e)
+#         }), 500

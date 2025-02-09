@@ -341,15 +341,15 @@ def get_invoice_details(invoice_id):
     return invoice
 
 
-def toggle_invoice_flag(invoice_id):
-    try:
-        invoice = Invoice.query.get_or_404(invoice_id)
-        invoice.flag = not invoice.flag  # Set flag to True when clicked
-        db.session.commit()
-        return jsonify({"status": "success"}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({
-            "status": "error", 
-            "message": str(e)
-        }), 500
+# def toggle_invoice_flag(invoice_id):
+#     try:
+#         invoice = Invoice.query.get_or_404(invoice_id)
+#         invoice.flag = not invoice.flag  # Set flag to True when clicked
+#         db.session.commit()
+#         return jsonify({"status": "success"}), 200
+#     except Exception as e:
+#         db.session.rollback()
+#         return jsonify({
+#             "status": "error", 
+#             "message": str(e)
+#         }), 500
