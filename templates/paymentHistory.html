@@ -1,0 +1,47 @@
+{% extends "parentBase.html" %}
+
+{% block style %}
+<title>Payment History</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='paymentHistory.css') }}">
+{% endblock %}
+
+{% block content %}
+    <!-- Main Content -->
+    <div class="main-content">
+        <section class="content">
+            <div class="header-container">
+                <div class="header-left">
+                    <h1>Payment History</h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search">
+                    <button>&#x27A4;</button>
+                </div>
+            </div>
+            <table id="myTable2">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Index <span class="sort"></span></th>
+                        <th onclick="sortTable(2)">Amount <span class="sort"></span></th>
+                        <th onclick="sortTable(3)">Payment Date <span class="sort"></span></th>
+                        <th onclick="sortTable(4)">Payment Method <span class="sort"></span></th>
+                        <th onclick="sortTable(5)">Receipt <span class="sort"></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment, invoice, fee, student in payments %}
+                    <tr>
+                        <td><a href="#"><span class="index">#{{ loop.index }}</span></a></td>
+                        <td><span class="amount">RM {{ "%.2f"|format(payment.total_amount) }}</span></td>
+                        <td><span class="paymentDate">{{ payment.payment_date.strftime('%d/%m/%Y') }}</span></td>
+                        <td><span class="paymentMethod">{{ payment.payment_method }}</span></td>
+                        <td><a href="#"><span class="receipt">View Receipt</span></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <script src="{{ url_for('static', filename='paymentHistory.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "parentBase.html" %}
+
+{% block style %}
+<title>Payment Confirmation</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='makePayment.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <section class="content">
+        <div class="confirmation-container">
+            <h1>Payment Confirmation</h1>
+            <div class="payment-details">
+                <p>Total Amount: RM {{ "%.2f"|format(total_amount) }}</p>
+                <p>Payment Method: {{ payment_method }}</p>
+            </div>
+            <form id="payment-form" action="{{ url_for('parent.complete_payment', student_id=student_id) }}" method="POST">
+                <input type="hidden" name="fee_ids" value="{{ fee_ids }}">
+                <input type="hidden" name="payment_method" value="{{ payment_method }}">
+                <button type="submit" class="pay-btn">Pay Now</button>
+            </form>
+            <a href="{{ url_for('parent.make_payment', student_id=student_id) }}" class="cancel-btn">Cancel</a>
+        </div>
+    </section>
+</div>
+
+<script>
+document.getElementById('payment-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this),
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        if (data.status === 'success') {
+            window.location.href = "{{ url_for('parent.make_payment', student_id=student_id) }}";
+        }
+    })
+    .catch(error => {
+        alert('An error occurred while processing payment');
+        console.error('Error:', error);
+    });
+});
+</script>
+{% endblock %} 

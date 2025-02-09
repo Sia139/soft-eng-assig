@@ -40,17 +40,34 @@ def manageAccount():
 @admin_blueprint.route("/update_user_role", methods=["GET", "POST"])
 @login_required
 def update_user_role():
+        
     data = request.get_json()
     user_id = data.get('user_id')
     new_role = data.get('new_role')
     
     try:
         user = User.query.get(user_id)
-        if user:
-            user.role = new_role
-            db.session.commit()
-            return jsonify({'success': True}), 200
-        return jsonify({'success': False, 'message': 'User not found'}), 404
+        if not user:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+        
+        # Don't allow updating the last admin
+        if user.role == 'admin' and User.query.filter_by(role='admin').count() <= 1:
+            return jsonify({
+                'success': False, 
+                'message': 'Cannot make change of the last admin user'
+            }), 400
+            
+        # Don't allow self role update
+        if user.id == current_user.id:
+            return jsonify({
+                'success': False, 
+                'message': 'Cannot update your own role'
+            }), 400
+            
+        user.role = new_role
+        db.session.commit()
+        return jsonify({'success': True}), 200
+            
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
