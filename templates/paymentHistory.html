@@ -34,7 +34,7 @@
                     <td><span class="amount">RM {{ "%.2f"|format(payment.total_amount) }}</span></td>
                     <td><span class="paymentDate">{{ payment.payment_date.strftime('%d/%m/%Y') }}</span></td>
                     <td><span class="paymentMethod">{{ payment.payment_method }}</span></td>
-                    <td><a href="#"class="receipt">View Receipt</a></td>
+                    <td><a span class="receipt" href="{{ url_for('parent.receipt', receipt = payment.id) }}">View Receipt</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

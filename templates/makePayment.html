@@ -8,7 +8,7 @@
 {% block content %}
     <!-- Main Content -->
 
-    <section class="content">
+    <<section class="content">
         <div class="header-container">
             <div class="header-left">
                 <h1>Make Payment</h1>
@@ -64,12 +64,11 @@
                         <span class="id">{{ loop.index }}</span>
                     </td>
                     <td>
-                        <span class="invoice">
-                            <a href="#">#{{ fee.invoice_id }}</a>
-                        </span>
+                        <a class="invoice-id" href="{{ url_for('parent.invoice_details', invoice_id=fee.invoice_id) }}">{{ fee.invoice_id }}</a>
                     </td>
                     <td>
                         <span class="details">{{ fee.fee_type }}</span>
+
                     </td>
                     <td>
                         <span class="charges">{{ "%.2f"|format(fee.amount) }}</span>

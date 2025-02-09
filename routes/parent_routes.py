@@ -209,3 +209,13 @@ def invoice_details(invoice_id):
     invoice = get_invoice_details(invoice_id)
 
     return render_template('invoiceDetail.html', invoice=invoice)
+
+""" -------------------------------------------------------------------------------------------------- """  
+
+@parent_blueprint.route("/receipt/<int:receipt>", methods=["GET"])
+@login_required
+def receipt(receipt):
+    payment = Payment.query.filter_by(id=receipt).first()
+    return render_template("receipt.html", payment = payment)
+
+""" -------------------------------------------------------------------------------------------------- """
