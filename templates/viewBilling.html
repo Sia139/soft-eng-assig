@@ -74,7 +74,8 @@
             {% for fee in fees %}
             <tr>
                 <td>
-                    <a href="{{ url_for('accountant.viewInvoice') }}">{{ fee.invoice.id }}</a>
+                    <!--<a href="{{ url_for('accountant.viewInvoice') }}">{{ fee.invoice.id }}</a>-->
+                    <a href="{{ url_for('accountant.invoice_details', invoice_id=fee.invoice.id) }}">{{ fee.invoice.id }}</a>
                 </td>
                 <td>
                     <span class="name">{{ fee.student.name }}</span>

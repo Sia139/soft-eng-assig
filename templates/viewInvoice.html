@@ -58,21 +58,21 @@
 
         <tbody>
             {% if invoices %}
-            {% for invoice in invoices %}
+                {% for invoice in invoices %}
 
-            <tr>
-                <td>{{ invoice.id }}</td>
-                <td>{{ invoice.fees[0].student.name }}</td>
-                <td>{{ invoice.fees[0].student.grade }}</td>
-                <td>{{ invoice.fees[0].due_date.strftime('%Y-%m-%d') }}</td>
-                <td>RM {{ "%.2f"|format(invoice.total_amount) }}</td>
-                <td>
-                    <!-- Pass the invoice id to the invoice_details route -->
-                    <a class="view-detail" href="{{ url_for('accountant.invoice_details', invoice_id=invoice.id) }}">View Details</a>
-                </td>
-            </tr>
+                <tr>
+                    <td>{{ invoice.id }}</td>
+                    <td>{{ invoice.fees[0].student.name }}</td>
+                    <td>{{ invoice.fees[0].student.grade }}</td>
+                    <td>{{ invoice.fees[0].due_date.strftime('%Y-%m-%d') }}</td>
+                    <td>RM {{ "%.2f"|format(invoice.total_amount) }}</td>
+                    <td>
+                        <!-- Pass the invoice id to the invoice_details route -->
+                        <a class="view-detail" href="{{ url_for('accountant.invoice_details', invoice_id=invoice.id) }}">View Details</a>
+                    </td>
+                </tr>
 
-            {% endfor %}
+                {% endfor %}
             {% else %}
             <tr>
                 <td colspan="6">No invoices found.</td>
