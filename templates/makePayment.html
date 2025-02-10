@@ -27,9 +27,11 @@
                 {% endif %}
             </div>
             <div class="header-right">
+                <!--
                 <h1 class="overdue">Total overdue: RM
                     <span class="overdue-amount">{{ "%.2f"|format(total_overdue) }}</span>
                 </h1>
+                -->
                 {% if student %}
                 <form action="{{ url_for('parent.process_payment', student_id=student.id) }}" method="POST">
                     <select id="payment-method" name="payment_method" class="payment-method" required>
@@ -47,47 +49,63 @@
         </div>
 
         {% if student and fees %}
-        <table id="myTable2">
-            <thead>
-                <tr>
-                    <th onclick="sortTable(0)">Index <span class="sort"></span></th>
-                    <th onclick="sortTable(1)">Invoice <span class="sort"></span></th>
-                    <th onclick="sortTable(2)">Details <span class="sort"></span></th>
-                    <th onclick="sortTable(3)">Charges <span class="sort"></span></th>
-                    <th onclick="sortTable(4)">Due date <span class="sort"></span></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for fee in fees %}
-                <tr>
-                    <td>
-                        <span class="id">{{ loop.index }}</span>
-                    </td>
-                    <td>
-                        <a class="invoice-id" href="{{ url_for('parent.invoice_details', invoice_id=fee.invoice_id) }}">{{ fee.invoice_id }}</a>
-                    </td>
-                    <td>
-                        <span class="details">{{ fee.fee_type }}</span>
+            <table id="myTable2">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Index <span class="sort"></span></th>
+                        <th onclick="sortTable(1)">Invoice <span class="sort"></span></th>
+                        <th onclick="sortTable(2)">Details <span class="sort"></span></th>
+                        <th onclick="sortTable(3)">Charges <span class="sort"></span></th>
+                        <th onclick="sortTable(4)">Due date <span class="sort"></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fee in fees %}
+                    <tr>
+                        <td>
+                            <span class="id">{{ loop.index }}</span>
+                        </td>
+                        <td>
+                            <a class="invoice-id" href="{{ url_for('parent.invoice_details', invoice_id=fee.invoice_id) }}">{{ fee.invoice_id }}</a>
+                        </td>
+                        <td>
+                            <span class="details">{{ fee.fee_type }}</span>
+                        </td>
+                        <td>
+                            <span class="charges">{{ "%.2f"|format(fee.amount) }}</span>
+                        </td>
+                        <td>
+                            <span class="dueDate">{{ fee.due_date.strftime('%d/%m/%Y') }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
-                    </td>
-                    <td>
-                        <span class="charges">{{ "%.2f"|format(fee.amount) }}</span>
-                    </td>
-                    <td>
-                        <span class="dueDate">{{ fee.due_date.strftime('%d/%m/%Y') }}</span>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <h2 class="overdue">Total amount: RM
+                <span class="overdue-amount">{{ "%.2f"|format(total_amount) }}</span>
+            </h2>
+            
+            <h2 class="overdue">Total discount amount: RM
+                <span class="overdue-amount">{{ "%.2f"|format(total_discount) }}</span>
+            </h2>
+            
+            <h2 class="overdue">Total penalty amount: RM
+                <span class="overdue-amount">{{ "%.2f"|format(total_penalty) }}</span>
+            </h2>
+            
+            <h1 class="overdue">Total overdue: RM
+                <span class="overdue-amount">{{ "%.2f"|format(total_overdue) }}</span>
+            </h1>
+            
         {% elif not student %}
-        <div class="no-student-selected">
-            <p>Please select a student to view their payment details.</p>
-        </div>
+            <div class="no-student-selected">
+                <p>Please select a student to view their payment details.</p>
+            </div>
         {% else %}
-        <div class="no-fees">
-            <p>No unpaid fees found for this student.</p>
-        </div>
+            <div class="no-fees">
+                <p>No unpaid fees found for this student.</p>
+            </div>
         {% endif %}
     </section>
 

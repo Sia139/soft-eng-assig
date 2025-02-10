@@ -328,6 +328,7 @@ def viewInvoice():
 @admin_blueprint.route("/payment_tracking", methods=["GET"])
 @login_required
 def payment_tracking():
+    check_and_update_invoices()
     # Get query parameters
     student_name = request.args.get("name")  # Fixed parameter for student name search
     grade = request.args.get("grade")

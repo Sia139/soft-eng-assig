@@ -11,7 +11,7 @@
         <div class="confirmation-container">
             <h1>Payment Confirmation</h1>
             <div class="payment-details">
-                <p>Total Amount: RM {{ "%.2f"|format(total_amount) }}</p>
+                <p>Total overdue: RM {{ "%.2f"|format(total_overdue) }}</p>
                 <p>Payment Method: {{ payment_method }}</p>
             </div>
             <form id="payment-form" action="{{ url_for('parent.complete_payment', student_id=student_id) }}" method="POST">

@@ -303,6 +303,7 @@ def single_fee_preview():
 @accountant_blueprint.route("/payment_tracking", methods=["GET"])
 @login_required
 def payment_tracking():
+    check_and_update_invoices()
     allowed = is_action_allowed(current_user.role, "payment_tracking")
     print(f"Permission check: {allowed}")
     
