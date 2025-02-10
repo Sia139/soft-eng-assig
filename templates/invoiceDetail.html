@@ -28,8 +28,10 @@
 
         .preview-table {
             width: 100%;
-            border-collapse: collapse;
+            /* border-collapse: collapse; */
             margin-bottom: auto;
+            padding-bottom: 20px;
+            border: solid 1px #ddd;
         }
 
         .preview-table th,
@@ -89,6 +91,10 @@
         .back-btn:hover {
             background: #ffcc07;
         }
+
+        #makepdf {
+            padding-bottom: 20px;;
+        }
     </style>
 
     <section class="content">
@@ -130,6 +136,7 @@
                         {% set total = total + fee.amount %}
                         {% endfor %}
                     </tbody>
+                    <tfoot></tfoot>
                 </table>
                 <br>
                 <div class="total-amount">
@@ -169,19 +176,19 @@
     -->
     <script>
         document.getElementById("downloadPDF").addEventListener("click", function () {
-            let invoiceElement = document.getElementById("makepdf");
-    
-            // PDF generation options
-            let options = {
-                margin: 10,
-                filename: "Invoice_{{ invoice.id }}.pdf",
-                image: { type: "jpeg", quality: 0.98 },
-                html2canvas: { scale: 3, scrollY: 0, useCORS: true },
-                jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-            };
-    
-            html2pdf().set(options).from(invoiceElement).save();
-        });
+    let invoiceElement = document.getElementById("makepdf");
+
+    let options = {
+        margin: 10,
+        filename: "Invoice_{{ invoice.id }}.pdf",
+        image: { type: "jpeg", quality: 1.0 },
+        html2canvas: { scale: 4, scrollY: 0, useCORS: true, logging: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+    };
+
+    html2pdf().set(options).from(invoiceElement).save();
+});
+
     </script>    
     
     <script src="{{ url_for('static', filename='viewBilling.js') }}"></script>
