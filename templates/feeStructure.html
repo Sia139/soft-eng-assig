@@ -24,7 +24,7 @@
             <form class="form" id="feeForm" action="{{ url_for('admin.fee_structure') }}" method="POST">
 
                 <div class="form-group">
-                    <label for="penalty">Penalty amount (RM):</label>
+                    <label for="penalty">Penalty amount per day (RM):</label>
                     <input type="text" id="penalty" name="penalty" value="{{ '%.2f' | format(fee_dict.get('penalty_amount', '')) }}">
                 </div>
             

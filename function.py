@@ -347,3 +347,140 @@ def get_invoice_details(invoice_id):
 def is_action_allowed(role, function_name):
     permission = RolePermission.query.filter_by(role=role, function_name=function_name).first()
     return permission.is_allowed if permission else False
+
+""" -------------------------------------------------------------------------------------------------- """
+
+# from datetime import date, timedelta
+# from flask import current_app
+
+# def check_and_update_invoices():
+#     """Check invoices for discount eligibility or penalty application on login."""
+#     with current_app.app_context():
+#         today = date.today()
+#         discount_value = FeeSetting.query.filter_by(detail="discount_amount").first()
+#         discount_period = FeeSetting.query.filter_by(detail="discount_period").first()
+#         penalty_amount = FeeSetting.query.filter_by(detail="penalty_amount").first()
+
+#         # Ensure FeeSettings are available
+#         if not (discount_value and discount_period and penalty_amount):
+#             print("Fee settings missing. Skipping adjustment.")
+#             return
+
+#         discount_value = discount_value.value
+#         discount_period = int(discount_period.value)  # Assuming it's stored as days
+#         penalty_amount = penalty_amount.value
+
+#         invoices = Invoice.query.all()
+
+#         for invoice in invoices:
+#             if invoice.flag:  # Already discounted or penalized, skip it
+#                 continue
+
+#             fees = invoice.fees  # Get all fees related to the invoice
+
+#             if not fees:
+#                 continue  # Skip invoices without fees
+
+#             due_dates = [fee.due_date for fee in fees]
+
+#             if not due_dates:
+#                 continue  # Skip if there are no due dates
+
+#             earliest_due_date = min(due_dates)  # Safely getting the minimum date
+
+#             if today <= earliest_due_date and today >= earliest_due_date - timedelta(days=discount_period):
+#                 # Apply discount only if not already applied
+#                 if invoice.discount_amount == 0:
+#                     invoice.discount_amount = discount_value
+#                     invoice.total_amount -= discount_value
+#                     invoice.flag = True  # Mark as processed
+#                     print(f"Applied discount of {discount_value} to Invoice {invoice.id}")
+
+#             elif today > earliest_due_date:
+#                 # Apply penalty only if not already applied
+#                 days_late = (today - earliest_due_date).days
+#                 new_penalty = penalty_amount * days_late
+#                 if invoice.penalty_amount == 0:
+#                     invoice.penalty_amount = new_penalty
+#                     invoice.total_amount += new_penalty
+#                     invoice.flag = True  # Mark as processed
+#                     print(f"Applied penalty of {new_penalty} to Invoice {invoice.id}")
+
+#         db.session.commit()
+#         print("Invoice adjustments applied successfully.")
+
+from datetime import date, timedelta
+from flask import current_app
+from decimal import Decimal
+from sqlalchemy.orm import joinedload
+
+def check_and_update_invoices():
+    """Check invoices for discount eligibility or penalty application on login."""
+    with current_app.app_context():
+        today = date.today()
+
+        # Fetch fee settings
+        discount_value = FeeSetting.query.filter_by(detail="discount_amount").first()
+        discount_period = FeeSetting.query.filter_by(detail="discount_period").first()
+        penalty_amount = FeeSetting.query.filter_by(detail="penalty_amount").first()
+
+        # Ensure all FeeSettings are available
+        if not all([discount_value, discount_period, penalty_amount]):
+            print("Fee settings missing. Skipping adjustment.")
+            return
+
+        # Convert values
+        discount_value = Decimal(discount_value.value)
+        penalty_amount = Decimal(penalty_amount.value)
+        
+        discount_period = timedelta(days=int(discount_period.value))  # Convert days to timedelta
+
+        # Fetch invoices with related fees
+        invoices = Invoice.query.options(joinedload(Invoice.fees)).all()
+
+        for invoice in invoices:
+
+            fees = invoice.fees  # Get all fees related to the invoice
+            if not fees:
+                continue  # Skip invoices without fees
+
+            due_dates = [fee.due_date for fee in fees if fee.due_date]  # Ensure valid due dates
+            create_dates = [fee.create_date for fee in fees if fee.create_date]  # Ensure valid create dates
+
+            if not due_dates or not create_dates:
+                continue  # Skip invoices without valid dates
+
+            earliest_due_date = min(due_dates)  # Get the earliest due date safely
+            earliest_create_date = min(create_dates)  # Get the earliest create date safely
+
+            print("----------------------------------------------------")
+            print(f"earliest_create_date {earliest_create_date}")
+            print(f"discount_period {discount_period}")
+            print(f"earliest_due_date {earliest_due_date}")
+            print(f"today {today}")
+            
+            # Apply penalty if past due date
+            if today > earliest_due_date:
+                days_late = (today - earliest_due_date).days
+                new_penalty_amount = penalty_amount * Decimal(days_late)
+                invoice.penalty_amount = new_penalty_amount
+                print(f"Applied penalty of {penalty_amount} to Invoice {invoice.id}")
+
+                
+                # days_late = (today - earliest_due_date).days
+                # new_penalty = penalty_amount * Decimal(days_late)
+                # if invoice.penalty_amount == Decimal("0"):
+                #     invoice.penalty_amount = penalty_amount
+                #     invoice.total_amount += penalty_amount
+                #     # invoice.flag = True  # Mark as processed
+                #     print(f"Applied penalty of {penalty_amount} to Invoice {invoice.id}")
+            
+            # Apply discount if the earliest create date + discount period is before today
+            elif earliest_create_date + discount_period > today:
+                # if invoice.discount_amount == Decimal("0"):
+                    invoice.discount_amount = discount_value
+                    # invoice.total_amount -= discount_value
+                    print(f"Applied discount of {discount_value} to Invoice {invoice.id}")
+                    
+        db.session.commit()
+        print("Invoice adjustments applied successfully.")

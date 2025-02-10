@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request,  redirect, url_for, jsoni
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from models import db, User, Student, Fee, Invoice, RolePermission, FeeSetting
-from function import create_fees_for_grade, create_single_fee, view_billing, search_parent_student, create_student, search_parent_student
+from function import create_fees_for_grade, create_single_fee, view_billing, search_parent_student, create_student, search_parent_student, check_and_update_invoices
 # from function import create_user, create_student, process_billing, search_parent_student, calculate_outstanding_balance
 from sqlalchemy.orm import joinedload
 from datetime import datetime
@@ -278,6 +278,7 @@ def viewBilling():
 @admin_blueprint.route("/viewInvoice", methods=["GET"])
 @login_required
 def viewInvoice():
+    check_and_update_invoices()
     # Get query parameters
     student_name = request.args.get("student_name")
     grade = request.args.get("grade")

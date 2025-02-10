@@ -2,7 +2,7 @@
 from flask import Blueprint, abort, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student, Invoice
-from function import create_fees_for_grade, is_action_allowed, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details
+from function import create_fees_for_grade, is_action_allowed, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details, check_and_update_invoices
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy.orm import joinedload
@@ -151,6 +151,7 @@ def delete_fee_route(fee_id):
 @accountant_blueprint.route("/viewInvoice", methods=["GET"])
 @login_required
 def viewInvoice():
+    check_and_update_invoices()
     allowed = is_action_allowed(current_user.role, "fee_management")
     print(f"Permission check: {allowed}")
     

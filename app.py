@@ -5,6 +5,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import *
 from config import Config
+from function import check_and_update_invoices
 
 # Import role-specific routes
 from routes.admin_routes import admin_blueprint
@@ -44,6 +45,7 @@ def login():
         
         if user and check_password_hash(user.password, password):
             login_user(user)
+            check_and_update_invoices()  # Ensure invoices are updated upon login
             print(f"Login successful for {username} with role {user.role}")
             return redirect(url_for("initial_page"))
         flash("Invalid username or password", "error")
@@ -320,7 +322,12 @@ def seed_permissions():
                 # Teacher Permissions
                 ("teacher", "add_student", True),
                 ("teacher", "fee_overview", True),
-                ("teacher", "view_student_details", True)  # <-- Now correctly separated
+                ("teacher", "view_student_details", True),  # <-- Now correctly separated
+
+                # Admin Permissions
+                ("admin", "payment_tracking", True),
+                ("admin", "fee_management", True),
+                ("admin", "add_student", True)
             ]
 
             for role, function, is_allowed in permissions:
