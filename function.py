@@ -275,7 +275,8 @@ def delete_fee(fee_id):
     except Exception as e:
         db.session.rollback()
         return False, str(e)
-    
+
+""" -------------------------------------------------------------------------------------------------- """
 
 def create_single_fee(student_id, fee_type, amount, due_date):
     """
@@ -327,6 +328,7 @@ def create_single_fee(student_id, fee_type, amount, due_date):
         db.session.rollback()
         return False, f"Error creating fee: {str(e)}"
     
+""" -------------------------------------------------------------------------------------------------- """
     
 def get_invoice_details(invoice_id):
     
@@ -340,16 +342,8 @@ def get_invoice_details(invoice_id):
      
     return invoice
 
+""" -------------------------------------------------------------------------------------------------- """
 
-# def toggle_invoice_flag(invoice_id):
-#     try:
-#         invoice = Invoice.query.get_or_404(invoice_id)
-#         invoice.flag = not invoice.flag  # Set flag to True when clicked
-#         db.session.commit()
-#         return jsonify({"status": "success"}), 200
-#     except Exception as e:
-#         db.session.rollback()
-#         return jsonify({
-#             "status": "error", 
-#             "message": str(e)
-#         }), 500
+def is_action_allowed(role, function_name):
+    permission = RolePermission.query.filter_by(role=role, function_name=function_name).first()
+    return permission.is_allowed if permission else False

@@ -1,33 +1,22 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
+from flask import Blueprint, abort, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from models import Fee, Notification, Student, Payment, Invoice, User, db
 from datetime import datetime
 from sqlalchemy.sql import func, and_
-from function import get_invoice_details
+from function import get_invoice_details, is_action_allowed
 # from function import view_fee_details, process_payment
 
 parent_blueprint = Blueprint("parent", __name__)
 
-@parent_blueprint.route("/dashboard")
-@login_required
-def parent_dashboard():
-    students = Student.query.filter_by(user_id=current_user.id).all()
-    student_fees = []
-    for student in students:
-        fees = Fee.query.filter_by(student_id=student.id, status='unpaid').all()
-        for fee in fees:
-            student_fees.append({
-                'student': student,
-                'overdue': fee.amount,  # Assuming 'overdue' means unpaid amount
-                'due_date': fee.due_date
-            })
-    return render_template("dashboard.html", role="Parent", student_fees=student_fees)
-
-""" -------------------------------------------------------------------------------------------------- """  
-
 @parent_blueprint.route("/notification")
 @login_required
 def notification():
+    allowed = is_action_allowed(current_user.role, "notifications")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
+    
     notifications = Notification.query.filter_by(user_id=current_user.id).all()
     return render_template("notifications.html", notifications=notifications)
 
@@ -36,6 +25,11 @@ def notification():
 @parent_blueprint.route("/make-payment", methods=['GET', 'POST'])
 @login_required
 def make_payment():
+    allowed = is_action_allowed(current_user.role, "make_payment")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
     # Get all students belonging to the current user (parent)
     students = Student.query.filter_by(user_id=current_user.id).all()
     
@@ -167,6 +161,11 @@ def complete_payment(student_id):
 @parent_blueprint.route("/payment-history")
 @login_required
 def payment_history():
+    allowed = is_action_allowed(current_user.role, "view_payment_history")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
     # Get only the specific user's paid payments first
     payments = Payment.query.filter_by(
                 user_id=current_user.id,

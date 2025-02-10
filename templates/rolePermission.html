@@ -1,0 +1,77 @@
+{% extends "adminBase.html" %}
+
+{% block header %}
+<title>View Invoices</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='rolePermission.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h1>Role Permission</h1>
+
+    <form method="GET" action="{{ url_for('admin.role_permission') }}">
+        <label for="role">Select Role:</label>
+        <select id="role" name="role" onchange="this.form.submit()">
+            {% for role in roles %}
+                <option value="{{ role }}" {% if role == selected_role %}selected{% endif %}>
+                    {{ role.capitalize() }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <form id="permissionForm">
+        <table id="permissionTable">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Permission</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for permission in permissions %}
+                <tr>
+                    <td>{{ permission.function_name }}</td>
+                    <td>
+                        <select name="permissions[{{ permission.function_name }}]">
+                            <option value="true" {% if permission.is_allowed %}selected{% endif %}>Open</option>
+                            <option value="false" {% if not permission.is_allowed %}selected{% endif %}>Close</option>
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="button" onclick="savePermissions()">Save Changes</button>
+    </form>
+</div>
+
+<script>
+    function savePermissions() {
+        let role = document.getElementById("role").value;
+        let formData = new FormData(document.getElementById("permissionForm"));
+        let updatedPermissions = {};
+
+        formData.forEach((value, key) => {
+            let functionName = key.replace("permissions[", "").replace("]", "");
+            updatedPermissions[functionName] = value === "true";
+        });
+
+        fetch("{{ url_for('admin.role_permission') }}", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ role: role, permissions: updatedPermissions })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Permissions updated successfully!");
+            } else {
+                alert("Error updating permissions: " + data.message);
+            }
+        })
+        .catch(error => console.error("Error saving permissions:", error));
+    }
+</script>
+{% endblock %}

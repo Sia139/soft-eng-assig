@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request,  redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
-from models import db, User, Student, Fee, Invoice
+from models import db, User, Student, Fee, Invoice, RolePermission
 from function import create_fees_for_grade, create_single_fee, view_billing, search_parent_student, create_student, search_parent_student
 # from function import create_user, create_student, process_billing, search_parent_student, calculate_outstanding_balance
 from sqlalchemy.orm import joinedload
@@ -239,6 +239,8 @@ def billSingle():
             
     return render_template("billSingle.html")
 
+"""--------------------------------------------------------------------------------------------------"""
+
 #cause of (AJAX)
 @admin_blueprint.route("/search-students", methods=["GET"])
 @login_required
@@ -249,6 +251,8 @@ def search_students_route():
     query = request.args.get("query", "").lower()
     students = search_parent_student(query)  # No role parameter means search for students
     return jsonify(students)
+
+"""--------------------------------------------------------------------------------------------------"""
 
 @admin_blueprint.route("/viewBilling", methods=["GET"])
 @login_required
@@ -268,6 +272,8 @@ def viewBilling():
         return jsonify({"error": error}), 400
 
     return render_template("viewBilling.html", fees=fees)
+
+"""--------------------------------------------------------------------------------------------------"""
 
 @admin_blueprint.route("/viewInvoice", methods=["GET"])
 @login_required
@@ -316,6 +322,7 @@ def viewInvoice():
 
     return render_template("viewInvoice.html", invoices=invoices)
 
+"""--------------------------------------------------------------------------------------------------"""
 
 @admin_blueprint.route("/payment_tracking", methods=["GET"])
 @login_required
@@ -356,18 +363,37 @@ def payment_tracking():
         search_name=student_name
     )
 
-# @admin_blueprint.route("/toggle_invoice_flag/<int:invoice_id>", methods=["POST"])
-# @login_required
-# def toggle_invoice_flag(invoice_id):
-#     try:
-#         invoice = Invoice.query.get_or_404(invoice_id)
-#         invoice.flag = not invoice.flag  # Set flag to True when clicked
-#         db.session.commit()
-#         return jsonify({"status": "success"}), 200
+"""--------------------------------------------------------------------------------------------------"""
+
+@admin_blueprint.route('/rolePermission', methods=['GET', 'POST'])
+@login_required
+def role_permission():
+    roles = ["accountant", "parent", "teacher"]
     
-#     except Exception as e:
-#         db.session.rollback()
-#         return jsonify({
-#             "status": "error", 
-#             "message": str(e)
-#         }), 500
+    if request.method == 'POST':
+        data = request.get_json()
+        role = data.get("role")
+        updated_permissions = data.get("permissions")
+
+        if not role or not updated_permissions:
+            return jsonify({"success": False, "message": "Invalid request data"}), 400
+
+        # Update database
+        for function_name, is_allowed in updated_permissions.items():
+            permission = RolePermission.query.filter_by(role=role, function_name=function_name).first()
+            if permission:
+                permission.is_allowed = is_allowed
+            else:
+                new_permission = RolePermission(role=role, function_name=function_name, is_allowed=is_allowed)
+                db.session.add(new_permission)
+
+        db.session.commit()
+        return jsonify({"success": True})
+
+    # Fetch role (default to accountant)
+    selected_role = request.args.get("role", "accountant")
+    
+    # Fetch permissions for the selected role
+    permissions = RolePermission.query.filter_by(role=selected_role).all()
+    
+    return render_template("rolePermission.html", roles=roles, selected_role=selected_role, permissions=permissions)

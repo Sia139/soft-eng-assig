@@ -286,7 +286,6 @@ def initialize_database():
                     "fee_type": "Transport",
                 }
             ]
-
             
             # Create Fee objects and save them
             for fee_data in default_fees:
@@ -303,6 +302,37 @@ def initialize_database():
 
 """ -------------------------------------------------------------------------------------------------- """  
 
+def seed_permissions():
+    with app.app_context():
+        if not RolePermission.query.first():
+            print('No permission initialized, setting up the permission....')
+            permissions = [
+                # Parent permissions
+                ("parent", "make_payment", True),
+                ("parent", "view_payment_history", True),
+                ("parent", "notifications", True),
+
+                # Accountant Permissions
+                ("accountant", "financial_report", True),
+                ("accountant", "payment_tracking", True),
+                ("accountant", "fee_management", True),
+
+                # Teacher Permissions
+                ("teacher", "add_student", True),
+                ("teacher", "fee_overview", True),
+                ("teacher", "view_student_details", True)  # <-- Now correctly separated
+            ]
+
+            for role, function, is_allowed in permissions:
+                db.session.add(RolePermission(role=role, function_name=function, is_allowed=is_allowed))
+
+            db.session.commit()
+            print("Permissions seeded successfully.")
+
+
+""" -------------------------------------------------------------------------------------------------- """  
+
 if __name__ == '__main__': 
     initialize_database()  # Initialize the database and create default users
-    app.run(debug=True) 
+    seed_permissions()
+    app.run(debug=True)

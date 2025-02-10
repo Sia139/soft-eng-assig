@@ -1,8 +1,8 @@
 # accountant_routes.py
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, abort, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student, Invoice
-from function import create_fees_for_grade, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details
+from function import create_fees_for_grade, is_action_allowed, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details
 from datetime import datetime
 from decimal import Decimal
 from sqlalchemy.orm import joinedload
@@ -14,6 +14,12 @@ accountant_blueprint = Blueprint("accountant", __name__)
 @accountant_blueprint.route("/billBunch", methods=["GET", "POST"])
 @login_required
 def billBunch():
+    allowed = is_action_allowed(current_user.role, "fee_management")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
+    
     if request.method == "POST":
         grade = request.form.get("grade")
         fee_details = {
@@ -50,6 +56,12 @@ def billBunch():
 @accountant_blueprint.route("/billSingle", methods=["GET", "POST"])
 @login_required
 def billSingle():
+    allowed = is_action_allowed(current_user.role, "fee_management")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
+    
     if request.method == "POST":
         student_id = request.form.get("student_id")
         fee_type = request.form.get("details")
@@ -88,6 +100,11 @@ def search_students_route():
 @accountant_blueprint.route("/viewBilling", methods=["GET"])
 @login_required
 def viewBilling():
+    allowed = is_action_allowed(current_user.role, "fee_management")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
     # Get query parameters
     student_name = request.args.get("student_name")
     grade = request.args.get("grade")
@@ -134,6 +151,11 @@ def delete_fee_route(fee_id):
 @accountant_blueprint.route("/viewInvoice", methods=["GET"])
 @login_required
 def viewInvoice():
+    allowed = is_action_allowed(current_user.role, "fee_management")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
     # Get query parameters
     student_name = request.args.get("student_name")
     grade = request.args.get("grade")
@@ -280,6 +302,11 @@ def single_fee_preview():
 @accountant_blueprint.route("/payment_tracking", methods=["GET"])
 @login_required
 def payment_tracking():
+    allowed = is_action_allowed(current_user.role, "payment_tracking")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
     # Get query parameters
     student_name = request.args.get("name")  # Fixed parameter for student name search
     grade = request.args.get("grade")

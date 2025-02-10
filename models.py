@@ -88,3 +88,15 @@ class FinancialReport(db.Model):
     fee_id = db.Column(db.Integer, db.ForeignKey('fees.id'), nullable=False)
     income = db.Column(db.Float, nullable=False)
     bad_debt = db.Column(db.Float, nullable=True)
+
+class RolePermission(db.Model):
+    __tablename__ = 'role_permissions'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    role = db.Column(
+        db.Enum('accountant', 'teacher', 'parent', name='user_roles'),
+        nullable=False
+    )
+    function_name = db.Column(db.String(100), nullable=False)  # Function name (e.g., "make_payment")
+    is_allowed = db.Column(db.Boolean, default=True)  # Whether the role is allowed to access this function
+
+    __table_args__ = (db.UniqueConstraint('role', 'function_name', name='unique_role_function'),)

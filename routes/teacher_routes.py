@@ -1,9 +1,9 @@
 from datetime import datetime
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
+from flask import Blueprint, abort, render_template, request, redirect, url_for, jsonify, flash
 from flask_login import login_required, current_user
 from models import Fee, Invoice, Notification, db, User, Student  # Import the necessary models
 # from function import create_user, create_student, process_billing, search_parent_student, calculate_outstanding_balance
-from function import create_student, search_parent_student
+from function import create_student, is_action_allowed, search_parent_student
 from sqlalchemy.orm import joinedload
 
 teacher_blueprint = Blueprint("teacher", __name__)
@@ -14,6 +14,12 @@ teacher_blueprint = Blueprint("teacher", __name__)
 @teacher_blueprint.route("/addStudent", methods=["GET", "POST"])
 @login_required
 def addStudent():
+    allowed = is_action_allowed(current_user.role, "add_student")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
+    
     if current_user.role != "teacher":
         return "Access Denied", 403
 
@@ -42,6 +48,12 @@ def search_parents_route():
 @teacher_blueprint.route("/viewStudents")
 @login_required
 def viewStudents():
+    allowed = is_action_allowed(current_user.role, "view_student_details")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
+    
     if current_user.role != "teacher":
         return "Access Denied", 403
     
@@ -85,6 +97,12 @@ def viewStudents():
 @teacher_blueprint.route("/feeOverview", methods=["GET"])
 @login_required
 def feeOverview():
+    allowed = is_action_allowed(current_user.role, "fee_overview")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return abort(403)
+    
     # Get query parameters
     student_name = request.args.get("name")  # Fixed parameter for student name search
     grade = request.args.get("grade")
