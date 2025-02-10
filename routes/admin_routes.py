@@ -242,15 +242,15 @@ def billSingle():
 """--------------------------------------------------------------------------------------------------"""
 
 #cause of (AJAX)
-@admin_blueprint.route("/search-students", methods=["GET"])
-@login_required
-def search_students_route():
-    if current_user.role not in ["teacher", "admin", "accountant"]:
-        return "Access Denied", 403
+# @admin_blueprint.route("/search-students", methods=["GET"])
+# @login_required
+# def search_students_route():
+#     if current_user.role not in ["teacher", "admin", "accountant"]:
+#         return "Access Denied", 403
 
-    query = request.args.get("query", "").lower()
-    students = search_parent_student(query)  # No role parameter means search for students
-    return jsonify(students)
+#     query = request.args.get("query", "").lower()
+#     students = search_parent_student(query)  # No role parameter means search for students
+#     return jsonify(students)
 
 """--------------------------------------------------------------------------------------------------"""
 

@@ -105,6 +105,7 @@ def viewBilling():
     
     if not allowed:
         return render_template('403.html')
+    
     # Get query parameters
     student_name = request.args.get("student_name")
     grade = request.args.get("grade")

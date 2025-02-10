@@ -228,33 +228,57 @@ def view_billing(student_name=None, grade=None, status=None, start_date=None, en
 """ -------------------------------------------------------------------------------------------------- """
 
 def update_fee(fee_id, data):
-    """
-    Generic function to update fee information
-    Returns tuple of (success, message)
-    """
+
     try:
         fee = Fee.query.get_or_404(fee_id)
-        
+
+        # Track changes for invoice updates
+        invoice_needs_update = False
+
         # Update fields with validation
         if 'fee_type' in data:
             fee.fee_type = data['fee_type']
+        
         if 'amount' in data:
             try:
-                fee.amount = Decimal(str(data['amount']))
+                new_amount = Decimal(str(data['amount']))
+                if fee.amount != new_amount:
+                    fee.amount = new_amount
+                    invoice_needs_update = True  # Mark for invoice update
             except (ValueError, TypeError):
                 return False, "Invalid amount format"
+        
         if 'due_date' in data:
             try:
-                fee.due_date = datetime.strptime(data['due_date'], "%Y-%m-%d").date()
+                new_due_date = datetime.strptime(data['due_date'], "%Y-%m-%d").date()
+                if fee.due_date != new_due_date:
+                    fee.due_date = new_due_date
+                    invoice_needs_update = True  # Mark for invoice update
             except ValueError:
                 return False, "Invalid date format"
+        
         if 'status' in data:
             if data['status'] not in ['paid', 'unpaid']:
                 return False, "Invalid status"
-            fee.status = data['status']
+            if fee.status != data['status']:
+                fee.status = data['status']
+                invoice_needs_update = True  # Mark for invoice update
+
+        # If there's an invoice linked, update it
+        if invoice_needs_update and fee.invoice:
+            invoice = fee.invoice  # Assuming Fee has a relationship to Invoice
+
+            # Recalculate total amount based on updated fees
+            invoice.total_amount = sum(f.amount for f in invoice.fees)
+
+            # Apply penalties or discounts if applicable
+            # discount = invoice.discount_amount if invoice.discount_amount else Decimal("0.00")
+            # penalty = invoice.penalty_amount if invoice.penalty_amount else Decimal("0.00")
+
+            # invoice.total_amount = total_amount - discount + penalty
 
         db.session.commit()
-        return True, "Fee updated successfully"
+        return True, "Fee and invoice updated successfully"
 
     except Exception as e:
         db.session.rollback()
@@ -262,19 +286,43 @@ def update_fee(fee_id, data):
 
 """ -------------------------------------------------------------------------------------------------- """
 
+# def delete_fee(fee_id):
+#     """
+#     Generic function to delete a fee
+#     Returns tuple of (success, message)
+#     """
+#     try:
+#         fee = Fee.query.get_or_404(fee_id)
+#         db.session.delete(fee)
+#         db.session.commit()
+#         return True, "Fee deleted successfully"
+#     except Exception as e:
+#         db.session.rollback()
+#         return False, str(e)
+
 def delete_fee(fee_id):
-    """
-    Generic function to delete a fee
-    Returns tuple of (success, message)
-    """
+
     try:
         fee = Fee.query.get_or_404(fee_id)
-        db.session.delete(fee)
+        invoice = fee.invoice  # Get the linked invoice (if any)
+
+        # If there's an associated invoice, update the total amount
+        if invoice:
+            db.session.delete(fee)  # Delete the fee
+            db.session.commit()
+            
+            invoice.total_amount = sum(f.amount for f in invoice.fees)  # Recalculate total
+            
+            if not invoice.fees:
+                db.session.delete(invoice)
+
         db.session.commit()
-        return True, "Fee deleted successfully"
+        return True, "Fee deleted successfully, and invoice updated."
+
     except Exception as e:
         db.session.rollback()
         return False, str(e)
+
 
 """ -------------------------------------------------------------------------------------------------- """
 
@@ -349,65 +397,6 @@ def is_action_allowed(role, function_name):
     return permission.is_allowed if permission else False
 
 """ -------------------------------------------------------------------------------------------------- """
-
-# from datetime import date, timedelta
-# from flask import current_app
-
-# def check_and_update_invoices():
-#     """Check invoices for discount eligibility or penalty application on login."""
-#     with current_app.app_context():
-#         today = date.today()
-#         discount_value = FeeSetting.query.filter_by(detail="discount_amount").first()
-#         discount_period = FeeSetting.query.filter_by(detail="discount_period").first()
-#         penalty_amount = FeeSetting.query.filter_by(detail="penalty_amount").first()
-
-#         # Ensure FeeSettings are available
-#         if not (discount_value and discount_period and penalty_amount):
-#             print("Fee settings missing. Skipping adjustment.")
-#             return
-
-#         discount_value = discount_value.value
-#         discount_period = int(discount_period.value)  # Assuming it's stored as days
-#         penalty_amount = penalty_amount.value
-
-#         invoices = Invoice.query.all()
-
-#         for invoice in invoices:
-#             if invoice.flag:  # Already discounted or penalized, skip it
-#                 continue
-
-#             fees = invoice.fees  # Get all fees related to the invoice
-
-#             if not fees:
-#                 continue  # Skip invoices without fees
-
-#             due_dates = [fee.due_date for fee in fees]
-
-#             if not due_dates:
-#                 continue  # Skip if there are no due dates
-
-#             earliest_due_date = min(due_dates)  # Safely getting the minimum date
-
-#             if today <= earliest_due_date and today >= earliest_due_date - timedelta(days=discount_period):
-#                 # Apply discount only if not already applied
-#                 if invoice.discount_amount == 0:
-#                     invoice.discount_amount = discount_value
-#                     invoice.total_amount -= discount_value
-#                     invoice.flag = True  # Mark as processed
-#                     print(f"Applied discount of {discount_value} to Invoice {invoice.id}")
-
-#             elif today > earliest_due_date:
-#                 # Apply penalty only if not already applied
-#                 days_late = (today - earliest_due_date).days
-#                 new_penalty = penalty_amount * days_late
-#                 if invoice.penalty_amount == 0:
-#                     invoice.penalty_amount = new_penalty
-#                     invoice.total_amount += new_penalty
-#                     invoice.flag = True  # Mark as processed
-#                     print(f"Applied penalty of {new_penalty} to Invoice {invoice.id}")
-
-#         db.session.commit()
-#         print("Invoice adjustments applied successfully.")
 
 from datetime import date, timedelta
 from flask import current_app

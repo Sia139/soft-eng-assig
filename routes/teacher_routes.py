@@ -20,8 +20,6 @@ def addStudent():
     if not allowed:
         return render_template('403.html')
     
-    if current_user.role != "teacher":
-        return "Access Denied", 403
 
     if request.method == "POST":
         result = create_student()

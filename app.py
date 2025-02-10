@@ -225,81 +225,81 @@ def initialize_database():
         else:
             print("Users already exist in the database. Skipping creation.")
             
-        # Add student data initialization
-        if not Student.query.first():
-            print("No students found, creating default students...")
+        # # Add student data initialization
+        # if not Student.query.first():
+        #     print("No students found, creating default students...")
             
-            # Get the parent user's ID (assuming it was created in the earlier part)
-            parent_user = User.query.filter_by(email='parent@example.com').first()
+        #     # Get the parent user's ID (assuming it was created in the earlier part)
+        #     parent_user = User.query.filter_by(email='parent@example.com').first()
             
-            default_students = [
-                {
-                    "name": "John Doe",
-                    "grade": "4",
-                    "dob": date(2015, 5, 15),
-                    "transport": True,
-                    "user_id": parent_user.id
-                },
-                {
-                    "name": "Jane Smith",
-                    "grade": "5",
-                    "dob": date(2016, 3, 20),
-                    "transport": False,
-                    "user_id": parent_user.id
-                }
-            ]
+        #     default_students = [
+        #         {
+        #             "name": "John Doe",
+        #             "grade": "4",
+        #             "dob": date(2015, 5, 15),
+        #             "transport": True,
+        #             "user_id": parent_user.id
+        #         },
+        #         {
+        #             "name": "Jane Smith",
+        #             "grade": "5",
+        #             "dob": date(2016, 3, 20),
+        #             "transport": False,
+        #             "user_id": parent_user.id
+        #         }
+        #     ]
 
-            # Create Student objects and save them
-            for student_data in default_students:
-                student = Student(**student_data)
-                db.session.add(student)
+        #     # Create Student objects and save them
+        #     for student_data in default_students:
+        #         student = Student(**student_data)
+        #         db.session.add(student)
 
-            db.session.commit()
-            print("Default students created successfully!")
+        #     db.session.commit()
+        #     print("Default students created successfully!")
 
-            # Add fee data initialization for students
-            print("Adding default fees for students...")
-            students = Student.query.all()
+        #     # Add fee data initialization for students
+        #     print("Adding default fees for students...")
+        #     students = Student.query.all()
 
-            # Define default fee data for students (ensure that due_date is a proper date)
-            default_fees = [
-                {
-                    "student_id": students[0].id,
-                    "due_date": date(2025, 2, 15),  # Use date only (no time)
-                    "amount": 100.00,
-                    "fee_type": "Tuition",
-                },
-                {
-                    "student_id": students[0].id,
-                    "due_date": date(2025, 3, 15),
-                    "amount": 50.00,
-                    "fee_type": "Transport",
-                },
-                {
-                    "student_id": students[1].id,
-                    "due_date": date(2025, 2, 15),
-                    "amount": 120.00,
-                    "fee_type": "Tuition",
-                },
-                {
-                    "student_id": students[1].id,
-                    "due_date": date(2025, 3, 15),
-                    "amount": 60.00,
-                    "fee_type": "Transport",
-                }
-            ]
+        #     # Define default fee data for students (ensure that due_date is a proper date)
+        #     default_fees = [
+        #         {
+        #             "student_id": students[0].id,
+        #             "due_date": date(2025, 2, 15),  # Use date only (no time)
+        #             "amount": 100.00,
+        #             "fee_type": "Tuition",
+        #         },
+        #         {
+        #             "student_id": students[0].id,
+        #             "due_date": date(2025, 3, 15),
+        #             "amount": 50.00,
+        #             "fee_type": "Transport",
+        #         },
+        #         {
+        #             "student_id": students[1].id,
+        #             "due_date": date(2025, 2, 15),
+        #             "amount": 120.00,
+        #             "fee_type": "Tuition",
+        #         },
+        #         {
+        #             "student_id": students[1].id,
+        #             "due_date": date(2025, 3, 15),
+        #             "amount": 60.00,
+        #             "fee_type": "Transport",
+        #         }
+        #     ]
             
-            # Create Fee objects and save them
-            for fee_data in default_fees:
-                fee = Fee(**fee_data)
-                db.session.add(fee)
+        #     # Create Fee objects and save them
+        #     for fee_data in default_fees:
+        #         fee = Fee(**fee_data)
+        #         db.session.add(fee)
 
-            db.session.commit()
-            print("-----------------------------------------------------------")
-            print("Default fees created successfully!")
+        #     db.session.commit()
+        #     print("-----------------------------------------------------------")
+        #     print("Default fees created successfully!")
 
-        else:
-            print("Students already exist in the database. Skipping creation.")
+        # else:
+        #     print("Students already exist in the database. Skipping creation.")
 
 
 """ -------------------------------------------------------------------------------------------------- """  

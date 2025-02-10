@@ -271,7 +271,7 @@ def complete_payment(student_id):
     try:
         # Convert fee_ids string to list of integers
         fee_id_list = [int(id) for id in fee_ids.split(',')]
-        
+
         # Retrieve fees
         fees = Fee.query.filter(Fee.id.in_(fee_id_list)).all()
         if not fees:
@@ -285,7 +285,7 @@ def complete_payment(student_id):
         total_amount = sum(fee.amount for fee in fees)
         total_discount = sum(invoice.discount_amount for invoice in invoices if invoice.discount_amount)
         total_penalty = sum(invoice.penalty_amount for invoice in invoices if invoice.penalty_amount)
-        
+
         total_overdue = total_amount + total_penalty - total_discount
 
         # Create new payment record
@@ -299,19 +299,15 @@ def complete_payment(student_id):
         db.session.add(payment)
         db.session.flush()
 
-        # Create new invoice
-        invoice = Invoice(
-            total_amount=total_overdue,
-            discount_amount=total_discount,
-            penalty_amount=total_penalty
-        )
-        db.session.add(invoice)
-        db.session.flush()
-
         # Update fees to paid status
         for fee in fees:
             fee.status = 'paid'
-            fee.invoice_id = invoice.id
+
+        # Mark associated invoices as paid if all their fees are paid
+        for invoice in invoices:
+            all_fees_paid = all(fee.status == 'paid' for fee in Fee.query.filter_by(invoice_id=invoice.id).all())
+            if all_fees_paid:
+                invoice.status = 'paid'  # Ensure invoice status is updated
 
         db.session.commit()
 
@@ -321,7 +317,6 @@ def complete_payment(student_id):
         print(f"Error processing payment: {str(e)}")
         db.session.rollback()
         return jsonify({'status': 'error', 'message': 'An error occurred while processing payment'}), 500
-
 
 """ -------------------------------------------------------------------------------------------------- """  
 
