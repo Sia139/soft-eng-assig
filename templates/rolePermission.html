@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="main-content">
+
     <h1>Role Permission</h1>
 
     <form method="GET" action="{{ url_for('admin.role_permission') }}">
@@ -45,7 +45,7 @@
 
         <button type="button" onclick="savePermissions()">Save Changes</button>
     </form>
-</div>
+
 
 <script>
     function savePermissions() {

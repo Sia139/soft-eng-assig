@@ -156,26 +156,6 @@
     <button id="downloadPDF" class="download-btn">Download PDF</button><!-- Download PDF button -->
 </section>
 
-    <!--
-    <script>
-        // When the downloadPDF button is clicked, generate the PDF from the invoiceDetails div
-        let button = document.getElementById("downloadPDF");
-        let makepdf = document.getElementById("makepdf");
-
-        button.addEventListener("click", function () {
-            let mywindow = window.open("", "PRINT", "height=400,width=600");
-
-            mywindow.document.write(makepdf.innerHTML);
-            mywindow.document.close();
-            mywindow.focus();
-
-            mywindow.print();
-            mywindow.close();
-
-            return true;
-        });
-    </script>
-    -->
     <script>
         document.getElementById("downloadPDF").addEventListener("click", function () {
             let invoiceElement = document.getElementById("makepdf");
