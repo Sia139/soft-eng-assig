@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, render_template, request, flash, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from models import Fee, Notification, Student, Payment, Invoice, User, db
 from datetime import datetime
@@ -15,7 +15,7 @@ def notification():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
     
     notifications = Notification.query.filter_by(user_id=current_user.id).all()
     return render_template("notifications.html", notifications=notifications)
@@ -69,7 +69,7 @@ def make_payment():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
 
     # Get all students belonging to the current user (parent)
     students = Student.query.filter_by(user_id=current_user.id).all()
@@ -414,7 +414,7 @@ def payment_history():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
     
     # Get the user's paid payments
     payments = Payment.query.filter_by(

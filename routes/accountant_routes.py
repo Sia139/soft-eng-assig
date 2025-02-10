@@ -1,5 +1,5 @@
 # accountant_routes.py
-from flask import Blueprint, abort, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student, Invoice
 from function import create_fees_for_grade, is_action_allowed, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details, check_and_update_invoices
@@ -18,7 +18,7 @@ def billBunch():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
     
     if request.method == "POST":
         grade = request.form.get("grade")
@@ -60,7 +60,7 @@ def billSingle():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
     
     if request.method == "POST":
         student_id = request.form.get("student_id")
@@ -104,7 +104,7 @@ def viewBilling():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
     # Get query parameters
     student_name = request.args.get("student_name")
     grade = request.args.get("grade")
@@ -156,7 +156,7 @@ def viewInvoice():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
     # Get query parameters
     student_name = request.args.get("student_name")
     grade = request.args.get("grade")
@@ -308,7 +308,7 @@ def payment_tracking():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
     # Get query parameters
     student_name = request.args.get("name")  # Fixed parameter for student name search
     grade = request.args.get("grade")

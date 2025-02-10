@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, abort, render_template, request, redirect, url_for, jsonify, flash
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
 from flask_login import login_required, current_user
 from models import Fee, Invoice, Notification, db, User, Student  # Import the necessary models
 # from function import create_user, create_student, process_billing, search_parent_student, calculate_outstanding_balance
@@ -18,7 +18,7 @@ def addStudent():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
     
     if current_user.role != "teacher":
         return "Access Denied", 403
@@ -52,7 +52,7 @@ def viewStudents():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
     
     if current_user.role != "teacher":
         return "Access Denied", 403
@@ -101,7 +101,7 @@ def feeOverview():
     print(f"Permission check: {allowed}")
     
     if not allowed:
-        return abort(403)
+        return render_template('403.html')
     
     # Get query parameters
     student_name = request.args.get("name")  # Fixed parameter for student name search
