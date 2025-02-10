@@ -1,0 +1,73 @@
+<!-- sysConfig.html -->
+{% if current_user.role == 'teacher' %}
+{% extends "teacherBase.html" %}
+{% elif current_user.role == 'admin'%}
+{% extends "adminBase.html" %}
+{% elif current_user.role == 'accountant' %}
+{% extends "accountantBase.html" %}
+{% elif current_user.role == 'parent'%}
+{% extends "parentBase.html" %}
+{% endif %}
+
+{% block header %}
+    <title>System Config</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sysConfig.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <section class="content">
+        <div class="header-container">
+            <h1>System configuration</h1>
+        </div>
+            
+        <div class="container">
+            <button class="pause-btn">&#10074;&#10074;</button>
+            <button class="play-btn">&#9658;</button>
+            <button class="stop-btn">&#9209;</button>
+        </div>
+    </section>
+    
+    <script src="{{ url_for('static', filename='sysConfig.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector(".pause-btn").addEventListener("click", function () {
+                updatePermission("pause");
+            });
+        
+            document.querySelector(".play-btn").addEventListener("click", function () {
+                updatePermission("play");
+            });
+        
+            document.querySelector(".stop-btn").addEventListener("click", function () {
+                updatePermission("stop");
+            });
+        
+            function updatePermission(action) {
+                fetch("/admin/sys_config", {  
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ action: action }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                    } else if (data.error) {
+                        alert("Error: " + data.error);
+                    } else {
+                        alert("Unexpected response from server");
+                    }
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    alert("Failed to update permission. Please check the console.");
+                });
+            }
+        });        
+    </script>
+    
+
+{% endblock %}

@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request,  redirect, url_for, jsoni
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from models import db, User, Student, Fee, Invoice, RolePermission, FeeSetting
-from function import create_fees_for_grade, create_single_fee, view_billing, search_parent_student, create_student, search_parent_student, check_and_update_invoices
+from function import create_fees_for_grade, create_single_fee, view_billing, search_parent_student, create_student, search_parent_student, check_and_update_invoices, is_action_allowed
 # from function import create_user, create_student, process_billing, search_parent_student, calculate_outstanding_balance
 from sqlalchemy.orm import joinedload
 from datetime import datetime
@@ -442,3 +442,43 @@ def fee_structure():
             return jsonify({"status": "error", "message": "Invalid input! Please enter numeric values."}), 400
 
     return render_template("feeStructure.html", fee_dict=fee_dict)
+
+"""--------------------------------------------------------------------------------------------------"""
+
+@admin_blueprint.route('/sys_config', methods=['GET', 'POST'])
+@login_required
+def sys_config():
+    if request.method == 'POST':
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({'error': 'No data received'}), 400  # Handle missing data
+            
+            action = data.get('action')
+            if not action:
+                return jsonify({'error': 'No action specified'}), 400  # Handle missing action
+            
+            print(f"Received action: {action}")  # Debugging output in console
+
+            # if not is_action_allowed(current_user.role, "update_permissions"):
+            #     return jsonify({'error': 'Unauthorized'}), 403
+
+            if action == 'pause':
+                permission = RolePermission.query.get(1)
+                if permission:
+                    permission.is_allowed = False
+            elif action == 'play':
+                RolePermission.query.update({RolePermission.is_allowed: True})
+            elif action == 'stop':
+                RolePermission.query.filter(RolePermission.role != 'admin').update({RolePermission.is_allowed: False})
+            else:
+                return jsonify({'error': 'Invalid action'}), 400  # Handle unexpected actions
+
+            db.session.commit()
+            return jsonify({'message': f'Action "{action}" executed successfully'})
+
+        except Exception as e:
+            print(f"Error: {e}")  # Log error in Flask console
+            return jsonify({'error': 'Server error'}), 500  # Handle unexpected server errors
+
+    return render_template("sysConfig.html")

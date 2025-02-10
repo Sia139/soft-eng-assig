@@ -26,7 +26,7 @@
             <div class="dropdown">
                 <button class="dropdown-btn">System</button>
                 <div class="dropdown-content">
-                    <a href="#">Configure system</a>
+                    <a href="{{ url_for('admin.sys_config') }}">Configure system</a>
                     <a href="{{ url_for('admin.fee_structure') }}">Fee structure</a>
                     <a href="{{ url_for('admin.role_permission') }}">Edit role permission</a>
                 </div>
