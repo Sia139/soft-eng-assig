@@ -190,7 +190,7 @@ def viewInvoice():
         joinedload(Invoice.fees).joinedload(Fee.student)
     ).order_by(Invoice.id.desc()).all()
     
-    # Calculate flag status for each invoice
+    ### Calculate flag status for each invoice ###
     # for invoice in invoices:
     #     invoice.flag = False
     #     for fee in invoice.fees:

@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, request,  redirect, url_for, jsonify
+from flask import Blueprint, render_template, request,  redirect, url_for, jsonify, flash
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
-from models import db, User, Student, Fee, Invoice, RolePermission
+from models import db, User, Student, Fee, Invoice, RolePermission, FeeSetting
 from function import create_fees_for_grade, create_single_fee, view_billing, search_parent_student, create_student, search_parent_student
 # from function import create_user, create_student, process_billing, search_parent_student, calculate_outstanding_balance
 from sqlalchemy.orm import joinedload
@@ -397,3 +397,46 @@ def role_permission():
     permissions = RolePermission.query.filter_by(role=selected_role).all()
     
     return render_template("rolePermission.html", roles=roles, selected_role=selected_role, permissions=permissions)
+
+"""--------------------------------------------------------------------------------------------------"""
+
+@admin_blueprint.route('/fee_structure', methods=['GET', 'POST'])
+@login_required
+def fee_structure():
+    if current_user.role != 'admin':
+        return jsonify({"status": "error", "message": "Unauthorized access."}), 403
+
+    # Fetch all settings and convert them into a dictionary
+    settings = FeeSetting.query.all()
+    fee_dict = {setting.detail: setting.value for setting in settings}
+
+    # Ensure required settings exist
+    required_settings = ['penalty_amount', 'discount_period', 'discount_amount']
+    for setting in required_settings:
+        if setting not in fee_dict:
+            new_setting = FeeSetting(detail=setting, value=0)  # Default value 0.0
+            db.session.add(new_setting)
+            fee_dict[setting] = 0  # Add to dictionary as well
+
+    db.session.commit()  # Commit new settings if needed
+
+    if request.method == 'POST':
+        try:
+            if 'penalty' in request.form:
+                fee_dict['penalty_amount'] = float(request.form['penalty'])
+            if 'period' in request.form:
+                fee_dict['discount_period'] = int(request.form['period'])
+            if 'discount' in request.form:
+                fee_dict['discount_amount'] = float(request.form['discount'])
+
+            # Update the database values
+            for setting in settings:
+                setting.value = fee_dict.get(setting.detail, setting.value)
+
+            db.session.commit()
+            return jsonify({"status": "success", "message": "Fee structure updated successfully!"})
+
+        except ValueError:
+            return jsonify({"status": "error", "message": "Invalid input! Please enter numeric values."}), 400
+
+    return render_template("feeStructure.html", fee_dict=fee_dict)

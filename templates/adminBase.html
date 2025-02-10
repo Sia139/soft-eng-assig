@@ -27,7 +27,7 @@
                 <button class="dropdown-btn">System</button>
                 <div class="dropdown-content">
                     <a href="#">Configure system</a>
-                    <a href="#">Fee structure</a>
+                    <a href="{{ url_for('admin.fee_structure') }}">Fee structure</a>
                     <a href="{{ url_for('admin.role_permission') }}">Edit role permission</a>
                 </div>
             </div>
@@ -62,19 +62,6 @@
                     <a href="{{ url_for('admin.payment_tracking') }}">Payment tracking</a>
                 </div>
             </div>
-
-            <!--
-            <div class="dropdown">
-                <button class="dropdown-btn">Fee</button>
-                <div class="dropdown-content">
-                    <a href="#">View fee</a>
-                    <a href="#">Edit fee</a>
-                    <a href="#">Update fee</a>
-                    <a href="{{ url_for('admin.billBunch') }}">By grade</a>
-                    <a href="{{ url_for('admin.billSingle') }}">By individual</a>
-                </div>
-            </div>
-            -->
         </nav>
         <div class="logout-section">
             <a href="\logout">&#x2190;</a>

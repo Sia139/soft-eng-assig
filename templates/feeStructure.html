@@ -1,0 +1,82 @@
+<!-- feeStructure.html -->
+{% if current_user.role == 'teacher' %}
+    {% extends "teacherBase.html" %}
+{% elif current_user.role == 'admin'%}
+    {% extends "adminBase.html" %}
+{% elif current_user.role == 'accountant' %}
+    {% extends "accountantBase.html" %}
+{% elif current_user.role == 'parent'%}
+    {% extends "parentBase.html" %}
+{% endif %}
+
+{% block header %}
+    <title>Fee Structure</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='feeStructure.css') }}">
+{%endblock%}
+
+{% block content %}
+    <section class="content">
+        <div class="header-container">
+            <h1>Fee Structure</h1>
+        </div>
+
+        <div class="container">
+            <form class="form" id="feeForm" action="{{ url_for('admin.fee_structure') }}" method="POST">
+
+                <div class="form-group">
+                    <label for="penalty">Penalty amount (RM):</label>
+                    <input type="text" id="penalty" name="penalty" value="{{ '%.2f' | format(fee_dict.get('penalty_amount', '')) }}">
+                </div>
+            
+                <div class="form-group">
+                    <label for="period">Discount period (Days):</label>
+                    <input type="text" id="period" name="period" value="{{ fee_dict.get('discount_period', 0) | int }}">
+                </div>
+            
+                <div class="form-group">
+                    <label for="discount">Discount amount (RM):</label>
+                    <input type="text" id="discount" name="discount" value="{{ '%.2f' | format(fee_dict.get('discount_amount', '')) }}">
+                </div>
+            
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">Save</button>
+                    <button type="button" class="cancel-btn" onclick="clearForm()">Cancel</button>
+                </div>
+
+            </form>
+            
+        </div>
+    </section>
+    
+    <script>
+        document.getElementById("feeForm").addEventListener("submit", function(event) {
+            event.preventDefault();  // Prevent default form submission
+        
+            let formData = new FormData(this);
+        
+            fetch("{{ url_for('admin.fee_structure') }}", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("✅ " + data.message);
+                } else {
+                    alert("❌ " + data.message);
+                }
+            })
+            .catch(error => {
+                alert("❌ An error occurred: " + error);
+            });
+        });
+
+        function clearForm() {
+            document.getElementById("penalty").value = "0.00";
+            document.getElementById("period").value = "0";
+            document.getElementById("discount").value = "0.00";
+        }
+    </script>
+
+    <script src="{{ url_for('static', filename='feeStructure.js') }}"></script>
+{% endblock %}

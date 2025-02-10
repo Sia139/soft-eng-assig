@@ -77,8 +77,10 @@ class Invoice(db.Model):
     __tablename__ = 'invoices'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     total_amount = db.Column(NUMERIC(10, 2), nullable=False)
-    # need to add a attribute call flag
     flag = db.Column(db.Boolean, default=False)  # True if paid before the due date
+    penalty_amount = db.Column(NUMERIC(10, 2), default=0.00)  # Penalty fee if late
+    discount_amount = db.Column(NUMERIC(10, 2), default=0.00)  # Discount if paid early
+
     
     fees = db.relationship('Fee', back_populates='invoice', lazy='joined')
 
@@ -100,3 +102,8 @@ class RolePermission(db.Model):
     is_allowed = db.Column(db.Boolean, default=True)  # Whether the role is allowed to access this function
 
     __table_args__ = (db.UniqueConstraint('role', 'function_name', name='unique_role_function'),)
+
+class FeeSetting(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    detail = db.Column(db.String(50), unique=True, nullable=False)  # "penalty_amount", "discount_period", "discount_amount"
+    value = db.Column(db.Float, nullable=False)  # The actual amount or period
