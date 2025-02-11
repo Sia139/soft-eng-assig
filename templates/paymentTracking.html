@@ -49,7 +49,7 @@
         <table id="myTable2">
             <thead>
                 <tr>
-                    <th onclick="sortTable(0)"># <span class="sort"></span></th>
+                    <th onclick="sortTable(0)">#Inv <span class="sort"></span></th>
                     <th onclick="sortTable(1)">Name <span class="sort"></span></th>
                     <th onclick="sortTable(2)">Parent <span class="sort"></span></th>
                     <th onclick="sortTable(3)">Overdue <span class="sort"></span></th>
@@ -61,7 +61,9 @@
                
                 {% for invoice in invoices %}
                     <tr>
-                        <td><span class="id">{{ invoice.id }}</span></td>
+                        <td>
+                            <a href="{{ url_for('accountant.invoice_details', invoice_id=invoice.id) }}">{{ invoice.id }}</a>
+                        </td>
                         <td><span class="name">{{ invoice.fees[0].student.name }}</span></td>
                         <td><span class="parent">{{ invoice.fees[0].student.guardian.username if invoice.fees[0].student.guardian else 'No Guardian Assigned' }}</span></td>
                         <td><span class="overdue">{{ "%.2f"|format(invoice.total_amount - invoice.discount_amount + invoice.penalty_amount) }}</span></td>

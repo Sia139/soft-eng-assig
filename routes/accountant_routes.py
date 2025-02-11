@@ -195,14 +195,6 @@ def viewInvoice():
         joinedload(Invoice.fees).joinedload(Fee.student)
     ).order_by(Invoice.id.desc()).all()
     
-    ### Calculate flag status for each invoice ###
-    # for invoice in invoices:
-    #     invoice.flag = False
-    #     for fee in invoice.fees:
-    #         if fee.due_date.date() < datetime.now().date() and fee.status == 'unpaid':
-    #             invoice.flag = True
-    #             break
-
     return render_template("viewInvoice.html", invoices=invoices)
 
 """ -------------------------------------------------------------------------------------------------- """
@@ -251,8 +243,6 @@ def fee_preview():
 def invoice_details(invoice_id):
     invoice = get_invoice_details(invoice_id)  # Use the renamed function
     
-    # if error:
-    #     flash(error, "danger")
     
     return render_template('invoiceDetail.html', invoice=invoice)
 
