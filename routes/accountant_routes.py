@@ -1,4 +1,7 @@
 # accountant_routes.py
+import calendar
+from reportlab.pdfgen import canvas
+from io import BytesIO
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student, Invoice
@@ -204,29 +207,6 @@ def viewInvoice():
 
 """ -------------------------------------------------------------------------------------------------- """
 
-# @accountant_blueprint.route("/preview_fees/<grade>", methods=["POST"])
-# @login_required
-# def preview_fees(grade):
-#     try:
-#         # Get students in the specified grade
-#         students = Student.query.filter_by(grade=grade).all()
-        
-#         if not students:
-#             return jsonify({"error": "No students found in this grade"}), 404
-            
-#         # Format student data for preview
-#         students_data = [{
-#             "name": student.name,
-#             "transport": student.transport
-#         } for student in students]
-        
-#         return jsonify({"students": students_data})
-        
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-""" -------------------------------------------------------------------------------------------------- """
-
 @accountant_blueprint.route("/fee_preview", methods=["GET"])
 @login_required
 def fee_preview():
@@ -300,6 +280,7 @@ def single_fee_preview():
                          details=details,
                          price=f"{price_float:.2f}")
     
+""" -------------------------------------------------------------------------------------------------- """
     
 @accountant_blueprint.route("/payment_tracking", methods=["GET"])
 @login_required
@@ -346,6 +327,8 @@ def payment_tracking():
         search_name=student_name
     )
 
+""" -------------------------------------------------------------------------------------------------- """
+
 @accountant_blueprint.route("/toggle_invoice_flag/<int:invoice_id>", methods=["POST"])
 @login_required
 def toggle_invoice_flag(invoice_id):
@@ -362,11 +345,181 @@ def toggle_invoice_flag(invoice_id):
             "message": str(e)
         }), 500
 
-# @accountant_blueprint.route("/toggle_invoice_flag/<int:invoice_id>", methods=["POST"])
-# @login_required
-# def toggle_invoice_flag_route(invoice_id):
-#     """
-#     Route to toggle invoice flag.
-#     """
-#     response, status_code = toggle_invoice_flag(invoice_id)
-#     return jsonify(response), status_code
+""" -------------------------------------------------------------------------------------------------- """
+
+@accountant_blueprint.route("/generate_report", methods=['GET'])
+@login_required
+def generate_report():
+    try:
+        selected_month = request.args.get('month')
+        if not selected_month:
+            return jsonify({"success": False, "error": "Month not selected"})
+
+        year, month = map(int, selected_month.split('-'))
+        start_date = datetime(year, month, 1)
+        _, last_day = calendar.monthrange(year, month)
+        end_date = datetime(year, month, last_day)
+
+        monthly_fees = Fee.query.filter(
+            Fee.due_date >= start_date,
+            Fee.due_date <= end_date
+        ).all()
+
+        total_income = sum(float(fee.amount) for fee in monthly_fees if fee.status == 'paid')
+        total_bad_debt = sum(float(fee.amount) for fee in monthly_fees if fee.status == 'unpaid')
+
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer)
+        
+        # Define constants
+        PAGE_HEIGHT = 800
+        PAGE_WIDTH = 600
+        MARGIN = 50
+        COL_WIDTHS = [200, 100, 150]  # Widths for each column
+        ROW_HEIGHT = 20
+        
+        def draw_table_header(y_position, headers):
+            # Draw table header background
+            p.setFillColorRGB(0.9, 0.9, 0.9)  # Light gray background
+            p.rect(MARGIN, y_position - ROW_HEIGHT, sum(COL_WIDTHS), ROW_HEIGHT, fill=1)
+            
+            # Draw header text
+            p.setFillColorRGB(0, 0, 0)  # Black text
+            x = MARGIN
+            for i, header in enumerate(headers):
+                p.drawString(x + 5, y_position - 15, header)
+                x += COL_WIDTHS[i]
+            
+            # Draw header lines
+            p.line(MARGIN, y_position, MARGIN + sum(COL_WIDTHS), y_position)
+            p.line(MARGIN, y_position - ROW_HEIGHT, MARGIN + sum(COL_WIDTHS), y_position - ROW_HEIGHT)
+            
+            return y_position - ROW_HEIGHT
+
+        def draw_table_row(y_position, data):
+            x = MARGIN
+            for i, item in enumerate(data):
+                p.drawString(x + 5, y_position - 15, str(item))
+                x += COL_WIDTHS[i]
+            
+            # Draw horizontal line
+            p.line(MARGIN, y_position - ROW_HEIGHT, MARGIN + sum(COL_WIDTHS), y_position - ROW_HEIGHT)
+            
+            return y_position - ROW_HEIGHT
+
+        def draw_vertical_lines(start_y, end_y):
+            x = MARGIN
+            for width in COL_WIDTHS:
+                p.line(x, start_y, x, end_y)
+                x += width
+            p.line(x, start_y, x, end_y)  # Last vertical line
+
+        def add_new_page():
+            p.showPage()
+            p.setFont("Helvetica", 10)
+            return PAGE_HEIGHT - MARGIN
+
+        # Start first page with title
+        p.setFont("Helvetica-Bold", 16)
+        y_position = PAGE_HEIGHT - MARGIN
+        p.drawString(MARGIN, y_position, f"Financial Report - {calendar.month_name[month]} {year}")
+        
+        # Add summary section
+        y_position -= 40
+        p.setFont("Helvetica-Bold", 12)
+        p.drawString(MARGIN, y_position, "Summary")
+        y_position -= 25
+        p.setFont("Helvetica", 10)
+        p.drawString(MARGIN, y_position, f"Total Income: ${total_income:.2f}")
+        y_position -= 15
+        p.drawString(MARGIN, y_position, f"Total Bad Debt: ${total_bad_debt:.2f}")
+        y_position -= 15
+        collection_rate = (total_income / (total_income + total_bad_debt) * 100) if (total_income + total_bad_debt) > 0 else 0
+        p.drawString(MARGIN, y_position, f"Collection Rate: {collection_rate:.1f}%")
+        
+        # Paid Fees Table
+        y_position -= 40
+        p.setFont("Helvetica-Bold", 12)
+        p.drawString(MARGIN, y_position, "Paid Fees")
+        y_position -= 25
+        
+        # Draw table headers
+        headers = ["Student Name", "Amount", "Payment Date"]
+        table_top = y_position
+        y_position = draw_table_header(y_position, headers)
+        
+        # Draw paid fees rows
+        for fee in monthly_fees:
+            if fee.status == 'paid':
+                if y_position < MARGIN + ROW_HEIGHT:
+                    # Draw vertical lines for current page
+                    draw_vertical_lines(table_top, y_position)
+                    # Start new page
+                    y_position = add_new_page()
+                    table_top = y_position
+                    y_position = draw_table_header(y_position, headers)
+                
+                student = Student.query.get(fee.student_id)
+                row_data = [
+                    student.name,
+                    f"${float(fee.amount):.2f}",
+                    fee.due_date.strftime('%d/%m/%Y')
+                ]
+                y_position = draw_table_row(y_position, row_data)
+        
+        # Draw vertical lines for last page of paid fees
+        draw_vertical_lines(table_top, y_position)
+        
+        # Unpaid Fees Table
+        y_position -= 40
+        if y_position < MARGIN + 100:
+            y_position = add_new_page()
+        
+        p.setFont("Helvetica-Bold", 12)
+        p.drawString(MARGIN, y_position, "Unpaid Fees")
+        y_position -= 25
+        
+        # Draw table headers for unpaid fees
+        table_top = y_position
+        y_position = draw_table_header(y_position, headers)
+        
+        # Draw unpaid fees rows
+        for fee in monthly_fees:
+            if fee.status == 'unpaid':
+                if y_position < MARGIN + ROW_HEIGHT:
+                    draw_vertical_lines(table_top, y_position)
+                    y_position = add_new_page()
+                    table_top = y_position
+                    y_position = draw_table_header(y_position, headers)
+                
+                student = Student.query.get(fee.student_id)
+                row_data = [
+                    student.name,
+                    f"${float(fee.amount):.2f}",
+                    fee.due_date.strftime('%d/%m/%Y')
+                ]
+                y_position = draw_table_row(y_position, row_data)
+        
+        # Draw vertical lines for last page of unpaid fees
+        draw_vertical_lines(table_top, y_position)
+        
+        # Add page number and generation date
+        p.setFont("Helvetica", 8)
+        p.drawString(PAGE_WIDTH - 70, MARGIN - 20, f"Page {p.getPageNumber()}")
+        p.drawString(MARGIN, MARGIN - 20, f"Generated on {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+        
+        p.save()
+        
+        buffer.seek(0)
+        response = make_response(buffer.getvalue())
+        response.mimetype = 'application/pdf'
+        response.headers['Content-Disposition'] = f'attachment; filename=financial_report_{selected_month}.pdf'
+        
+        return response
+
+    except Exception as e:
+        print(f"Error generating report: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        })

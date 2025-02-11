@@ -133,26 +133,8 @@ def delete_user():
 @admin_blueprint.route("/addStudent", methods=["GET", "POST"])
 @login_required
 def addStudent():
-    if current_user.role != "admin":
-        return "Access Denied", 403
-
-    if request.method == "POST":
-        create_student()
-            
-    # Get parents for the dropdown search in the form
-    parents = search_parents_route()
+    # route to teacher_blueprint
     return render_template("addStudent.html")
-
-#cause of (AJAX)
-@admin_blueprint.route("/searchParents", methods=["GET"])
-@login_required
-def search_parents_route():
-    if current_user.role not in ["teacher", "admin"]:
-        return "Access Denied", 403
-
-    query = request.args.get("query", "").lower()
-    parents = search_parent_student(query, role="parent")
-    return jsonify(parents)
 
 """ -------------------------------------------------------------------------------------------------- """  
 
@@ -217,40 +199,9 @@ def billBunch():
 @admin_blueprint.route("/billSingle", methods=["GET", "POST"])
 @login_required
 def billSingle():
-    if request.method == "POST":
-        student_id = request.form.get("student_id")
-        fee_type = request.form.get("details")
-        amount = request.form.get("price")
-        due_date = request.form.get("due_date")
-        
-        if not all([student_id, fee_type, amount, due_date]):
-            return jsonify({"status": "error", "message": "All fields are required"}), 400
-            
-        try:
-            # Create a single fee with invoice
-            success, message = create_single_fee(student_id, fee_type, amount, due_date)
-            
-            if success:
-                return jsonify({"status": "success", "message": message}), 200
-            return jsonify({"status": "error", "message": message}), 400
-            
-        except Exception as e:
-            return jsonify({"status": "error", "message": str(e)}), 500
-            
+    #route to accountant_blueprint
     return render_template("billSingle.html")
 
-"""--------------------------------------------------------------------------------------------------"""
-
-#cause of (AJAX)
-# @admin_blueprint.route("/search-students", methods=["GET"])
-# @login_required
-# def search_students_route():
-#     if current_user.role not in ["teacher", "admin", "accountant"]:
-#         return "Access Denied", 403
-
-#     query = request.args.get("query", "").lower()
-#     students = search_parent_student(query)  # No role parameter means search for students
-#     return jsonify(students)
 
 """--------------------------------------------------------------------------------------------------"""
 
