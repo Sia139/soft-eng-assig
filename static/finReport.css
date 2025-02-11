@@ -333,7 +333,7 @@ select {
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
-.generate-btn {
+.download-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 20px;
@@ -347,7 +347,7 @@ select {
     margin-left: 10px;
 }
 
-.generate-btn:hover {
+.download-btn:hover {
     background: #0056b3;
 }
 
