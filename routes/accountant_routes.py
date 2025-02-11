@@ -337,10 +337,6 @@ def toggle_invoice_flag(invoice_id):
 
 """ -------------------------------------------------------------------------------------------------- """
 
-# from flask import request
-# from datetime import datetime, date
-# from sqlalchemy.sql import func
-
 @accountant_blueprint.route("/finReport", methods=["GET"])
 @login_required
 def finReport():
@@ -364,13 +360,6 @@ def finReport():
     ]
     
     filtered_invoices.sort(key=lambda inv: min(fee.due_date for fee in inv.fees if fee.due_date >= first_day))
-
-
-    # total_income = sum(invoice.total_amount for invoice in filtered_invoices)  # Total expected income
-    # total_paid = sum(sum(fee.amount_paid for fee in invoice.fees) for invoice in filtered_invoices)  # Total collected
-    # total_bad_debt = total_income - total_paid  # Unpaid amount (bad debt)
-    # collection_rate = (total_paid / total_income * 100) if total_income > 0 else 0  # Collection rate percentage
-    # total_bad_debt = sum(sum(fee.amount for fee in invoice.fees if fee.status == 'unpaid') for invoice in filtered_invoices)
 
     total = sum(invoice.total_amount for invoice in filtered_invoices)  # Total expected income
     total_paid = sum(sum(fee.amount for fee in invoice.fees if fee.status == 'paid') for invoice in filtered_invoices)  # Total collected
