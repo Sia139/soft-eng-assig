@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Report</title>
+    <link rel="icon" type="image/x-icon" href="icon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='finReport.css') }}">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='images/kids.jpeg') }}" alt="Logo">
+        </div>
+        <nav class="menu">
+            <div class="dropdown">
+                <button class="dropdown-btn">Fee</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('accountant.viewBilling') }}">View & edit bill</a>
+                    <a href="{{ url_for('accountant.viewBilling') }}">Update bill</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Create bill</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('accountant.billBunch') }}">By grade</a>
+                    <a href="{{ url_for('accountant.billSingle') }}">By individual</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Financial</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('accountant.finReport') }}">Financial report</a>
+                    <a href="#">Payment tracking</a>
+                </div>
+            </div>
+        </nav>
+        <div class="logout-section">
+            <a href="#">&#x2190;</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <button class="collapse-button">&#9776;</button>
+        <div class="header">
+            <div class="time">08:27am</div>
+            <div class="user"> 
+                <label for="role-toggle">Accountant</label>
+            </div>
+        </div>
+        <section class="content">
+            <div class="header-container">
+                <h1>Financial Report</h1>
+            </div>
+                
+            <div class="container">
+                <div class="report-controls">
+                    <form action="{{ url_for('accountant.generate_report') }}" method="GET">
+                        <div class="month-selector">
+                            <label for="month">Select Month:</label>
+                            <input type="month" id="month" name="month" required>
+                        </div>
+                        <button id="generateReport" class="generate-btn" type="submit">Generate Report</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="{{ url_for('static', filename='finReport.js') }}"></script>
+</body>
+</html>
