@@ -101,43 +101,43 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function displayReport(report, selectedMonth) {
-    // Show the report section
-    document.getElementById('reportSummary').style.display = 'block';
+// function displayReport(report, selectedMonth) {
+//     // Show the report section
+//     document.getElementById('reportSummary').style.display = 'block';
     
-    // Update summary cards
-    document.getElementById('selectedMonth').textContent = formatMonth(selectedMonth);
-    document.getElementById('totalRevenue').textContent = formatCurrency(report.totalRevenue);
-    document.getElementById('totalPaid').textContent = formatCurrency(report.totalPaid);
-    document.getElementById('totalPending').textContent = formatCurrency(report.totalPending);
-    document.getElementById('collectionRate').textContent = `${report.collectionRate}%`;
+//     // Update summary cards
+//     document.getElementById('selectedMonth').textContent = formatMonth(selectedMonth);
+//     document.getElementById('totalRevenue').textContent = formatCurrency(report.totalRevenue);
+//     document.getElementById('totalPaid').textContent = formatCurrency(report.totalPaid);
+//     document.getElementById('totalPending').textContent = formatCurrency(report.totalPending);
+//     document.getElementById('collectionRate').textContent = `${report.collectionRate}%`;
     
-    // Update fee type breakdown table
-    const tableBody = document.getElementById('feeTypeTable').getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // Clear existing rows
+//     // Update fee type breakdown table
+//     const tableBody = document.getElementById('feeTypeTable').getElementsByTagName('tbody')[0];
+//     tableBody.innerHTML = ''; // Clear existing rows
     
-    report.feeTypes.forEach(fee => {
-        const row = tableBody.insertRow();
-        row.innerHTML = `
-            <td>${fee.type}</td>
-            <td>${formatCurrency(fee.total)}</td>
-            <td>${formatCurrency(fee.paid)}</td>
-            <td>${formatCurrency(fee.pending)}</td>
-            <td>${fee.collectionRate}%</td>
-        `;
-    });
-}
+//     report.feeTypes.forEach(fee => {
+//         const row = tableBody.insertRow();
+//         row.innerHTML = `
+//             <td>${fee.type}</td>
+//             <td>${formatCurrency(fee.total)}</td>
+//             <td>${formatCurrency(fee.paid)}</td>
+//             <td>${formatCurrency(fee.pending)}</td>
+//             <td>${fee.collectionRate}%</td>
+//         `;
+//     });
+// }
 
-function formatCurrency(amount) {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-    }).format(amount);
-}
+// function formatCurrency(amount) {
+//     return new Intl.NumberFormat('en-US', {
+//         style: 'currency',
+//         currency: 'USD'
+//     }).format(amount);
+// }
 
-function formatMonth(monthStr) {
-    return new Date(monthStr + '-01').toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long'
-    });
-}
+// function formatMonth(monthStr) {
+//     return new Date(monthStr + '-01').toLocaleDateString('en-US', {
+//         year: 'numeric',
+//         month: 'long'
+//     });
+// }
