@@ -2,7 +2,7 @@
 import calendar
 from reportlab.pdfgen import canvas
 from io import BytesIO
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, make_response, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, Fee, Student, Invoice
 from function import create_fees_for_grade, is_action_allowed, update_fee, delete_fee, view_billing, search_parent_student, create_single_fee, get_invoice_details, check_and_update_invoices
@@ -346,6 +346,60 @@ def toggle_invoice_flag(invoice_id):
         }), 500
 
 """ -------------------------------------------------------------------------------------------------- """
+
+@accountant_blueprint.route("/finReport", methods=["GET"])
+@login_required
+def finReport():
+    try:
+        selected_month = request.args.get('month')
+        if not selected_month:
+            # If no month is selected, render the template with a message
+            return render_template("finReport.html", 
+                                   error="Please select a month to view the report.")
+
+        year, month = map(int, selected_month.split('-'))
+        start_date = datetime(year, month, 1)
+        _, last_day = calendar.monthrange(year, month)
+        end_date = datetime(year, month, last_day)
+
+        # Get fees for the selected month
+        monthly_fees = Fee.query.filter(
+            Fee.due_date >= start_date,
+            Fee.due_date <= end_date
+        ).all()
+
+        # Calculate summary statistics
+        total_income = sum(fee.amount for fee in monthly_fees if fee.status == 'paid')
+        total_unpaid = sum(fee.amount for fee in monthly_fees if fee.status == 'unpaid')
+        total_fees = total_income + total_unpaid
+
+        # Fee type breakdown
+        fee_type_breakdown = {}
+        for fee in monthly_fees:
+            fee_type_breakdown[fee.type] = fee_type_breakdown.get(fee.type, 0) + fee.amount
+
+        # Grade-wise breakdown
+        grade_breakdown = {}
+        for fee in monthly_fees:
+            student = Student.query.get(fee.student_id)
+            grade_breakdown[student.grade] = grade_breakdown.get(student.grade, 0) + fee.amount
+
+        # Pass data to the template
+        return render_template("finReport.html", 
+                               total_income=total_income,
+                               total_unpaid=total_unpaid,
+                               total_fees=total_fees,
+                               fee_type_breakdown=fee_type_breakdown,
+                               grade_breakdown=grade_breakdown,
+                               selected_month=selected_month
+                              )
+
+    except Exception as e:
+        print(f"Error generating report: {str(e)}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        })
 
 @accountant_blueprint.route("/generate_report", methods=['GET'])
 @login_required

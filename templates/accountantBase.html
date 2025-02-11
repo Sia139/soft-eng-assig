@@ -33,7 +33,7 @@
             <div class="dropdown">
                 <button class="dropdown-btn">Financial</button>
                 <div class="dropdown-content">
-                    <a href="#">Financial report</a>
+                    <a href="{{ url_for('accountant.finReport') }}">Financial report</a>
                     <a href="{{ url_for('accountant.payment_tracking') }}">Payment tracking</a>
                 </div>
             </div>
