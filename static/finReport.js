@@ -49,56 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateTime();
     setInterval(updateTime, 60000);
 
-    // Add report generation functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log("Script loaded");
-        
-        const form = document.querySelector('form');
-        
-        if (form) {
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault(); // Prevent default form submission
-                
-                const monthInput = document.getElementById('month');
-                const selectedMonth = monthInput.value;
-                console.log("Selected month:", selectedMonth);
-                
-                if (!selectedMonth) {
-                    alert('Please select a month');
-                    return;
-                }
-                
-                try {
-                    const response = await fetch(`/accountant/generate_report?month=${selectedMonth}`, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/pdf'
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const blob = await response.blob();
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `financial_report_${selectedMonth}.pdf`;
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                        a.remove();
-                    } else {
-                        const errorData = await response.json();
-                        alert(errorData.error || 'Failed to generate report');
-                    }
-                } catch (error) {
-                    console.error('Error generating report:', error);
-                    alert('An error occurred while generating the report');
-                }
-            });
-        } else {
-            console.error("Form not found");
-        }
-    });
 });
 
 // function displayReport(report, selectedMonth) {
