@@ -20,17 +20,114 @@
             </div>
                 
             <div class="container">
-                <!-- <div class="report-controls"> -->
-                    <form action="{{ url_for('accountant.generate_report') }}" method="GET">
-                        <div class="month-selector">
-                            <label for="month">Select Month:</label>
-                            <input type="month" id="month" name="month" required>
-                        </div>
-                        <button id="generateReport" class="generate-btn" type="submit">Generate Report</button>
-                    </form>
-                <!-- </div> -->
-            </div>
+                <form action="{{ url_for('accountant.finReport') }}" method="GET">
+                    <div class="month-selector">
+                        <label for="month">Select Month:</label>
+                        <input type="month" type="submit" id="month" name="month" value="{{ selected_month }}" required>
+                    </div>
+                </form>
+                
+                <button id="downloadPDF" class="download-btn">Download PDF</button><!-- Download PDF button -->
+            </div>  
+
+            <div id="makepdf">
+                
+                <h2> 
+                    {% if selected_month %}
+                        Financial Report - {{ selected_month.split('-')[1] }}/{{ selected_month.split('-')[0] }}
+                    {% else %}
+                        No Month Selected
+                    {% endif %}
+                </h2>
+                
+                <div class="summary">
+                    <h3>Summary</h3>
+                    <ul>
+                        <li><strong>Total Income:</strong> ${{ "%.2f"|format(total_paid) }}</li>
+                        <li><strong>Total Bad Debt:</strong> ${{ "%.2f"|format(total_bad_debt) }}</li>
+                        <li><strong>Collection Rate:</strong> {{ "%.2f"|format(collection_rate) }}%</li>
+                    </ul>
+                </div>
+                
+                
+                <table id="myTable2">
+                    <thead>
+                        <tr>
+                            <th>#Inv</th>
+                            <th>Name</th>
+                            <th>Parent</th>
+                            <th>Overdue</th>
+                            <th>Due Date</th>
+                            <th>Penalty</th>
+                            <th>Discount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                
+                    <tbody>
+                        {% if invoices %}
+                            {% for invoice in invoices %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('accountant.invoice_details', invoice_id=invoice.id) }}">{{ invoice.id }}</a>
+                                    </td>
+                                    <td>{{ invoice.fees[0].student.name }}</td>
+                                    <td>{{ invoice.fees[0].student.guardian.username if invoice.fees[0].student.guardian else 'No Guardian Assigned' }}</td>
+                                    <td>{{ "%.2f"|format(invoice.total_amount - invoice.discount_amount + invoice.penalty_amount) }}</td>
+                                    <td>{{ invoice.fees[0].due_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ "%.2f"|format(invoice.penalty_amount) }}</td>
+                                    <td>{{ "%.2f"|format(invoice.discount_amount) }}</td>
+                                    <td>
+                                        <span class="status {% if invoice.fees[0].status == 'paid' %}paid{% else %}unpaid{% endif %}">
+                                            {{ invoice.fees[0].status | capitalize }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>               
+    
         </section>
     </div>
+
     <script src="{{ url_for('static', filename='finReport.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <script>
+
+        document.getElementById("month").addEventListener("change", function() {
+            this.form.submit();
+        });
+
+        document.getElementById("downloadPDF").addEventListener("click", function () {
+            let invoiceElement = document.getElementById("makepdf");
+
+            let selectedMonth = "{{ selected_month }}";
+            let fileName = "Financial_Report.pdf"; // Default filename
+            
+            if (selectedMonth) {
+                let parts = selectedMonth.split('-');
+                if (parts.length === 2) {
+                    let year = parts[0];
+                    let month = parts[1];
+                    fileName = `Financial_Report_${month}_${year}.pdf`;
+                }
+            }
+
+            // PDF generation options
+            let options = {
+                margin: 10,
+                filename: fileName,
+                image: { type: "jpeg", quality: 0.98 },
+                html2canvas: { scale: 3, scrollY: 0, useCORS: true },
+                jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+            };
+    
+            html2pdf().set(options).from(invoiceElement).save();
+        });
+
+    </script>
+
 {% endblock %}

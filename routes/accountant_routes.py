@@ -337,233 +337,53 @@ def toggle_invoice_flag(invoice_id):
 
 """ -------------------------------------------------------------------------------------------------- """
 
+# from flask import request
+# from datetime import datetime, date
+# from sqlalchemy.sql import func
+
 @accountant_blueprint.route("/finReport", methods=["GET"])
 @login_required
 def finReport():
-    try:
-        selected_month = request.args.get('month')
-        if not selected_month:
-            # If no month is selected, render the template with a message
-            return render_template("finReport.html", 
-                                   error="Please select a month to view the report.")
+    selected_month = request.args.get("month")  # Get user-selected month (YYYY-MM)
+    
+    if not selected_month:
+        return render_template("finReport.html", invoices=[], selected_month=None, total_paid=0, total_bad_debt=0, collection_rate=0)
 
-        year, month = map(int, selected_month.split('-'))
-        start_date = datetime(year, month, 1)
-        _, last_day = calendar.monthrange(year, month)
-        end_date = datetime(year, month, last_day)
+    year, month = map(int, selected_month.split('-'))
+    first_day = datetime(year, month, 1).date()
+    _, last_day = calendar.monthrange(year, month)
+    end_date = datetime(year, month, last_day).date()
 
-        # Get fees for the selected month
-        monthly_fees = Fee.query.filter(
-            Fee.due_date >= start_date,
-            Fee.due_date <= end_date
-        ).all()
+    invoices = Invoice.query.join(Fee).filter(
+        Fee.due_date >= first_day,
+        Fee.due_date <= end_date
+    ).all()
 
-        # Calculate summary statistics
-        total_income = sum(fee.amount for fee in monthly_fees if fee.status == 'paid')
-        total_unpaid = sum(fee.amount for fee in monthly_fees if fee.status == 'unpaid')
-        total_fees = total_income + total_unpaid
+    filtered_invoices = [
+        invoice for invoice in invoices if any(fee.due_date >= first_day for fee in invoice.fees)
+    ]
+    
+    filtered_invoices.sort(key=lambda inv: min(fee.due_date for fee in inv.fees if fee.due_date >= first_day))
 
-        # Fee type breakdown
-        fee_type_breakdown = {}
-        for fee in monthly_fees:
-            fee_type_breakdown[fee.type] = fee_type_breakdown.get(fee.type, 0) + fee.amount
 
-        # Grade-wise breakdown
-        grade_breakdown = {}
-        for fee in monthly_fees:
-            student = Student.query.get(fee.student_id)
-            grade_breakdown[student.grade] = grade_breakdown.get(student.grade, 0) + fee.amount
+    # total_income = sum(invoice.total_amount for invoice in filtered_invoices)  # Total expected income
+    # total_paid = sum(sum(fee.amount_paid for fee in invoice.fees) for invoice in filtered_invoices)  # Total collected
+    # total_bad_debt = total_income - total_paid  # Unpaid amount (bad debt)
+    # collection_rate = (total_paid / total_income * 100) if total_income > 0 else 0  # Collection rate percentage
+    # total_bad_debt = sum(sum(fee.amount for fee in invoice.fees if fee.status == 'unpaid') for invoice in filtered_invoices)
 
-        # Pass data to the template
-        return render_template("finReport.html", 
-                               total_income=total_income,
-                               total_unpaid=total_unpaid,
-                               total_fees=total_fees,
-                               fee_type_breakdown=fee_type_breakdown,
-                               grade_breakdown=grade_breakdown,
-                               selected_month=selected_month
-                              )
+    total = sum(invoice.total_amount for invoice in filtered_invoices)  # Total expected income
+    total_paid = sum(sum(fee.amount for fee in invoice.fees if fee.status == 'paid') for invoice in filtered_invoices)  # Total collected
+    total_bad_debt = sum(sum(fee.amount for fee in invoice.fees if fee.status == 'unpaid') for invoice in filtered_invoices)
+    collection_rate = (total_paid / total * 100) if total > 0 else 0  # Collection rate percentage
 
-    except Exception as e:
-        print(f"Error generating report: {str(e)}")
-        return jsonify({
-            "success": False,
-            "error": str(e)
-        })
+    
+    return render_template(
+        "finReport.html",
+        invoices=filtered_invoices,
+        selected_month=selected_month,
+        total_paid=total_paid,
+        total_bad_debt=total_bad_debt,
+        collection_rate=collection_rate
+    )
 
-@accountant_blueprint.route("/generate_report", methods=['GET'])
-@login_required
-def generate_report():
-    try:
-        selected_month = request.args.get('month')
-        if not selected_month:
-            return jsonify({"success": False, "error": "Month not selected"})
-
-        year, month = map(int, selected_month.split('-'))
-        start_date = datetime(year, month, 1)
-        _, last_day = calendar.monthrange(year, month)
-        end_date = datetime(year, month, last_day)
-
-        monthly_fees = Fee.query.filter(
-            Fee.due_date >= start_date,
-            Fee.due_date <= end_date
-        ).all()
-
-        total_income = sum(float(fee.amount) for fee in monthly_fees if fee.status == 'paid')
-        total_bad_debt = sum(float(fee.amount) for fee in monthly_fees if fee.status == 'unpaid')
-
-        buffer = BytesIO()
-        p = canvas.Canvas(buffer)
-        
-        # Define constants
-        PAGE_HEIGHT = 800
-        PAGE_WIDTH = 600
-        MARGIN = 50
-        COL_WIDTHS = [200, 100, 150]  # Widths for each column
-        ROW_HEIGHT = 20
-        
-        def draw_table_header(y_position, headers):
-            # Draw table header background
-            p.setFillColorRGB(0.9, 0.9, 0.9)  # Light gray background
-            p.rect(MARGIN, y_position - ROW_HEIGHT, sum(COL_WIDTHS), ROW_HEIGHT, fill=1)
-            
-            # Draw header text
-            p.setFillColorRGB(0, 0, 0)  # Black text
-            x = MARGIN
-            for i, header in enumerate(headers):
-                p.drawString(x + 5, y_position - 15, header)
-                x += COL_WIDTHS[i]
-            
-            # Draw header lines
-            p.line(MARGIN, y_position, MARGIN + sum(COL_WIDTHS), y_position)
-            p.line(MARGIN, y_position - ROW_HEIGHT, MARGIN + sum(COL_WIDTHS), y_position - ROW_HEIGHT)
-            
-            return y_position - ROW_HEIGHT
-
-        def draw_table_row(y_position, data):
-            x = MARGIN
-            for i, item in enumerate(data):
-                p.drawString(x + 5, y_position - 15, str(item))
-                x += COL_WIDTHS[i]
-            
-            # Draw horizontal line
-            p.line(MARGIN, y_position - ROW_HEIGHT, MARGIN + sum(COL_WIDTHS), y_position - ROW_HEIGHT)
-            
-            return y_position - ROW_HEIGHT
-
-        def draw_vertical_lines(start_y, end_y):
-            x = MARGIN
-            for width in COL_WIDTHS:
-                p.line(x, start_y, x, end_y)
-                x += width
-            p.line(x, start_y, x, end_y)  # Last vertical line
-
-        def add_new_page():
-            p.showPage()
-            p.setFont("Helvetica", 10)
-            return PAGE_HEIGHT - MARGIN
-
-        # Start first page with title
-        p.setFont("Helvetica-Bold", 16)
-        y_position = PAGE_HEIGHT - MARGIN
-        p.drawString(MARGIN, y_position, f"Financial Report - {calendar.month_name[month]} {year}")
-        
-        # Add summary section
-        y_position -= 40
-        p.setFont("Helvetica-Bold", 12)
-        p.drawString(MARGIN, y_position, "Summary")
-        y_position -= 25
-        p.setFont("Helvetica", 10)
-        p.drawString(MARGIN, y_position, f"Total Income: ${total_income:.2f}")
-        y_position -= 15
-        p.drawString(MARGIN, y_position, f"Total Bad Debt: ${total_bad_debt:.2f}")
-        y_position -= 15
-        collection_rate = (total_income / (total_income + total_bad_debt) * 100) if (total_income + total_bad_debt) > 0 else 0
-        p.drawString(MARGIN, y_position, f"Collection Rate: {collection_rate:.1f}%")
-        
-        # Paid Fees Table
-        y_position -= 40
-        p.setFont("Helvetica-Bold", 12)
-        p.drawString(MARGIN, y_position, "Paid Fees")
-        y_position -= 25
-        
-        # Draw table headers
-        headers = ["Student Name", "Amount", "Payment Date"]
-        table_top = y_position
-        y_position = draw_table_header(y_position, headers)
-        
-        # Draw paid fees rows
-        for fee in monthly_fees:
-            if fee.status == 'paid':
-                if y_position < MARGIN + ROW_HEIGHT:
-                    # Draw vertical lines for current page
-                    draw_vertical_lines(table_top, y_position)
-                    # Start new page
-                    y_position = add_new_page()
-                    table_top = y_position
-                    y_position = draw_table_header(y_position, headers)
-                
-                student = Student.query.get(fee.student_id)
-                row_data = [
-                    student.name,
-                    f"${float(fee.amount):.2f}",
-                    fee.due_date.strftime('%d/%m/%Y')
-                ]
-                y_position = draw_table_row(y_position, row_data)
-        
-        # Draw vertical lines for last page of paid fees
-        draw_vertical_lines(table_top, y_position)
-        
-        # Unpaid Fees Table
-        y_position -= 40
-        if y_position < MARGIN + 100:
-            y_position = add_new_page()
-        
-        p.setFont("Helvetica-Bold", 12)
-        p.drawString(MARGIN, y_position, "Unpaid Fees")
-        y_position -= 25
-        
-        # Draw table headers for unpaid fees
-        table_top = y_position
-        y_position = draw_table_header(y_position, headers)
-        
-        # Draw unpaid fees rows
-        for fee in monthly_fees:
-            if fee.status == 'unpaid':
-                if y_position < MARGIN + ROW_HEIGHT:
-                    draw_vertical_lines(table_top, y_position)
-                    y_position = add_new_page()
-                    table_top = y_position
-                    y_position = draw_table_header(y_position, headers)
-                
-                student = Student.query.get(fee.student_id)
-                row_data = [
-                    student.name,
-                    f"${float(fee.amount):.2f}",
-                    fee.due_date.strftime('%d/%m/%Y')
-                ]
-                y_position = draw_table_row(y_position, row_data)
-        
-        # Draw vertical lines for last page of unpaid fees
-        draw_vertical_lines(table_top, y_position)
-        
-        # Add page number and generation date
-        p.setFont("Helvetica", 8)
-        p.drawString(PAGE_WIDTH - 70, MARGIN - 20, f"Page {p.getPageNumber()}")
-        p.drawString(MARGIN, MARGIN - 20, f"Generated on {datetime.now().strftime('%d/%m/%Y %H:%M')}")
-        
-        p.save()
-        
-        buffer.seek(0)
-        response = make_response(buffer.getvalue())
-        response.mimetype = 'application/pdf'
-        response.headers['Content-Disposition'] = f'attachment; filename=financial_report_{selected_month}.pdf'
-        
-        return response
-
-    except Exception as e:
-        print(f"Error generating report: {str(e)}")
-        return jsonify({
-            "success": False,
-            "error": str(e)
-        })
