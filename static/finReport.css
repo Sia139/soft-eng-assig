@@ -1,43 +1,50 @@
 /* General Styles */
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    min-height: 100vh;
+html {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in-out forwards;
 }
 
-/* Header */
-.header {
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #808080;
-    color: white;
-    font-size: 16px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    height: 100vh;
+    background: linear-gradient(135deg, #93efff, #fdbffa);
+    transition: margin-left 0.3s ease;
+    overflow: hidden;
 }
 
 /* Sidebar Styles */
 .sidebar {
     width: 20%;
-    height: 100vh;
-    /* Make the sidebar occupy full height */
+    height: 100vh; /* Make the sidebar occupy full height */
     background-color: #FFDD00;
     color: #333;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    position: fixed;
-    /* Fix the sidebar's position */
+    position: fixed; /* Fix the sidebar's position */
     top: 0;
     left: 0;
-    z-index: 2;
-    /* Keep above other content */
+    z-index: 2; /* Keep above other content */
     padding: 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     transition: width 0.3s ease, visibility 0.3s ease;
     overflow: hidden;
+}
+
+.sidebar.collapsed {
+    width: 0%;
+    visibility: hidden;
 }
 
 .dropdown {
@@ -103,19 +110,12 @@ body {
     background: rgba(0, 0, 0, 0.1);
 }
 
-.sidebar.collapsed {
-    width: 0%;
-    visibility: hidden;
-}
-
 .logo-section {
     width: 100%;
-    height: 20%;
-    /* Set a fixed height for the logo */
+    height: 20%; /* Set a fixed height for the logo */
     display: flex;
     justify-content: center;
-    align-items: center;
-    /* Center the logo vertically */
+    align-items: center; /* Center the logo vertically */
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -134,15 +134,12 @@ body {
     display: flex;
     flex-direction: column;
     text-align: center;
-    gap: 1rem;
-    /* Reduce the gap between menu items */
-    margin-top: 1rem;
-    /* Remove extra top margin */
-    padding: 0;
-    /* Remove any padding */
+    gap: 1rem; /* Reduce the gap between menu items */
+    margin-top: 1rem; /* Remove extra top margin */
+    padding: 0; /* Remove any padding */
 }
 
-.menu a{
+.menu a {
     color: #333;
     text-decoration: none;
     font-weight: bold;
@@ -152,7 +149,6 @@ body {
     transition: background 0.3s;
     width: auto;
     text-align: center;
-    display: block;
 }
 
 .menu a:hover {
@@ -160,15 +156,12 @@ body {
 }
 
 .sidebar.collapsed .menu a {
-    font-size: 0;
-    /* Hide text when collapsed */
-    padding: 0rem;
-    /* Shrink padding */
+    font-size: 0; /* Hide text when collapsed */
+    padding: 0rem; /* Shrink padding */
 }
 
-.sidebar.collapsed+.main-content {
-    margin-left: 70px;
-    /* Adjust the main content position */
+.sidebar.collapsed + .main-content {
+    margin-left: 70px; /* Adjust the main content position */
 }
 
 .logout-section {
@@ -180,12 +173,9 @@ body {
 
 /* Logout Button */
 .logout-section a {
-    position: absolute;
-    /* Position the logout button at the bottom-right */
-    bottom: 10px;
-    /* Distance from the bottom of the sidebar */
-    right: 10px;
-    /* Distance from the right of the sidebar */
+    position: absolute; /* Position the logout button at the bottom-right */
+    bottom: 10px; /* Distance from the bottom of the sidebar */
+    right: 10px; /* Distance from the right of the sidebar */
     text-decoration: none;
     color: #333;
     font-size: 1.5rem;
@@ -197,18 +187,18 @@ body {
 }
 
 .logout-section a:hover {
-    color: red;
-    /* Highlight on hover */
+    color: red; /* Highlight on hover */
 }
+
+/* .menu-icon {
+    font-size: 1.5rem;
+} */
 
 /* Collapse button styles */
 .collapse-button {
-    position: absolute;
-    /* Always position outside the sidebar */
-    bottom: 10px;
-    /* Adjust vertical positioning */
-    left: 10px;
-    /* Fixed position to ensure visibility */
+    position: absolute; /* Always position outside the sidebar */
+    bottom: 10px; /* Adjust vertical positioning */
+    left: 10px; /* Fixed position to ensure visibility */
     width: 30px;
     height: 30px;
     font-size: 1rem;
@@ -216,8 +206,7 @@ body {
     border: none;
     border-radius: 0;
     cursor: pointer;
-    z-index: 3;
-    /* Ensure it stays on top of everything */
+    z-index: 3; /* Ensure it stays on top of everything */
     transition: all 0.3s ease;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -225,10 +214,10 @@ body {
 
 /* Ensure collapse button is always visible when sidebar is collapsed */
 .sidebar.collapsed .collapse-button {
-    left: 10px;
-    /* Adjust left position when collapsed */
+    left: 10px; /* Adjust left position when collapsed */
 }
 
+/* Main Content */
 .main-content {
     flex: 1;
     display: flex;
@@ -237,17 +226,35 @@ body {
     transition: margin-left 0.3s ease;
 }
 
-.header-container {
-    margin-bottom: 30px;
-    text-align: center;
+.sidebar.collapsed ~ .main-content {
+    margin-left: 0px; /* Adjust content margin for collapsed sidebar */
 }
 
-.header-container h1 {
-    color: #2c3e50;
-    font-size: 2.5rem;
-    margin: 0;
-    padding: 20px 0;
-    font-weight: 600;
+.header {
+    background: #DADADA;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header .time {
+    font-weight: bold;
+    color: #555;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;  /* Space out the items */
+    align-items: center;  /* Align the items vertically */
+    margin-bottom: 0px;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;  /* Stack the title and grade vertically */
+    align-items: flex-start;  /* Align the items to the left */
 }
 
 .sidebar.collapsed~.main-content {
@@ -264,18 +271,29 @@ body {
     width: 90%;
 }
 
+select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-left: 10px;
+    background: #f7f7f7;
+}
+
 .toggle {
     margin-left: 10px;
 }
 
-/* Container Styles */
+/* Container */
 .container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    margin: auto;
+    width: 90%;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px 30px;
+    overflow-y: auto;
 }
 
 /* Report Controls */
@@ -316,26 +334,21 @@ body {
 }
 
 .generate-btn {
-    background: #3498db;
-    color: white;
+    padding: 10px 20px;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 500;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    background: #007bff;
+    color: white;
+    margin-left: 10px;
 }
 
 .generate-btn:hover {
-    background: #2980b9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
-}
-
-.generate-btn:active {
-    transform: translateY(0);
+    background: #0056b3;
 }
 
 /* Report Summary */
