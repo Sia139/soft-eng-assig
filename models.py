@@ -104,6 +104,7 @@ class RolePermission(db.Model):
     __table_args__ = (db.UniqueConstraint('role', 'function_name', name='unique_role_function'),)
     
 class FeeSetting(db.Model):
+    __tablename__ = 'fee_setting'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     detail = db.Column(db.String(50), unique=True, nullable=False)  # "penalty_amount", "discount_period", "discount_amount"
     value = db.Column(db.Float, nullable=False)  # The actual amount or period
