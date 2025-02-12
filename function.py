@@ -432,6 +432,10 @@ def check_and_update_invoices():
             fees = invoice.fees  # Get all fees related to the invoice
             if not fees:
                 continue  # Skip invoices without fees
+            
+            if all(fee.status == 'paid' for fee in fees):
+                print(f"Skipping Invoice {invoice.id} as it is fully paid.")
+                continue  # Skip this invoice
 
             due_dates = [fee.due_date for fee in fees if fee.due_date]  # Ensure valid due dates
             create_dates = [fee.create_date for fee in fees if fee.create_date]  # Ensure valid create dates
