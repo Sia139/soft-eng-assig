@@ -340,6 +340,11 @@ def toggle_invoice_flag(invoice_id):
 @accountant_blueprint.route("/finReport", methods=["GET"])
 @login_required
 def finReport():
+    allowed = is_action_allowed(current_user.role, "financial_report")
+    print(f"Permission check: {allowed}")
+    
+    if not allowed:
+        return render_template('403.html')
     selected_month = request.args.get("month")  # Get user-selected month (YYYY-MM)
     
     if not selected_month:
