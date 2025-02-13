@@ -342,4 +342,4 @@ def seed_permissions():
 if __name__ == '__main__': 
     initialize_database()  # Initialize the database and create default users
     seed_permissions()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
